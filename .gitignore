@@ -1,0 +1,10 @@
+/Code/webots/controllers/formation/build/
+/Code/webots/controllers/formation/formation
+/Code/webots/controllers/formation/formation.c\~ 
+/Code/webots/controllers/formation/Makefile
+/Code/webots/controllers/formation_super/build/
+/Code/webots/controllers/formation_super/formation_super
+/Code/webots/controllers/formation_super/formation_super.c\~
+/Code/webots/controllers/formation_super/Makefile
+/Code/webots/worlds/.formationWorld.wbproj 
+/Code/webots/worlds/.flocking_reynolds.wbproj 
