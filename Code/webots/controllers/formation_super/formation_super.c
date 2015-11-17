@@ -80,8 +80,9 @@ void send_init_poses(void)
 		loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0]; // X
 		loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2]; // Z
 		loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
+		printf("Supervisor %d %d %d\n",loc[i][0],loc[i][1],loc[i][2]);
 		// Send it out
-		sprintf(buffer,"%1d#%f#%f#%f",i,loc[i][0],loc[i][1],loc[i][2]);
+		sprintf(buffer,"%1d#%f#%f#%f#%f#%f",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz);
 		//printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
 		wb_emitter_send(emitter,buffer,strlen(buffer));
 
@@ -130,9 +131,9 @@ int main(int argc, char *args[]) {
             	if (t%10 == 0) { // every 10 TIME_STEP (640ms)
                   	for (i=0;i<FORMATION_SIZE;i++) {
                               	// Get data
-				loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0]; // X
-				loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2]; // Z
-				loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
+						loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0]; // X
+						loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2]; // Z
+						loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 				
                     		// Sending positions to the robots, comment the following two lines if you don't want the supervisor sending it                   		
                   		sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);

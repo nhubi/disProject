@@ -176,7 +176,7 @@ DEF rob0 E-puck {
   hidden angularVelocity_2 -0.128668 -4.34759e-08 6.90778e-08
   translation -0.26479 -3.19812e-05 0.439438
   rotation -0.995072 0.0946832 -0.0294367 7.27241e-05
-  controller "formation"
+  controller "formation2"
   name "rob0"
   emitter_channel 0
   receiver_channel 0
@@ -194,7 +194,7 @@ DEF rob1 E-puck {
   hidden angularVelocity_2 -0.125587 -0.000280461 -0.000612841
   translation -0.158156 -2.35412e-06 0.436885
   rotation -0.747912 0.655124 -0.106958 -0.00746706
-  controller "formation"
+  controller "formation2"
   name "rob1"
   emitter_channel 0
   receiver_channel 0
@@ -212,7 +212,7 @@ DEF rob2 E-puck {
   hidden angularVelocity_2 -0.128668 -4.34758e-08 6.90778e-08
   translation -0.0499819 -3.19812e-05 0.438491
   rotation -0.995072 0.0946832 -0.0294367 7.27241e-05
-  controller "formation"
+  controller "formation2"
   name "rob2"
   emitter_channel 0
   receiver_channel 0
@@ -230,7 +230,7 @@ DEF rob3 E-puck {
   hidden angularVelocity_2 -0.128668 -4.34758e-08 6.90778e-08
   translation 0.0586924 -3.19812e-05 0.436266
   rotation -0.995072 0.0946832 -0.0294367 7.27241e-05
-  controller "formation"
+  controller "formation2"
   name "rob3"
   emitter_channel 0
   receiver_channel 0
@@ -240,6 +240,6 @@ Supervisor {
     Emitter {
     }
   ]
-  controller "formation_super"
+  controller "formation_super2"
   controllerArgs "0 -25 25"
 }

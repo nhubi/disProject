@@ -155,6 +155,7 @@ void update_self_motion(int msl, int msr) {
 
 /*
  * Computes wheel speed given a certain X,Z speed
+ * (Stefano) I think that we shouldn't modify this function
  */
 void compute_wheel_speeds(int *msl, int *msr)
 {
@@ -181,6 +182,7 @@ void compute_wheel_speeds(int *msl, int *msr)
 
 /*
  * Initialize robot's position
+ * (Stefano) The robot receive infomation on his ID, position and the goal
  */
 void initial_pos(void){
 	char *inbuffer;
@@ -208,6 +210,7 @@ void initial_pos(void){
 			prev_loc[rob_nb][0] = loc[rob_nb][0];
 			prev_loc[rob_nb][1] = loc[rob_nb][1];
 			initialized[rob_nb] = 1; 		// initialized = true
+			printf("initialPos %i %i %i %i\n",loc[rob_nb][0],loc[rob_nb][1],prev_loc[rob_nb][0],prev_loc[rob_nb][1]);
 		}
 		wb_receiver_next_packet(receiver);
 	}
@@ -277,13 +280,15 @@ void reynolds_rules() {
 //	}
 //	
 //	// aggregation of all behaviors with relative influence determined by weights
-//	for (j=0;j<2;j++)
-//	{
+	for (j=0;j<2;j++)
+	{
 //		speed[robot_id][j] = cohesion[j] * RULE1_WEIGHT;
 //		speed[robot_id][j] +=  dispersion[j] * RULE2_WEIGHT;
 //		speed[robot_id][j] +=  consistency[j] * RULE3_WEIGHT;
-//		speed[robot_id][j] += (migr[j]-loc[robot_id][j]) * MIGRATION_WEIGHT;
-//	}
+		
+		speed[robot_id][j] += (migr[j]-loc[robot_id][j]) * MIGRATION_WEIGHT;
+		printf("reynolds %d\n",speed[robot_id][j]);
+	}
 }
 
 
@@ -301,6 +306,8 @@ int main(){
 	char *inbuffer;			// Buffer for the receiver node
 	int max_sens;			// Store highest sensor value
 	
+	
+	// In this initialization the common goal is communicated to the robot
 	reset();			// Resetting the robot
 	initial_pos();			// Initializing the robot's position
 	
@@ -308,7 +315,13 @@ int main(){
 	max_sens = 0;
 
 	
-	
+	// Allocation of speed - not necessary
+//	int j; //index
+//	for (i=0; i<FORMATION_SIZE; i++) {
+//		for (j=0; j<2; j++) {
+//			speed[i][j]=0;
+//		}
+//	}
 	
 
 	
@@ -338,6 +351,7 @@ int main(){
 		while (wb_receiver_get_queue_length(receiver) > 0 && count < FORMATION_SIZE) {
 			inbuffer = (char*) wb_receiver_get_data(receiver);
 			sscanf(inbuffer,"%d#%f#%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta);
+			printf("initialCheck %i %i\n",(int) rob_nb/FORMATION_SIZE,(int) robot_id/FORMATION_SIZE);
 			
 			if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE) {
 				rob_nb %= FORMATION_SIZE;
@@ -351,15 +365,16 @@ int main(){
 					initialized[rob_nb] = 1;
 				} else {
 					// Get position update
-					//				printf("\n got update robot[%d] = (%f,%f) \n",rob_nb,loc[rob_nb][0],loc[rob_nb][1]);
+//					printf("\n got update robot[%d] = (%f,%f) \n",rob_nb,loc[rob_nb][0],loc[rob_nb][1]);
 					prev_loc[rob_nb][0] = loc[rob_nb][0];
 					prev_loc[rob_nb][1] = loc[rob_nb][1];
 					loc[rob_nb][0] = rob_x; //x-position
 					loc[rob_nb][1] = rob_z; //z-position
 					loc[rob_nb][2] = rob_theta; //theta
 				}
-				
-				speed[rob_nb][0] = (1/DELTA_T)*(loc[rob_nb][0]-prev_loc[rob_nb][0]);
+				printf("speedStarting %d %d\n",(1/DELTA_T)*(loc[rob_nb][0]-prev_loc[rob_nb][0]),(1/DELTA_T)*(loc[rob_nb][1]-prev_loc[rob_nb][1]));
+				printf("Location %d %d\n",loc[rob_nb][0],loc[rob_nb][0]);
+				speed[rob_nb][0] = (1/DELTA_T)*(loc[rob_nb][0]-loc[rob_nb][0]);
 				speed[rob_nb][1] = (1/DELTA_T)*(loc[rob_nb][1]-prev_loc[rob_nb][1]);
 				count++;
 			}
@@ -379,15 +394,20 @@ int main(){
 		prev_loc[robot_id][1] = loc[robot_id][1];
 		
 		update_self_motion(msl,msr);
-		
+		printf("speedBefore %d %d\n",speed[robot_id][0],speed[robot_id][1]);
+
 		speed[robot_id][0] = (1/DELTA_T)*(loc[robot_id][0]-prev_loc[robot_id][0]);
 		speed[robot_id][1] = (1/DELTA_T)*(loc[robot_id][1]-prev_loc[robot_id][1]);
 		
 		// Reynold's rules with all previous info (updates the speed[][] table)
 		reynolds_rules();
 		
+		printf("speed %d %d\n",speed[robot_id][0],speed[robot_id][1]);
+		
 		// Compute wheels speed from Reynold's speed
 		compute_wheel_speeds(&msl, &msr);
+		printf("wheelSpeed %d %d\n",msl,msr);
+
 		
 		// Adapt speed instinct to distance sensor values
 		if (sum_sensors > NB_SENSORS*MIN_SENS) {
@@ -398,10 +418,11 @@ int main(){
 		// Add Braitenberg
 		msl += bmsl;
 		msr += bmsr;
-
 		
+		
+		printf("prova %d %d\n",msl,msr);
 		// set your speeds here I just put a constant number which you need to overwrite
-  	    wb_differential_wheels_set_speed(20,20);
+  	    wb_differential_wheels_set_speed(msl,msr);
 		
 		// Send current position to neighbors, uncomment for I14, don't forget to uncomment the declration of "outbuffer" at the begining of this function.
 		// sprintf(outbuffer,"%1d#%f#%f#%f",robot_id,loc[robot_id][0],loc[robot_id][1], loc[robot_id][2]);
