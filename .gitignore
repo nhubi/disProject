@@ -1,11 +1,19 @@
-/Code/webots/controllers/formation/build/
-/Code/webots/controllers/formation/formation
-/Code/webots/controllers/formation/formation.c\~ 
-/Code/webots/controllers/formation/Makefile
-/Code/webots/controllers/formation_super/build/
-/Code/webots/controllers/formation_super/formation_super
-/Code/webots/controllers/formation_super/formation_super.c\~
-/Code/webots/controllers/formation_super/Makefile
-/Code/webots/worlds/.formationWorld.wbproj 
-/Code/webots/worlds/.flocking_reynolds.wbproj 
-/Code/webots/worlds/.formationWorld.wbproj
+# Ignore all files without extension (Ignore all except
+# those containing a dot or between slashes)
+# THIS PART MUST REMAIN AT THE BEGINNING OF .gitignore!
+*
+!/**/
+!*.*
+###########################################################
+
+# Ignore */build directories and their content
+build/
+
+# Ignore all Makefiles
+*Makefile
+
+# Ignore all .wbproj files
+*.wbproj
+
+# Ignore all temporary files
+*~
