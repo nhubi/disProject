@@ -32,7 +32,7 @@
 
 //#define RULE3_WEIGHT        0.10   // Weight of consistency rule. default 0.1
 
-#define MIGRATION_WEIGHT    0.01   // Wheight of attraction towards the common goal. default 0.01
+#define MIGRATION_WEIGHT    0.1   // Wheight of attraction towards the common goal. default 0.01
 
 /////////////////////////////////////////////
 
@@ -56,7 +56,7 @@ float loc[FORMATION_SIZE][3];	// X, Z, Theta of all robots
 float prev_loc[FORMATION_SIZE][3];	// Previous X, Z, Theta values
 float speed[FORMATION_SIZE][2];	// Speeds calculated with Reynold's rules
 int initialized[FORMATION_SIZE];	// != 0 if initial positions have been received
-float migr[2];	                // Migration vector
+float migr[2];//={25, 25};	                // Migration vector
 
 /*
  * Reset the robot's devices and get its ID
@@ -197,7 +197,7 @@ void initial_pos(void){
 		while (wb_receiver_get_queue_length(receiver) == 0)	wb_robot_step(TIME_STEP);
 		
 		inbuffer = (char*) wb_receiver_get_data(receiver);
-		sscanf(inbuffer,"%d#%f#%f#%f##%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta, &migr[0], &migr[1]);
+		sscanf(inbuffer,"%d#%f#%f#%f##%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta,migr[0],migr[1]);
 		// Only info about self will be taken into account at first.
 		
 		//robot_nb %= FORMATION_SIZE;
@@ -210,7 +210,7 @@ void initial_pos(void){
 			prev_loc[rob_nb][0] = loc[rob_nb][0];
 			prev_loc[rob_nb][1] = loc[rob_nb][1];
 			initialized[rob_nb] = 1; 		// initialized = true
-			printf("initialPos %i %i %i %i\n",loc[rob_nb][0],loc[rob_nb][1],prev_loc[rob_nb][0],prev_loc[rob_nb][1]);
+			printf("initialPos %f %f %f %f\n",loc[rob_nb][0],loc[rob_nb][1],prev_loc[rob_nb][0],prev_loc[rob_nb][1]);
 		}
 		wb_receiver_next_packet(receiver);
 	}
@@ -280,6 +280,7 @@ void reynolds_rules() {
 //	}
 //	
 //	// aggregation of all behaviors with relative influence determined by weights
+         printf("Migr %f %f\n",migr[0],migr[1]);
 	for (j=0;j<2;j++)
 	{
 //		speed[robot_id][j] = cohesion[j] * RULE1_WEIGHT;
@@ -287,7 +288,7 @@ void reynolds_rules() {
 //		speed[robot_id][j] +=  consistency[j] * RULE3_WEIGHT;
 		
 		speed[robot_id][j] += (migr[j]-loc[robot_id][j]) * MIGRATION_WEIGHT;
-		printf("reynolds %d\n",speed[robot_id][j]);
+		printf("reynolds %f\n",speed[robot_id][j]);
 	}
 }
 
@@ -372,8 +373,8 @@ int main(){
 					loc[rob_nb][1] = rob_z; //z-position
 					loc[rob_nb][2] = rob_theta; //theta
 				}
-				printf("speedStarting %d %d\n",(1/DELTA_T)*(loc[rob_nb][0]-prev_loc[rob_nb][0]),(1/DELTA_T)*(loc[rob_nb][1]-prev_loc[rob_nb][1]));
-				printf("Location %d %d\n",loc[rob_nb][0],loc[rob_nb][0]);
+				printf("speedStarting %f %f\n",(1/DELTA_T)*(loc[rob_nb][0]-prev_loc[rob_nb][0]),(1/DELTA_T)*(loc[rob_nb][1]-prev_loc[rob_nb][1]));
+				printf("Location %f %f\n",loc[rob_nb][0],loc[rob_nb][0]);
 				speed[rob_nb][0] = (1/DELTA_T)*(loc[rob_nb][0]-loc[rob_nb][0]);
 				speed[rob_nb][1] = (1/DELTA_T)*(loc[rob_nb][1]-prev_loc[rob_nb][1]);
 				count++;
@@ -394,15 +395,16 @@ int main(){
 		prev_loc[robot_id][1] = loc[robot_id][1];
 		
 		update_self_motion(msl,msr);
-		printf("speedBefore %d %d\n",speed[robot_id][0],speed[robot_id][1]);
 
 		speed[robot_id][0] = (1/DELTA_T)*(loc[robot_id][0]-prev_loc[robot_id][0]);
 		speed[robot_id][1] = (1/DELTA_T)*(loc[robot_id][1]-prev_loc[robot_id][1]);
 		
+		printf("speedBeforeReynolds %f %f\n",speed[robot_id][0],speed[robot_id][1]);
+		
 		// Reynold's rules with all previous info (updates the speed[][] table)
 		reynolds_rules();
 		
-		printf("speed %d %d\n",speed[robot_id][0],speed[robot_id][1]);
+		printf("speed %f %f\n",speed[robot_id][0],speed[robot_id][1]);
 		
 		// Compute wheels speed from Reynold's speed
 		compute_wheel_speeds(&msl, &msr);
