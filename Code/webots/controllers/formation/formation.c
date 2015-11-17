@@ -36,9 +36,9 @@
 
 /////////////////////////////////////////////
 
-// I don't know what's this
-int e_puck_matrix[16] = {17,29,34,10,8,-38,-56,-76,-72,-58,-36,8,10,36,28,18}; // Maze
-//int e_puck_matrix[16] = {17,29,12,10,8,-38,-56,-76,-72,-58,-36,8,10,12,28,18}; // Crossing
+// Each sensor's weight for braitenberg 
+int braitenberg_weights_right[16] = {4,3,2,1,0,0,0,0};
+int braitenberg_weights_left[16]  = {0,0,0,0,1,2,3,4};
 
 
 WbDeviceTag ds[NB_SENSORS];	    // Handle for the infra-red distance sensors
@@ -339,8 +339,8 @@ int main(){
 			max_sens = max_sens>distances[i]?max_sens:distances[i]; // Check if new highest sensor value
 			
 			// Weighted sum of distance sensor values for Braitenberg vehicle
-			bmsr += e_puck_matrix[i] * distances[i];
-			bmsl += e_puck_matrix[i+NB_SENSORS] * distances[i];
+			bmsr += braitenberg_weights_right[i] * distances[i];
+			bmsl += braitenberg_weights_left[i]  * distances[i];
 		}
 		
 		// Adapt Braitenberg values (empirical tests)
