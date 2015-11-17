@@ -197,7 +197,7 @@ void initial_pos(void){
 		while (wb_receiver_get_queue_length(receiver) == 0)	wb_robot_step(TIME_STEP);
 		
 		inbuffer = (char*) wb_receiver_get_data(receiver);
-		sscanf(inbuffer,"%d#%f#%f#%f##%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta,migr[0],migr[1]);
+		sscanf(inbuffer,"%d#%f#%f#%f##%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1]);
 		// Only info about self will be taken into account at first.
 		
 		//robot_nb %= FORMATION_SIZE;

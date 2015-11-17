@@ -82,7 +82,7 @@ void send_init_poses(void)
 		loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 		printf("Supervisor %f %f %f\n",loc[i][0],loc[i][1],loc[i][2]);
 		// Send it out
-		sprintf(buffer,"%1d#%f#%f#%f#%f#%f",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz);
+		sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz);
 		//printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
 		wb_emitter_send(emitter,buffer,strlen(buffer));
 
