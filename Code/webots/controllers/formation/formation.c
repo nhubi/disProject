@@ -2,6 +2,8 @@
 #include <math.h>
 #include <string.h>
 
+#include "utils.h"
+
 #include <webots/robot.h>
 
 #include <webots/differential_wheels.h>
@@ -11,24 +13,25 @@
 
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                          DEFINITIONS                                           //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define FORMATION_SIZE     4        // Size of flock
-#define TIME_STEP	      64        // [ms] Length of time step
-#define MIGRATION_WEIGHT   0.1      // Wheight of attraction towards the common goal. default 0.01
+#define FORMATION_SIZE      4       // Size of flock
+#define TIME_STEP          64       // [ms] Length of time step
+#define MIGRATION_WEIGHT    0.1     // Wheight of attraction towards the common goal. default 0.01
 
 
 // ROBOT SPECS
 
-#define AXLE_LENGTH        0.052    // Distance between wheels of robot (meters)
-#define SPEED_UNIT_RADS	   0.00628  // Conversion factor from speed unit to radian per second
-#define WHEEL_RADIUS       0.0205   // Wheel radius (meters)
-#define NB_SENSORS         8        // Number of distance sensors
-#define MIN_SENS         350        // sensibility value
-#define MAX_SENS        4096        // Minimum sensibility value
-#define MAX_SPEED        800        // Maximum speed
+#define AXLE_LENGTH         0.052   // Distance between wheels of robot (meters)
+#define SPEED_UNIT_RADS     0.00628 // Conversion factor from speed unit to radian per second
+#define WHEEL_RADIUS        0.0205  // Wheel radius (meters)
+#define NB_SENSORS          8       // Number of distance sensors
+#define MIN_SENS          350       // sensibility value
+#define MAX_SENS         4096       // Minimum sensibility value
+#define MAX_SPEED         800       // Maximum speed
 
 
 
@@ -117,34 +120,6 @@ void send_ping(void)  {
          char out[10];
 	strcpy(out,robot_name);  // in the ping message we send the name of the robot.
 	wb_emitter_send(emitter,out,strlen(out)+1); 
-}
-
-
-
-
-
-/*
- * Keep given float number within interval {-limit, limit}
- */
-void limitf(float *number, int limit) {
-	if (*number > limit)
-		*number = (float)limit;
-	if (*number < -limit)
-		*number = (float)-limit;
-}
-
-
-
-
-
-/*
- * Keep given int number within interval {-limit, limit}
- */
-void limit(int *number, int limit) {
-	if (*number > limit)
-		*number = limit;
-	if (*number < -limit)
-		*number = -limit;
 }
 
 
@@ -259,7 +234,7 @@ void initial_pos(void){
  * Update speed according to Reynold's rules
  */
 void reynolds_rules() {
-	int i, j, k;			// Loop counters
+	int i, j;			// Loop counters
 	float avg_loc[2] = {0,0};	// Flock average positions
 	float avg_speed[2] = {0,0};	// Flock average speeds
 	float cohesion[2] = {0,0};
