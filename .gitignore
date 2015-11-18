@@ -9,6 +9,9 @@
 # Ignore */build directories and their content
 build/
 
+# Do not ignore Makefiles
+!Makefile
+
 # Ignore all .wbproj files
 *.wbproj
 
