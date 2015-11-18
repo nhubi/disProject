@@ -7,6 +7,7 @@
 
 // Motorschemas
 #include "ms_avoid_static_obstacles.h"
+#include "ms_move_to_goal.h"
 
 
 
