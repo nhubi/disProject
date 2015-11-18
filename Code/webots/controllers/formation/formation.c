@@ -8,6 +8,7 @@
 // Motorschemas
 #include "ms_avoid_static_obstacles.h"
 #include "ms_move_to_goal.h"
+#include "ms_keep_formation.h"
 
 
 
@@ -48,6 +49,7 @@ void send_ping(void)  {
 
 
 
+//TODO: replace reynolds rules with keep_formation and avoid_moving_obstacles motorschemes. 
 /*
  * Update speed according to Reynold's rules
  */
