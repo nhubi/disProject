@@ -5,6 +5,9 @@
 #include "utils.h"
 #include "robot_state.h"
 
+// Motorschemas
+#include "ms_avoid_static_obstacles.h"
+
 
 
 
@@ -16,6 +19,7 @@
 
 
 // Each sensor's weight for Braitenberg 
+// TODO: move Braitenberg to ms_avoid_static_obstacles
 int braitenberg_weights_right[16] = {4,3,2,1,0,0,0,0};
 int braitenberg_weights_left[16]  = {0,0,0,0,1,2,3,4};
 
@@ -151,6 +155,11 @@ int main(){
 	
 	// Forever
 	for(;;){
+        // TODO: move Braitenberg to ms_avoid_static_obstacles
+        // TODO: write function that combines vectors received computed from motorschemas...
+        //       The resulting vector needs to be translated into wheel speeds.
+
+
         // initialize variables
 		bmsl = 0; 
         bmsr = 0;
