@@ -5,8 +5,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//#ifndef MS_AV_STAT_OB_H
-//#define MS_AV_STAT_OB_H
+#ifndef MS_MOVE_TO_GOAL
+#define MS_MOVE_TO_GOAL
 
 #include "robot_state.h"
 
@@ -36,4 +36,4 @@
 void update_move_to_goal_vector(int robot_id, float speed[4][2], float MIGRATION_WEIGHT);
 
 
-//#endif
+#endif
