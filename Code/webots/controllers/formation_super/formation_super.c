@@ -134,6 +134,11 @@ int main(int argc, char *args[]) {
 						loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0]; // X
 						loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2]; // Z
 						loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
+						if (i==0) {
+							printf("Robot location %f %f\n",loc[i][0],loc[i][1]);
+
+						}
+
 				
                     		// Sending positions to the robots, comment the following two lines if you don't want the supervisor sending it                   		
                   		sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);

@@ -122,7 +122,6 @@ void reynolds_rules() {
 //		speed[robot_id][j] +=  consistency[j] * RULE3_WEIGHT;
 		
 		speed[robot_id][j] += (migr[j]-loc[robot_id][j]) * MIGRATION_WEIGHT;
-//		printf("reynolds %f\n",speed[robot_id][j]);
 	}
 }
 
@@ -182,7 +181,7 @@ int main(){
 		
 		// Adapt Braitenberg values (empirical tests)
 		bmsl/=MIN_SENS; bmsr/=MIN_SENS;
-		bmsl+=66; bmsr+=72;
+//		bmsl+=66; bmsr+=72;
 		
 
 
@@ -236,6 +235,7 @@ int main(){
 		prev_loc[robot_id][0] = loc[robot_id][0];
 		prev_loc[robot_id][1] = loc[robot_id][1];
 		
+		
 		update_self_motion(msl,msr);
 
 		speed[robot_id][0] = (1/TIME_STEP/1000)*(loc[robot_id][0]-prev_loc[robot_id][0]);
@@ -259,11 +259,15 @@ int main(){
 			msr -= msr*max_sens/(2*MAX_SENS);
 		}
 		
+//		printf("Wheel speed after adapt speed %d %d\n",msl,msr);
+
+		
 		// Add Braitenberg
 		msl += bmsl;
 		msr += bmsr;
 		
-//		printf("prova %d %d\n",msl,msr);
+//		printf("Wheel speed after braitenberg %d %d\n",msl,msr);
+
 
 		// set your speeds here (I just put a constant number which you need to overwrite)
   	    wb_differential_wheels_set_speed(msl,msr);

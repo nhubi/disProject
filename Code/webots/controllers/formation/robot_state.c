@@ -138,6 +138,8 @@ void update_self_motion(int msl, int msr) {
  */
 void compute_wheel_speeds(int *msl, int *msr)
 {
+//	printf("reynolds %f %f %f\n",migr[0],loc[robot_id][0],speed[robot_id][0]);
+
 	// Compute wanted position from Reynold's speed and current location
     // x in robot coordinates
 	float x = speed[robot_id][0]*cosf(loc[robot_id][2]) - speed[robot_id][1]*sinf(loc[robot_id][2]);
@@ -159,4 +161,9 @@ void compute_wheel_speeds(int *msl, int *msr)
 	*msr = 50*(u + AXLE_LENGTH*w/2.0) / WHEEL_RADIUS;
 	limit(msl,MAX_SPEED);
 	limit(msr,MAX_SPEED);
+	
+//	printf("Wheel speed after reynolds %d %d\n",*msl,*msr);
 }
+
+
+
