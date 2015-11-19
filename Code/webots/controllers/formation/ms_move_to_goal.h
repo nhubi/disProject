@@ -5,9 +5,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef MS_AV_STAT_OB_H
-#define MS_AV_STAT_OB_H
+//#ifndef MS_AV_STAT_OB_H
+//#define MS_AV_STAT_OB_H
 
+#include "robot_state.h"
 
 
 // includes
@@ -30,7 +31,9 @@
 
 // methods
 
-float * get_move_to_goal_vector(int robot_id);
+//float * get_move_to_goal_vector(int robot_id);
+
+void update_move_to_goal_vector(int robot_id, float speed[4][2], float MIGRATION_WEIGHT);
 
 
-#endif
+//#endif

@@ -115,14 +115,16 @@ void reynolds_rules() {
 //	
 //	// aggregation of all behaviors with relative influence determined by weights
 //         printf("Migr %f %f\n",migr[0],migr[1]);
-	for (j=0;j<2;j++)
-	{
+//	for (j=0;j<2;j++)
+//	{
 //		speed[robot_id][j] = cohesion[j] * RULE1_WEIGHT;
 //		speed[robot_id][j] +=  dispersion[j] * RULE2_WEIGHT;
 //		speed[robot_id][j] +=  consistency[j] * RULE3_WEIGHT;
 		
-		speed[robot_id][j] += (migr[j]-loc[robot_id][j]) * MIGRATION_WEIGHT;
-	}
+//		speed[robot_id][j] += (migr[j]-loc[robot_id][j]) * MIGRATION_WEIGHT;
+//	}
+//	get_move_to_goal_vector(10);
+	update_move_to_goal_vector(robot_id,speed,MIGRATION_WEIGHT);
 }
 
 
