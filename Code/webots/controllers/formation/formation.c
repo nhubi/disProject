@@ -14,7 +14,7 @@
 
 
 
-#define MIGRATION_WEIGHT    0.1     // Wheight of attraction towards the common goal. default 0.01
+#define MIGRATION_WEIGHT    0.1     // Weight of attraction towards the common goal. default 0.01
 
 
 
@@ -163,10 +163,10 @@ int main(){
 
 
         // initialize variables
-		bmsl = 0; 
+	bmsl = 0; 
         bmsr = 0;
-		sum_sensors = 0;
-		max_sens = 0;
+	sum_sensors = 0;
+	max_sens = 0;
 
         // Braitenberg
 		for(i=0;i<NB_SENSORS;i++) {
@@ -192,11 +192,11 @@ int main(){
 			sscanf(inbuffer,"%d#%f#%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta);
 //			printf("initialCheck %i %i\n",(int) rob_nb/FORMATION_SIZE,(int) robot_id/FORMATION_SIZE);
 			
-            // check that received message comes from a member of the flock
+            		// check that received message comes from a member of the flock
 			if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE) {
 				rob_nb %= FORMATION_SIZE;
 
-                // If robot is not initialised, initialise it. 
+                		// If robot is not initialised, initialise it. 
 				if (initialized[rob_nb] == 0) {
 					loc[rob_nb][0] = rob_x;
 					loc[rob_nb][1] = rob_z;
@@ -205,15 +205,15 @@ int main(){
 					prev_loc[rob_nb][1] = loc[rob_nb][1];
 					initialized[rob_nb] = 1;
 
-                // Otherwise, update the its position.
+                		// Otherwise, update its position.
 				} else {
 //					printf("\n got update robot[%d] = (%f,%f) \n",rob_nb,loc[rob_nb][0],loc[rob_nb][1]);
 
 					// Remember previous position
 					prev_loc[rob_nb][0] = loc[rob_nb][0];
 					prev_loc[rob_nb][1] = loc[rob_nb][1];
-                    
-                    // save current position
+
+                    			// save current position
 					loc[rob_nb][0] = rob_x;
 					loc[rob_nb][1] = rob_z;
 					loc[rob_nb][2] = rob_theta;
@@ -222,7 +222,7 @@ int main(){
 //				printf("speedStarting %f %f\n",(1/TIME_STEP/1000)*(loc[rob_nb][0]-prev_loc[rob_nb][0]),(1/TIME_STEP/1000)*(loc[rob_nb][1]-prev_loc[rob_nb][1]));
 //				printf("Location %f %f\n",loc[rob_nb][0],loc[rob_nb][0]);
 
-                // Calculate speed
+                		// Calculate speed
 				speed[rob_nb][0] = (1/TIME_STEP/1000)*(loc[rob_nb][0]-loc[rob_nb][0]);
 				speed[rob_nb][1] = (1/TIME_STEP/1000)*(loc[rob_nb][1]-prev_loc[rob_nb][1]);
 				count++;
@@ -270,10 +270,10 @@ int main(){
 
 
 		// set your speeds here (I just put a constant number which you need to overwrite)
-  	    wb_differential_wheels_set_speed(msl,msr);
+  	    	wb_differential_wheels_set_speed(msl,msr);
 		
 		// Send current position to neighbors, uncomment for I14, don't forget to uncomment the 
-        // declration of "outbuffer" at the begining of this function.
+        	// declration of "outbuffer" at the begining of this function.
 		// sprintf(outbuffer,"%1d#%f#%f#%f", robot_id, loc[robot_id][0], loc[robot_id][1], loc[robot_id][2]);
 		// wb_emitter_send(emitter,outbuffer,strlen(outbuffer));
 	

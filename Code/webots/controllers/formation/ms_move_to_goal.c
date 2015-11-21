@@ -22,3 +22,4 @@ float * get_move_to_goal_vector(int robot_id){
     float vector[3] = {0,0,0};
     return vector;
 }
+

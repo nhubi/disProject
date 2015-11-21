@@ -75,7 +75,7 @@ void initial_pos(void){
 		
 		// wait for message
 		while (wb_receiver_get_queue_length(receiver) == 0)	{
-            wb_robot_step(TIME_STEP);
+            	wb_robot_step(TIME_STEP);
         }
 		
 		inbuffer = (char*) wb_receiver_get_data(receiver);

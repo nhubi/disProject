@@ -29,19 +29,22 @@ int t;
 
 /*----------------- for the goal and obstacles you might also need to ask the supervisor depending on the approach you take:
  1) absolute positions 2) relative distances based on the perception of the robot 
- approach 2 is more realistic and preferred. However approach 1 also exists incase you run into problems with implementing local perception
+ approach 2 is more realistic and prefered. However approach 1 also exists in case you run into problems with implementing local perception
  most of the codes that you need for both approaches can be found in the labs (lab4 is particularly useful) 
 
 Think about the obstacles, do you need to know their exact position? 
-how can you differentiate between a robot and an obstacle if you use local perception? in one of your labs you had communication between robots where the distance 
+- No, we just need to detect them. 
+how can you differentiate between a robot and an obstacle if you use local perception?
+- Obstacle: distance sensors
+- Robot: communication -> range and bearing
+In one of your labs you had communication between robots where the distance 
 between a pair of robots could be found
-if you decide to use the absolute positions of all the obstacles through the supervisor,how can you make it more realistic? e.g define a region around the robot where you include the obstacles? 
+if you decide to use the absolute positions of all the obstacles through the supervisor, how can you make it more realistic? e.g define a region around the robot where you include the obstacles? 
 
 The more realistic and less dependent on the supervisor you are, the better.
 
 goal is the red cylinder which can be moved around between different trials of your code
 */
-
 
 
 
@@ -91,7 +94,6 @@ void send_init_poses(void)
 	}
 }
 
-
 /*
  * Main function.
  you need to complete the code
@@ -116,7 +118,7 @@ int main(int argc, char *args[]) {
   	if (orient_migr<0) {
           	orient_migr+=2*M_PI; // Keep value between 0 and 2PI
 	}
-         ///////////////////
+        ///////////////////
          
          
          // reset and communication part
@@ -136,7 +138,6 @@ int main(int argc, char *args[]) {
 						loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 						if (i==0) {
 							printf("Robot location %f %f\n",loc[i][0],loc[i][1]);
-
 						}
 
 				

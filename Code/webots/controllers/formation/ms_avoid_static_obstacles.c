@@ -7,7 +7,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// This file contains everything related to the motorschema 'avoid_static_obstacles.              //
+// This file contains everything related to the motorschema 'avoid_static_obstacles'.              //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
