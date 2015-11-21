@@ -104,9 +104,9 @@ int main(int argc, char *args[]) {
 	// DEFINE GOAL  //
 	//////////////////  
 	if (argc == 4) {
-          	offset = atoi(args[1]);
-          	migrx = atoi(args[2]); // migration urge on x direction
-          	migrz = atoi(args[3]); // migration urge on y direction
+          	migrx = atoi(args[1]);
+          	offset = atoi(args[2]); // migration urge on x direction
+          	migrz = atoi(args[3]); // migration urge on z direction
           	printf("Migratory instinct: (%f, %f)\n",migrx,migrz);
 	} else {
           	printf("No goal defined in supervisor->controllerArgs");

@@ -99,8 +99,21 @@ void initial_pos(void){
 }
 
 
-
-
+/*
+ * Computes the unit center of all the robots from their actual 
+ * positions
+ * (Ondine) Positions of the other robots will then have to be determined 
+ * with local communication
+ */
+void compute_unit_center(void) {
+	int i,j;	
+	for(j = 0; j < 3; j++) {
+          	unit_center[j] = 0;
+		for(i = 0; i < FORMATION_SIZE; i++) 
+			unit_center[j] += loc[i][j];
+		unit_center[j] /= FORMATION_SIZE;
+	}
+}
 
 /*
  * Updates robot position with wheel speeds
@@ -128,8 +141,6 @@ void update_self_motion(int msl, int msr) {
 	if (loc[robot_id][2] > 2*M_PI) loc[robot_id][2] -= 2.0*M_PI;
 	if (loc[robot_id][2] < 0) loc[robot_id][2] += 2.0*M_PI;
 }
-
-
 
 
 
