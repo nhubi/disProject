@@ -124,7 +124,14 @@ void reynolds_rules() {
 //		speed[robot_id][j] += (migr[j]-loc[robot_id][j]) * MIGRATION_WEIGHT;
 //	}
 //	get_move_to_goal_vector(10);
-	update_move_to_goal_vector(robot_id,speed,MIGRATION_WEIGHT);
+    
+    compute_unit_center();
+    printf("Unit center: (%f, %f)\n",unit_center[0], unit_center[1]);
+
+    float dir_goal[2];
+	get_move_to_goal_vector(dir_goal, robot_id);
+    speed[robot_id][1] = dir_goal[1];
+    speed[robot_id][2] = dir_goal[2];
 }
 
 

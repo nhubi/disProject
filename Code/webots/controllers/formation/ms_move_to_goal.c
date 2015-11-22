@@ -23,10 +23,12 @@
 //    return vector;
 //}
 
-void update_move_to_goal_vector(int robot_id, float speed[4][2], float MIGRATION_WEIGHT) {
+void get_move_to_goal_vector(float * direction, int robot_id) {
+    
+
 	int j;
 	for (j=0;j<2;j++) {
-		speed[robot_id][j] += (migr[j]-loc[robot_id][j]) * MIGRATION_WEIGHT;
+		direction[j] = (migr[j]-unit_center[j]);
 	}
 	
 	return;

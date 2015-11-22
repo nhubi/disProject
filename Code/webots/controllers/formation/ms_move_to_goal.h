@@ -33,7 +33,7 @@
 
 //float * get_move_to_goal_vector(int robot_id);
 
-void update_move_to_goal_vector(int robot_id, float speed[4][2], float MIGRATION_WEIGHT);
+void get_move_to_goal_vector(float * direction, int robot_id);
 
 
 #endif
