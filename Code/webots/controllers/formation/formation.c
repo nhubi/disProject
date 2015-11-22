@@ -12,24 +12,8 @@
 
 
 
-
-
-#define MIGRATION_WEIGHT 0.1     // Wheight of attraction towards the common goal. default 0.01
-
-
-
-
-
-// Each sensor's weight for Braitenberg 
-// TODO: move Braitenberg to ms_avoid_static_obstacles
-int braitenberg_weights_right[16] = {0,0,0,0,1,2,3,4};
-int braitenberg_weights_left[16]  = {4,3,2,1,0,0,0,0};
-
 // The swarm's center
 float unit_center[2];
-
-
-
 
 
 
@@ -71,14 +55,14 @@ void computeDirection(){
 
     //TODO: - call get_*_vector methods
     //      - combine them
-    //      - compute wheel speed
+    //          - We probably need a more complicated combination method than just weighted addition
+    //          --> state machine?
 
     get_move_to_goal_vector(dir_goal, robot_id);
     get_keep_formation_vector(dir_keep_formation, robot_id);
     get_stat_obst_avoidance_vector(dir_avoid_obstacles, robot_id);
 
-
-    int d = 0;
+    int d;
     //for each dimension d...
     for(d = 0; d < 2; d++){
         // init speed to (0,0)
@@ -90,8 +74,6 @@ void computeDirection(){
         speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
     }
-
-    printf("\nDirection of robot%d = (%f,%f) \n",robot_id,speed[robot_id][0],speed[robot_id][1]);
 }
 
 
@@ -106,14 +88,9 @@ int main(){
 	// char outbuffer[255];
 	
 	int msl, msr;                   // Wheel speeds
-	int bmsl, bmsr, sum_sensors;    // Braitenberg parameters
-	int i;                          // Loop counter
 	int rob_nb;                     // Robot number
 	float rob_x, rob_z, rob_theta;  // Robot position and orientation
-	int distances[NB_SENSORS];      // Array for the distance sensor readings
 	char *inbuffer;                 // Buffer for the receiver node
-	int max_sens;                   // Store highest sensor value
-    
 	
 	
 	// In this initialization the common goal is communicated to the robot
@@ -121,7 +98,6 @@ int main(){
 	initial_pos();  // Initializing the robot's position
 	
 	msl = 0; msr = 0;
-	max_sens = 0;
 	
 
 	
@@ -130,29 +106,6 @@ int main(){
         // TODO: move Braitenberg to ms_avoid_static_obstacles
         // TODO: write function that combines vectors received computed from motorschemas...
         //       The resulting vector needs to be translated into wheel speeds.
-
-/*
-        // initialize variables
-		bmsl = 0; 
-        bmsr = 0;
-		sum_sensors = 0;
-		max_sens = 0;
-
-        // Braitenberg
-		for(i=0;i<NB_SENSORS;i++) {
-			distances[i]=wb_distance_sensor_get_value(dist_sens[i]); //Read sensor values
-			sum_sensors += distances[i]; // Add up sensor values
-			max_sens = max_sens>distances[i]?max_sens:distances[i]; // Check if new highest sensor value
-			
-			// Weighted sum of distance sensor values for Braitenberg vehicle
-			bmsr += braitenberg_weights_right[i] * distances[i];
-			bmsl += braitenberg_weights_left[i]  * distances[i];
-		}
-		
-		// Adapt Braitenberg values (empirical tests)
-		bmsl/=MIN_SENS; bmsr/=MIN_SENS;
-		
-*/
 
 
 		// Get information from other robots
@@ -202,46 +155,25 @@ int main(){
 		}
 		
 
-		// Compute self position & speed
+		// compute current position according to motor speeds (msl, msr)
 		prev_loc[robot_id][0] = loc[robot_id][0];
 		prev_loc[robot_id][1] = loc[robot_id][1];
 		
 		update_self_motion(msl,msr);
 
 
-
-		speed[robot_id][0] = (1/TIME_STEP/1000)*(loc[robot_id][0]-prev_loc[robot_id][0]);
-		speed[robot_id][1] = (1/TIME_STEP/1000)*(loc[robot_id][1]-prev_loc[robot_id][1]);
-		
-		// Reynold's rules with all previous info (updates the speed[][] table)
-		// reynolds_rules();
-
-
-        // Get direction vectors from each motorscheme and combine them
+        // Get direction vectors from each motorscheme and combine them in speed table
         computeDirection();
 
-		
-		// Compute wheels speed from Reynold's speed
-		compute_wheel_speeds(&msl, &msr);
-//		printf("wheelSpeed %d %d\n",msl,msr);
 
-
-		// Adapt speed instinct to distance sensor values
-		if (sum_sensors > NB_SENSORS*MIN_SENS) {
-			msl -= msl*max_sens/(2*MAX_SENS);
-			msr -= msr*max_sens/(2*MAX_SENS);
-        }
-		
-/*
-		// Add Braitenberg
-		msl += bmsl;
-		msr += bmsr;
-*/
+        // Compute wheel speeds from speed vectors
+        compute_wheel_speeds(&msl, &msr);
 
 
 		// set your speeds here (I just put a constant number which you need to overwrite)
   	    wb_differential_wheels_set_speed(msl,msr);
 		
+
 		// Send current position to neighbors, uncomment for I14, don't forget to uncomment the 
         // declration of "outbuffer" at the begining of this function.
 		// sprintf(outbuffer,"%1d#%f#%f#%f", robot_id, loc[robot_id][0], loc[robot_id][1], loc[robot_id][2]);
