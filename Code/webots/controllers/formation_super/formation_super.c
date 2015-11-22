@@ -23,6 +23,8 @@ float loc[FORMATION_SIZE][3];			// Location of everybody in the formation: X,Y a
 int offset; // Offset of robots number (I don't understand the meaning of this variable)
 float migrx,migrz; // Migration vector
 float orient_migr; // Migration orientation
+WbNodeRef goal_id; 					// Goal node
+WbFieldRef goal;					// Goal translation field
 int t;
 
 //You can add the rest of the required variables in a similar fashion and initialize them similar to the robots in the simplest case!
@@ -62,6 +64,8 @@ void reset(void) {
 		robs_trans[i] = wb_supervisor_node_get_field(robs[i],"translation");
 		robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
 	}
+	goal_id = wb_supervisor_node_get_from_def("goal");
+	goal = wb_supervisor_node_get_field(goal_id,"translation");
 }
 
 /*
@@ -81,6 +85,16 @@ void send_init_poses(void)
 		loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2]; // Z
 		loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 //		printf("Supervisor %f %f %f\n",loc[i][0],loc[i][1],loc[i][2]);
+
+        		migrx = wb_supervisor_field_get_sf_vec3f(goal)[0]; //X
+		offset = wb_supervisor_field_get_sf_vec3f(goal)[1]; //Y
+		migrz = wb_supervisor_field_get_sf_vec3f(goal)[2]; //Z
+		//printf("Migratory instinct: (%f, %f)\n",migrx,migrz);
+		orient_migr = -atan2f(migrx,migrz); // angle of migration urge
+		if (orient_migr<0) {
+			orient_migr+=2*M_PI; // Keep value between 0 and 2PI
+		}
+		
 		// Send it out
 		sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz);
 		//printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
@@ -103,7 +117,7 @@ int main(int argc, char *args[]) {
 	//////////////////
 	// DEFINE GOAL  //
 	//////////////////  
-	if (argc == 4) {
+	/*if (argc == 4) {
           	migrx = atoi(args[1]);
           	offset = atoi(args[2]); // migration urge on x direction
           	migrz = atoi(args[3]); // migration urge on z direction
@@ -111,15 +125,16 @@ int main(int argc, char *args[]) {
 	} else {
           	printf("No goal defined in supervisor->controllerArgs");
           	return 1;
-	}
-	orient_migr = -atan2f(migrx,migrz); // angle of migration urge
+	}*/
+	
+	/*orient_migr = -atan2f(migrx,migrz); // angle of migration urge
   	if (orient_migr<0) {
           	orient_migr+=2*M_PI; // Keep value between 0 and 2PI
-	}
+	}*/
          ///////////////////
          
          
-         // reset and communication part
+    // reset and communication part
 	reset();     
 	send_init_poses(); //this function is here as an example for communication using the supervisor
 	
@@ -141,7 +156,7 @@ int main(int argc, char *args[]) {
 
 				
                     		// Sending positions to the robots, comment the following two lines if you don't want the supervisor sending it                   		
-                  		sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
+                  		sprintf(buffer,"%1d#%f#%f#%f%##f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
                   		wb_emitter_send(emitter,buffer,strlen(buffer));				
                   	}
                   	// Here we should then add the fitness function

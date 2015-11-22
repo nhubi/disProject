@@ -126,12 +126,12 @@ void reynolds_rules() {
 //	get_move_to_goal_vector(10);
     
     compute_unit_center();
-    printf("Unit center: (%f, %f)\n",unit_center[0], unit_center[1]);
+    //printf("Unit center: (%f, %f)\n",unit_center[0], unit_center[1]);
 
     float dir_goal[2];
 	get_move_to_goal_vector(dir_goal, robot_id);
+    speed[robot_id][0] = dir_goal[0];
     speed[robot_id][1] = dir_goal[1];
-    speed[robot_id][2] = dir_goal[2];
 }
 
 
