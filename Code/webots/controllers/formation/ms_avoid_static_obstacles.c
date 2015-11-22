@@ -18,7 +18,8 @@
 /*
  * Calculates a robot's vector that points to a direction which avoids obstacles.
  */
-float * get_stat_obst_vector(int robot_id){
-    float vector[3] = {0,0,0};
-    return vector;
+void get_stat_obst_avoidance_vector(float* direction, int robot_id){
+    // dummy direction
+    direction[0] = 0;
+    direction[1] = 1;
 }

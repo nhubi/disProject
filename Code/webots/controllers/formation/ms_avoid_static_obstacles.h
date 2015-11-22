@@ -30,7 +30,7 @@
 
 // methods
 
-float * get_stat_obst_vector(int robot_id);
+void get_stat_obst_avoidance_vector(float * direction, int robot_id);
 
 
 #endif

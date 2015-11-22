@@ -6,15 +6,15 @@
 #include "robot_state.h"
 
 // Motorschemas
-#include "ms_avoid_static_obstacles.h"
 #include "ms_move_to_goal.h"
 #include "ms_keep_formation.h"
+#include "ms_avoid_static_obstacles.h"
 
 
 
 
 
-#define MIGRATION_WEIGHT    0.1     // Wheight of attraction towards the common goal. default 0.01
+#define MIGRATION_WEIGHT 0.1     // Wheight of attraction towards the common goal. default 0.01
 
 
 
@@ -22,8 +22,11 @@
 
 // Each sensor's weight for Braitenberg 
 // TODO: move Braitenberg to ms_avoid_static_obstacles
-int braitenberg_weights_right[16] = {4,3,2,1,0,0,0,0};
-int braitenberg_weights_left[16]  = {0,0,0,0,1,2,3,4};
+int braitenberg_weights_right[16] = {0,0,0,0,1,2,3,4};
+int braitenberg_weights_left[16]  = {4,3,2,1,0,0,0,0};
+
+// The swarm's center
+float unit_center[2];
 
 
 
@@ -40,89 +43,55 @@ int braitenberg_weights_left[16]  = {0,0,0,0,1,2,3,4};
  * the other robots.
  */
 void send_ping(void)  {
-         char out[10];
-	strcpy(out,robot_name);  // in the ping message we send the name of the robot.
-	wb_emitter_send(emitter,out,strlen(out)+1); 
+    char out[10];
+    strcpy(out,robot_name);  // in the ping message we send the name of the robot.
+    wb_emitter_send(emitter,out,strlen(out)+1); 
 }
 
 
 
 
 
-//TODO: replace reynolds rules with keep_formation and avoid_moving_obstacles motorschemes. 
 /*
- * Update speed according to Reynold's rules
+ * Combines the vectors from the 4 motorschemas and computes the corresponding wheel speeds.
  */
-void reynolds_rules() {
-	int i, j;			// Loop counters
-	float avg_loc[2] = {0,0};	// Flock average positions
-	float avg_speed[2] = {0,0};	// Flock average speeds
-	float cohesion[2] = {0,0};
-	float dispersion[2] = {0,0};
-	float consistency[2] = {0,0};
-	
-	/* Compute averages over the whole flock */
-	for(i=0; i<FORMATION_SIZE; i++) {
-		if (i == robot_id)
-		{
-			// don't consider yourself for the average
-			continue;
-		}
-		for (j=0;j<2;j++)
-		{
-			avg_speed[j] += speed[i][j];
-			avg_loc[j] += loc[i][j];
-		}
-	}
-	
-	for (j=0;j<2;j++)
-	{
-		avg_speed[j] /= FORMATION_SIZE-1;
-		avg_loc[j] /= FORMATION_SIZE-1;
-	}
-	
-	/* Reynold's rules */
-	
-	/* Rule 1 - Aggregation/Cohesion: move towards the center of mass */
-//	for (j=0;j<2;j++) {
-//		// If center of mass is too far
-//		if (fabsf(loc[robot_id][j]-avg_loc[j]) > RULE1_THRESHOLD)
-//		{
-//			cohesion[j] = avg_loc[j] - loc[robot_id][j];   // Relative distance to the center of the swarm
-//		}
-//	}
-	
-	
-	/* Rule 2 - Dispersion/Separation: keep far enough from flockmates */
-//	for (k=0;k<FORMATION_SIZE;k++) {
-//		if (k != robot_id) {        // Loop on flockmates only
-//			// If neighbor k is too close (Euclidean distance)
-//			if (pow(loc[robot_id][0]-loc[k][0],2)+pow(loc[robot_id][1]-loc[k][1],2) < RULE2_THRESHOLD)
-//			{
-//				for (j=0;j<2;j++)
-//				{
-//					dispersion[j] = loc[robot_id][j] -loc[k][j];	// Relative distance to k
-//				}
-//			}
-//		}
-//	}
-	
-	/* Rule 3 - Consistency/Alignment: match the speeds of flockmates */
-//	for (j=0;j<2;j++)
-//	{
-//		consistency[j] =  speed[robot_id][j]- avg_speed[j]; 		  // difference speed to the average
-//	}
-//	
-//	// aggregation of all behaviors with relative influence determined by weights
-//         printf("Migr %f %f\n",migr[0],migr[1]);
-	for (j=0;j<2;j++)
-	{
-//		speed[robot_id][j] = cohesion[j] * RULE1_WEIGHT;
-//		speed[robot_id][j] +=  dispersion[j] * RULE2_WEIGHT;
-//		speed[robot_id][j] +=  consistency[j] * RULE3_WEIGHT;
-		
-		speed[robot_id][j] += (migr[j]-loc[robot_id][j]) * MIGRATION_WEIGHT;
-	}
+void computeDirection(){
+
+    // direction vector for each motorschema
+    float dir_goal[2]            = {0, 0};
+    float dir_keep_formation[2]  = {0, 0};
+    float dir_avoid_robot[2]     = {0, 0};
+    float dir_avoid_obstacles[2] = {0, 0};
+
+    // each motorschema's weight
+    float w_goal            = 1;
+    float w_keep_formation  = 1;
+    float w_avoid_robot     = 1;
+    float w_avoid_obstacles = 1;
+
+    //TODO: - call get_*_vector methods
+    //      - combine them
+    //      - compute wheel speed
+
+    get_move_to_goal_vector(dir_goal, robot_id);
+    get_keep_formation_vector(dir_keep_formation, robot_id);
+    get_stat_obst_avoidance_vector(dir_avoid_obstacles, robot_id);
+
+
+    int d = 0;
+    //for each dimension d...
+    for(d = 0; d < 2; d++){
+        // init speed to (0,0)
+        speed[robot_id][d] = 0;
+
+        // combine the direction vectors.
+        speed[robot_id][d] += w_goal            * dir_goal[d];
+        speed[robot_id][d] += w_keep_formation  * dir_keep_formation[d];
+        speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
+        speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
+    }
+
+    printf("\nDirection of robot%d = (%f,%f) \n",robot_id,speed[robot_id][0],speed[robot_id][1]);
 }
 
 
@@ -144,6 +113,7 @@ int main(){
 	int distances[NB_SENSORS];      // Array for the distance sensor readings
 	char *inbuffer;                 // Buffer for the receiver node
 	int max_sens;                   // Store highest sensor value
+    
 	
 	
 	// In this initialization the common goal is communicated to the robot
@@ -161,7 +131,7 @@ int main(){
         // TODO: write function that combines vectors received computed from motorschemas...
         //       The resulting vector needs to be translated into wheel speeds.
 
-
+/*
         // initialize variables
 		bmsl = 0; 
         bmsr = 0;
@@ -181,8 +151,8 @@ int main(){
 		
 		// Adapt Braitenberg values (empirical tests)
 		bmsl/=MIN_SENS; bmsr/=MIN_SENS;
-//		bmsl+=66; bmsr+=72;
 		
+*/
 
 
 		// Get information from other robots
@@ -231,22 +201,25 @@ int main(){
 			wb_receiver_next_packet(receiver);
 		}
 		
+
 		// Compute self position & speed
 		prev_loc[robot_id][0] = loc[robot_id][0];
 		prev_loc[robot_id][1] = loc[robot_id][1];
 		
-		
 		update_self_motion(msl,msr);
+
+
 
 		speed[robot_id][0] = (1/TIME_STEP/1000)*(loc[robot_id][0]-prev_loc[robot_id][0]);
 		speed[robot_id][1] = (1/TIME_STEP/1000)*(loc[robot_id][1]-prev_loc[robot_id][1]);
 		
-//		printf("speedBeforeReynolds %f %f\n",speed[robot_id][0],speed[robot_id][1]);
-		
 		// Reynold's rules with all previous info (updates the speed[][] table)
-		reynolds_rules();
-		
-//		printf("speed %f %f\n",speed[robot_id][0],speed[robot_id][1]);
+		// reynolds_rules();
+
+
+        // Get direction vectors from each motorscheme and combine them
+        computeDirection();
+
 		
 		// Compute wheels speed from Reynold's speed
 		compute_wheel_speeds(&msl, &msr);
@@ -257,16 +230,13 @@ int main(){
 		if (sum_sensors > NB_SENSORS*MIN_SENS) {
 			msl -= msl*max_sens/(2*MAX_SENS);
 			msr -= msr*max_sens/(2*MAX_SENS);
-		}
+        }
 		
-//		printf("Wheel speed after adapt speed %d %d\n",msl,msr);
-
-		
+/*
 		// Add Braitenberg
 		msl += bmsl;
 		msr += bmsr;
-		
-//		printf("Wheel speed after braitenberg %d %d\n",msl,msr);
+*/
 
 
 		// set your speeds here (I just put a constant number which you need to overwrite)
@@ -280,5 +250,4 @@ int main(){
 		// Continue one step
 		wb_robot_step(TIME_STEP);
 	}
-}  
-  
+}

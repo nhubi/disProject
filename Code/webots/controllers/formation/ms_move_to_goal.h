@@ -30,7 +30,7 @@
 
 // methods
 
-float * get_move_to_goal_vector(int robot_id);
+void get_move_to_goal_vector(float* direction, int robot_id);
 
 
 #endif

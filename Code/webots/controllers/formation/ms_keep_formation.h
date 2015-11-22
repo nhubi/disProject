@@ -5,8 +5,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef MS_AV_STAT_OB_H
-#define MS_AV_STAT_OB_H
+#ifndef MS_KEEP_FORMATION_H
+#define MS_KEEP_FORMATION_H
 
 
 
@@ -30,7 +30,7 @@
 
 // methods
 
-float * get_keep_formation_vector(int robot_id);
+void get_keep_formation_vector(float* direction, int robot_id);
 
 
 #endif
