@@ -169,8 +169,8 @@ int main(int argc, char *args[]) {
 
 				
                     		// Sending positions to the robots, comment the following two lines if you don't want the supervisor sending it                   		
-                  		sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
-                  		wb_emitter_send(emitter,buffer,strlen(buffer));				
+                  		//sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
+                  		//wb_emitter_send(emitter,buffer,strlen(buffer));				
                   	}
                   	// Here we should then add the fitness function
                   	

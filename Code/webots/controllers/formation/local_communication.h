@@ -1,28 +1,39 @@
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-
-#include "ms_move_to_goal.h"
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// This file contains everything related to the motorschema 'move_to_goal'.                       //
+// This file contains the definitions related to the motorschema 'move_to_goal'.                  //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+#ifndef LOCAL_COMMUNICATIONS
+#define LOCAL_COMMUNICATIONS
+
+
+#include "robot_state.h"
+
+
+// includes
+
+//#include <???>
 
 
 
-void get_move_to_goal_vector(float * direction, int robot_id) {
-	int j;
-  	
-	for (j=0;j<2;j++) {
-	printf("%f %f\n",migr[j],unit_center[j]);
-		direction[j] = (migr[j]-unit_center[j]);
-	}
-	
-	return;
-}
+// definitions
 
+//#define WHATEVER
+
+
+
+// initializations
+
+//int dummy = 1
+
+
+
+// methods
+
+void get_move_to_goal_vector(float * direction, int robot_id);
+
+
+
+#endif

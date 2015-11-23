@@ -83,7 +83,7 @@ void computeDirection(){
  */
 int main(){
 	// for I14, sending current position to neighbors
-	// char outbuffer[255];
+	char outbuffer[255];
 	
 	int msl, msr;                   // Wheel speeds
 	int rob_nb;                     // Robot number
@@ -171,8 +171,8 @@ int main(){
 
         // Send current position to neighbors, uncomment for I14, don't forget to uncomment the 
         // declration of "outbuffer" at the begining of this function.
-        // sprintf(outbuffer,"%1d#%f#%f#%f", robot_id, loc[robot_id][0], loc[robot_id][1], loc[robot_id][2]);
-        // wb_emitter_send(emitter,outbuffer,strlen(outbuffer));
+        sprintf(outbuffer,"%1d#%f#%f#%f", robot_id, loc[robot_id][0], loc[robot_id][1], loc[robot_id][2]);
+        wb_emitter_send(emitter,outbuffer,strlen(outbuffer));
 	
         // Continue one step
         wb_robot_step(TIME_STEP);

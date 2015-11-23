@@ -242,5 +242,5 @@ Supervisor {
     }
   ]
   controller "formation_super"
-  controllerArgs "0 0 1"
+  controllerArgs "0 5 5"
 }
