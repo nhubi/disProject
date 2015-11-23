@@ -23,3 +23,4 @@ void get_move_to_goal_vector(float* direction, int robot_id){
     direction[0] = 1;
     direction[1] = 0.0;
 }
+

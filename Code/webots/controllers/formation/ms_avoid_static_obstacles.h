@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// This file contains the definitions related to the motorschema 'avoid_static_obstacles.         //
+// This file contains the definitions related to the motorschema 'avoid_static_obstacles'.         //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

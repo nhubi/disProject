@@ -10,8 +10,6 @@
 #include "ms_keep_formation.h"
 #include "ms_avoid_static_obstacles.h"
 
-
-
 // The swarm's center
 float unit_center[2];
 
@@ -37,7 +35,8 @@ void send_ping(void)  {
 
 
 /*
- * Combines the vectors from the 4 motorschemas and computes the corresponding wheel speeds.
+ * Combines the vectors from the 4 motorschemas and computes the corresponding wheel speed vector.
+ * This vector can then be translated in actual wheel speeds.
  */
 void computeDirection(){
 
@@ -53,10 +52,8 @@ void computeDirection(){
     float w_avoid_robot     = 1;
     float w_avoid_obstacles = 1;
 
-    //TODO: - call get_*_vector methods
-    //      - combine them
-    //          - We probably need a more complicated combination method than just weighted addition
-    //          --> state machine?
+    //TODO: We probably need a more complicated combination method than just weighted addition
+    //      --> state machine?
 
     get_move_to_goal_vector(dir_goal, robot_id);
     get_keep_formation_vector(dir_keep_formation, robot_id);
@@ -93,7 +90,7 @@ int main(){
 	char *inbuffer;                 // Buffer for the receiver node
 	
 	
-	// In this initialization the common goal is communicated to the robot
+	// In this initialization, the common goal is communicated to the robot
 	reset();        // Resetting the robot
 	initial_pos();  // Initializing the robot's position
 	
@@ -103,10 +100,6 @@ int main(){
 	
 	// Forever
 	for(;;){
-        // TODO: move Braitenberg to ms_avoid_static_obstacles
-        // TODO: write function that combines vectors received computed from motorschemas...
-        //       The resulting vector needs to be translated into wheel speeds.
-
 
 		// Get information from other robots
 		int count = 0;
@@ -116,27 +109,27 @@ int main(){
 //			printf("initialCheck %i %i\n",(int) rob_nb/FORMATION_SIZE,(int) robot_id/FORMATION_SIZE);
 			
             // check that received message comes from a member of the flock
-			if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE) {
-				rob_nb %= FORMATION_SIZE;
+            if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE) {
+                rob_nb %= FORMATION_SIZE;
 
                 // If robot is not initialised, initialise it. 
-				if (initialized[rob_nb] == 0) {
-					loc[rob_nb][0] = rob_x;
-					loc[rob_nb][1] = rob_z;
-					loc[rob_nb][2] = rob_theta;
-					prev_loc[rob_nb][0] = loc[rob_nb][0];
-					prev_loc[rob_nb][1] = loc[rob_nb][1];
-					initialized[rob_nb] = 1;
+                if (initialized[rob_nb] == 0) {
+                    loc[rob_nb][0] = rob_x;
+                    loc[rob_nb][1] = rob_z;
+                    loc[rob_nb][2] = rob_theta;
+                    prev_loc[rob_nb][0] = loc[rob_nb][0];
+                    prev_loc[rob_nb][1] = loc[rob_nb][1];
+                    initialized[rob_nb] = 1;
 
-                // Otherwise, update the its position.
+                // Otherwise, update its position.
 				} else {
 //					printf("\n got update robot[%d] = (%f,%f) \n",rob_nb,loc[rob_nb][0],loc[rob_nb][1]);
 
 					// Remember previous position
 					prev_loc[rob_nb][0] = loc[rob_nb][0];
 					prev_loc[rob_nb][1] = loc[rob_nb][1];
-                    
-                    // save current position
+
+                    			// save current position
 					loc[rob_nb][0] = rob_x;
 					loc[rob_nb][1] = rob_z;
 					loc[rob_nb][2] = rob_theta;
@@ -145,12 +138,11 @@ int main(){
 //				printf("speedStarting %f %f\n",(1/TIME_STEP/1000)*(loc[rob_nb][0]-prev_loc[rob_nb][0]),(1/TIME_STEP/1000)*(loc[rob_nb][1]-prev_loc[rob_nb][1]));
 //				printf("Location %f %f\n",loc[rob_nb][0],loc[rob_nb][0]);
 
-                // Calculate speed
+                		// Calculate speed
 				speed[rob_nb][0] = (1/TIME_STEP/1000)*(loc[rob_nb][0]-loc[rob_nb][0]);
 				speed[rob_nb][1] = (1/TIME_STEP/1000)*(loc[rob_nb][1]-prev_loc[rob_nb][1]);
 				count++;
 			}
-			
 			wb_receiver_next_packet(receiver);
 		}
 		
@@ -171,15 +163,15 @@ int main(){
 
 
 		// set your speeds here (I just put a constant number which you need to overwrite)
-  	    wb_differential_wheels_set_speed(msl,msr);
+  	    	wb_differential_wheels_set_speed(msl,msr);
 		
 
-		// Send current position to neighbors, uncomment for I14, don't forget to uncomment the 
+        // Send current position to neighbors, uncomment for I14, don't forget to uncomment the 
         // declration of "outbuffer" at the begining of this function.
-		// sprintf(outbuffer,"%1d#%f#%f#%f", robot_id, loc[robot_id][0], loc[robot_id][1], loc[robot_id][2]);
-		// wb_emitter_send(emitter,outbuffer,strlen(outbuffer));
+        // sprintf(outbuffer,"%1d#%f#%f#%f", robot_id, loc[robot_id][0], loc[robot_id][1], loc[robot_id][2]);
+        // wb_emitter_send(emitter,outbuffer,strlen(outbuffer));
 	
-		// Continue one step
-		wb_robot_step(TIME_STEP);
+        // Continue one step
+        wb_robot_step(TIME_STEP);
 	}
 }
