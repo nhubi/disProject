@@ -64,9 +64,7 @@ void reset(void) {
 		robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
 	}
 	goal_id = wb_supervisor_node_get_from_def("goal-node");
-printf("1. Is goal_id NULL? - %d\n", (goal_id == NULL));
 	goal = wb_supervisor_node_get_field(goal_id,"translation");
-printf("1. Is goal NULL? - %d\n", (goal == NULL));
 }
 
 
@@ -92,9 +90,6 @@ void send_init_poses(void)
 		loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 //		printf("Supervisor %f %f %f\n",loc[i][0],loc[i][1],loc[i][2]);
 
-migrx = 0;
-migrz = 0;	
-printf("2. Is goal NULL? - %d\n", (goal == NULL));
         migrx = wb_supervisor_field_get_sf_vec3f(goal)[0];  //X
 		offset = wb_supervisor_field_get_sf_vec3f(goal)[1]; //Y
 		migrz = wb_supervisor_field_get_sf_vec3f(goal)[2];  //Z
@@ -161,11 +156,11 @@ int main(int argc, char *args[]) {
 		        loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
 		        loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
 		        loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
-/*
+
 		        if (i==0) {
 			        printf("Robot location %f %f\n",loc[i][0],loc[i][1]);
 		        }
-*/
+
             	// Sending positions to the robots
           		sprintf(buffer,"%1d#%f#%f#%f#%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
           		wb_emitter_send(emitter,buffer,strlen(buffer));				
