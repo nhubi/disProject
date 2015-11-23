@@ -47,6 +47,7 @@ int initialized[FORMATION_SIZE];    // != 0 if initial positions have been recei
 float prev_loc[FORMATION_SIZE][3];  // Previous X, Z, Theta values
 float loc[FORMATION_SIZE][3];       // X, Z, Theta of all robots
 float speed[FORMATION_SIZE][2];     // Speeds in x and z direction
+float unit_center[3];		    	// X, Z, Theta of the unit center of all robots
 
 WbDeviceTag dist_sens[NB_SENSORS];  // Handle for the infra-red distance sensors
 WbDeviceTag receiver;		        // Handle for the receiver node
@@ -60,6 +61,7 @@ float migr[2];//={25, 25};          // Migration vector
 
 void reset(void);
 void initial_pos(void);
+void compute_unit_center(void);
 void update_self_motion(int msl, int msr);
 void compute_wheel_speeds(int *msl, int *msr);
 

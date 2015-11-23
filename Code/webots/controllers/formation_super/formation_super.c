@@ -8,21 +8,23 @@
 #include <webots/emitter.h>
 #include <webots/supervisor.h>
 
-#define FORMATION_SIZE		4	// Number of robots in formation
-#define TIME_STEP		64	// [ms] Length of time step
+#define FORMATION_SIZE  4	// Number of robots in formation
+#define TIME_STEP      64	// [ms] Length of time step
 
 
-WbNodeRef  robs[FORMATION_SIZE];		// Robots nodes
-WbFieldRef robs_trans[FORMATION_SIZE];		// Robots translation fields
-WbFieldRef robs_rotation[FORMATION_SIZE];	// Robots rotation fields
-WbDeviceTag emitter;				// Single emitter
+WbNodeRef  robs[FORMATION_SIZE];            // Robots nodes
+WbFieldRef robs_trans[FORMATION_SIZE];      // Robots translation fields
+WbFieldRef robs_rotation[FORMATION_SIZE];   // Robots rotation fields
+WbDeviceTag emitter;                        // Single emitter
 
-float loc[FORMATION_SIZE][3];			// Location of everybody in the formation: X,Y and Theta
+float loc[FORMATION_SIZE][3];               // Location of everybody in the formation: X,Y and Theta
 
 // Variable for goal:
-int offset; // Offset of robots number (I don't understand the meaning of this variable)
-float migrx,migrz; // Migration vector
-float orient_migr; // Migration orientation
+int offset;         // Offset of robots number
+float migrx,migrz;  // Migration vector
+float orient_migr;  // Migration orientation
+WbNodeRef goal_id;  // Goal node
+WbFieldRef goal;    // Goal translation field
 int t;
 
 //You can add the rest of the required variables in a similar fashion and initialize them similar to the robots in the simplest case!
@@ -52,7 +54,6 @@ goal is the red cylinder which can be moved around between different trials of y
  * Initialize robot positions and devices
  */
 void reset(void) {
-	
 	wb_robot_init();
 	emitter = wb_robot_get_device("emitter");
 	if (emitter==0) printf("missing emitter\n");
@@ -61,29 +62,47 @@ void reset(void) {
 	int i;
 	for (i=0;i<FORMATION_SIZE;i++) {
 		sprintf(rob,"rob%d",i);
-		robs[i] = wb_supervisor_node_get_from_def(rob);
-		robs_trans[i] = wb_supervisor_node_get_field(robs[i],"translation");
+		robs[i]          = wb_supervisor_node_get_from_def(rob);
+		robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
 		robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
 	}
+	goal_id = wb_supervisor_node_get_from_def("goal-node");
+	goal = wb_supervisor_node_get_field(goal_id,"translation");
 }
 
+
+
+
+
 /*
-* this is sending the robots information only, for the obstacles and the goal you should complete this function
-if you decide to go with absolute positions, however you can think about the relative distances which are more
-realistic and try to use that data (you can find the codes for doing this in lab4)
-*/
+ * this is sending the robots information only, for the obstacles and the goal you should complete
+ * this function if you decide to go with absolute positions, however you can think about the 
+ * relative distances which are more realistic and try to use that data (you can find the codes for 
+ * doing this in lab4)
+ */
 
 void send_init_poses(void)
 {
-        char buffer[255];	// Buffer for sending data
-        int i;
-         
-        for (i=0;i<FORMATION_SIZE;i++) {
+    char buffer[255];	// Buffer for sending data
+    int i;
+     
+    for (i=0;i<FORMATION_SIZE;i++) {
 		// Get data
-		loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0]; // X
-		loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2]; // Z
+		loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
+		loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
 		loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 //		printf("Supervisor %f %f %f\n",loc[i][0],loc[i][1],loc[i][2]);
+
+        migrx = wb_supervisor_field_get_sf_vec3f(goal)[0];  //X
+		offset = wb_supervisor_field_get_sf_vec3f(goal)[1]; //Y
+		migrz = wb_supervisor_field_get_sf_vec3f(goal)[2];  //Z
+		//printf("Migratory instinct: (%f, %f)\n",migrx,migrz);
+		orient_migr = -atan2f(migrx,migrz); // angle of migration urge
+		
+        if (orient_migr<0) {
+			orient_migr+=2*M_PI; // Keep value between 0 and 2PI
+		}
+	
 		// Send it out
 		sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz);
 		//printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
@@ -96,7 +115,6 @@ void send_init_poses(void)
 
 /*
  * Main function.
- you need to complete the code
  */
  
 int main(int argc, char *args[]) {
@@ -104,31 +122,40 @@ int main(int argc, char *args[]) {
 	
 	//////////////////
 	// DEFINE GOAL  //
-	//////////////////  
-	if (argc == 4) {
-          	offset = atoi(args[1]);
-          	migrx = atoi(args[2]); // migration urge on x direction
-          	migrz = atoi(args[3]); // migration urge on y direction
+	//////////////////
+
+	/*if (argc == 4) {
+          	migrx = atoi(args[1]);
+          	offset = atoi(args[2]); // migration urge on x direction
+          	migrz = atoi(args[3]); // migration urge on z direction
           	printf("Migratory instinct: (%f, %f)\n",migrx,migrz);
 	} else {
           	printf("No goal defined in supervisor->controllerArgs");
           	return 1;
 	}
-	orient_migr = -atan2f(migrx,migrz); // angle of migration urge
+
+    orient_migr = -atan2f(migrx,migrz); // angle of migration urge
   	if (orient_migr<0) {
           	orient_migr+=2*M_PI; // Keep value between 0 and 2PI
+
 	}
         ///////////////////
+
+	}*/
+
          
          
-         // reset and communication part
-	reset();     
+    // reset and communication part
+	reset();
+    printf("Supervisor resetted.\n");
 	send_init_poses(); //this function is here as an example for communication using the supervisor
+	printf("Init poses sent.\n");
+
 	
-	
-	int i; // necessary declaration - not possible to declare it inside for loop
+	int i; // necessary declaration - not possible to declare it inside the for loop
 	// infinite loop
 	for(;;) {
+
           	wb_robot_step(TIME_STEP);
             	if (t%10 == 0) { // every 10 TIME_STEP (640ms)
                   	for (i=0;i<FORMATION_SIZE;i++) {
@@ -150,6 +177,6 @@ int main(int argc, char *args[]) {
             	}
             	t += TIME_STEP;
 	
-	}
 
+	}
 }

@@ -5,9 +5,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef MS_MOVE_TO_GOAL_H
-#define MS_MOVE_TO_GOAL_H
+#ifndef MS_MOVE_TO_GOAL
+#define MS_MOVE_TO_GOAL
 
+
+#include "robot_state.h"
 
 
 // includes
@@ -30,7 +32,8 @@
 
 // methods
 
-void get_move_to_goal_vector(float* direction, int robot_id);
+void get_move_to_goal_vector(float * direction, int robot_id);
+
 
 
 #endif
