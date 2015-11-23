@@ -15,12 +15,12 @@
 
 
 
-/*
- * Calculates a robot's vector that points to a direction which avoids obstacles.
- */
-void get_move_to_goal_vector(float* direction, int robot_id){
-    // dummy direction
-    direction[0] = 1;
-    direction[1] = 0.0;
+void get_move_to_goal_vector(float * direction, int robot_id) {
+	int j;
+	for (j=0;j<2;j++) {
+		direction[j] = (migr[j]-unit_center[j]);
+	}
+	
+	return;
 }
 

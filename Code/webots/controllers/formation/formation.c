@@ -11,7 +11,8 @@
 #include "ms_avoid_static_obstacles.h"
 
 // The swarm's center
-float unit_center[2];
+// Defined also in robot state, it will have to be defined here with local_communications
+// float unit_center[2];
 
 
 
@@ -153,7 +154,9 @@ int main(){
 		
 		update_self_motion(msl,msr);
 
-
+        // Compute the unit center at each iteration
+        compute_unit_center();
+        
         // Get direction vectors from each motorscheme and combine them in speed table
         computeDirection();
 
