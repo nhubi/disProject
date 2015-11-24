@@ -102,57 +102,53 @@ int main(){
 	// Forever
 	for(;;){
 
-		// Get information from other robots
-		int count = 0;
-		while (wb_receiver_get_queue_length(receiver) > 0 && count < FORMATION_SIZE) {
-			inbuffer = (char*) wb_receiver_get_data(receiver);
-			sscanf(inbuffer,"%d#%f#%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta);
-//			printf("initialCheck %i %i\n",(int) rob_nb/FORMATION_SIZE,(int) robot_id/FORMATION_SIZE);
+	// Get information from other robots
+	int count = 0;
+	while (wb_receiver_get_queue_length(receiver) > 0 && count < FORMATION_SIZE) {
+		inbuffer = (char*) wb_receiver_get_data(receiver);
+		sscanf(inbuffer,"%d#%f#%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta);
+
 			
-            // check that received message comes from a member of the flock
-            if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE) {
-                rob_nb %= FORMATION_SIZE;
+            	// check that received message comes from a member of the flock
+            	if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE) {
+                	rob_nb %= FORMATION_SIZE;
 
-                // If robot is not initialised, initialise it. 
-                if (initialized[rob_nb] == 0) {
-                    loc[rob_nb][0] = rob_x;
-                    loc[rob_nb][1] = rob_z;
-                    loc[rob_nb][2] = rob_theta;
-                    prev_loc[rob_nb][0] = loc[rob_nb][0];
-                    prev_loc[rob_nb][1] = loc[rob_nb][1];
-                    initialized[rob_nb] = 1;
+                	// If robot is not initialised, initialise it. 
+                	if (initialized[rob_nb] == 0) {
+                    		loc[rob_nb][0] = rob_x;
+                    		loc[rob_nb][1] = rob_z;
+                    		loc[rob_nb][2] = rob_theta;
+                    		prev_loc[rob_nb][0] = loc[rob_nb][0];
+                    		prev_loc[rob_nb][1] = loc[rob_nb][1];
+                    		initialized[rob_nb] = 1;
 
-                // Otherwise, update its position.
-				} else {
-//					printf("\n got update robot[%d] = (%f,%f) \n",rob_nb,loc[rob_nb][0],loc[rob_nb][1]);
+                	// Otherwise, update its position.
+			} else {
+				// Remember previous position
+				prev_loc[rob_nb][0] = loc[rob_nb][0];
+				prev_loc[rob_nb][1] = loc[rob_nb][1];
 
-					// Remember previous position
-					prev_loc[rob_nb][0] = loc[rob_nb][0];
-					prev_loc[rob_nb][1] = loc[rob_nb][1];
-
-                    			// save current position
-					loc[rob_nb][0] = rob_x;
-					loc[rob_nb][1] = rob_z;
-					loc[rob_nb][2] = rob_theta;
-				}
-
-//				printf("speedStarting %f %f\n",(1/TIME_STEP/1000)*(loc[rob_nb][0]-prev_loc[rob_nb][0]),(1/TIME_STEP/1000)*(loc[rob_nb][1]-prev_loc[rob_nb][1]));
-//				printf("Location %f %f\n",loc[rob_nb][0],loc[rob_nb][0]);
-
-                		// Calculate speed
-				speed[rob_nb][0] = (1/TIME_STEP/1000)*(loc[rob_nb][0]-loc[rob_nb][0]);
-				speed[rob_nb][1] = (1/TIME_STEP/1000)*(loc[rob_nb][1]-prev_loc[rob_nb][1]);
-				count++;
+              			// save current position
+				loc[rob_nb][0] = rob_x;
+				loc[rob_nb][1] = rob_z;
+				loc[rob_nb][2] = rob_theta;
 			}
-			wb_receiver_next_packet(receiver);
-		}
-		
 
-		// compute current position according to motor speeds (msl, msr)
-		prev_loc[robot_id][0] = loc[robot_id][0];
-		prev_loc[robot_id][1] = loc[robot_id][1];
+
+
+               		// Calculate speed
+			speed[rob_nb][0] = (1/TIME_STEP/1000)*(loc[rob_nb][0]-loc[rob_nb][0]);
+			speed[rob_nb][1] = (1/TIME_STEP/1000)*(loc[rob_nb][1]-prev_loc[rob_nb][1]);
+			count++;
+		}
+		wb_receiver_next_packet(receiver);
+	}	
+
+	// compute current position according to motor speeds (msl, msr)
+	prev_loc[robot_id][0] = loc[robot_id][0];
+	prev_loc[robot_id][1] = loc[robot_id][1];
 		
-		update_self_motion(msl,msr);
+	update_self_motion(msl,msr);
 
         // Compute the unit center at each iteration
         compute_unit_center();
@@ -176,5 +172,11 @@ int main(){
 	
         // Continue one step
         wb_robot_step(TIME_STEP);
+
+
+
+
 	}
+
+
 }
