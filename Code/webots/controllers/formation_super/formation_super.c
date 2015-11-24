@@ -24,7 +24,7 @@ int offset;         // Offset of robots number
 float migrx,migrz;  // Migration vector
 float orient_migr;  // Migration orientation
 WbNodeRef goal_id;  // Goal node
-WbFieldRef goal;    // Goal translation field
+WbFieldRef goal_field;    // Goal translation field
 int t;
 
 //You can add the rest of the required variables in a similar fashion and initialize them similar to the robots in the simplest case!
@@ -66,8 +66,8 @@ void reset(void) {
 		robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
 		robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
 	}
-	goal_id = wb_supervisor_node_get_from_def("goal-node");
-	goal = wb_supervisor_node_get_field(goal_id,"translation");
+	goal_id = wb_supervisor_node_get_from_def("goal");
+	goal_field = wb_supervisor_node_get_field(goal_id,"translation");
 }
 
 
@@ -85,7 +85,17 @@ void send_init_poses(void)
 {
     char buffer[255];	// Buffer for sending data
     int i;
-     
+    
+    migrx = wb_supervisor_field_get_sf_vec3f(goal_field)[0];  //X
+    offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1]; //Y
+    migrz = wb_supervisor_field_get_sf_vec3f(goal_field)[2];  //Z
+    //printf("Migratory instinct: (%f, %f)\n",migrx,migrz);
+    orient_migr = -atan2f(migrx,migrz); // angle of migration urge
+  	
+    if (orient_migr<0) {
+	orient_migr+=2*M_PI; // Keep value between 0 and 2PI
+    }
+	
     for (i=0;i<FORMATION_SIZE;i++) {
 		// Get data
 		loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
@@ -93,22 +103,12 @@ void send_init_poses(void)
 		loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 //		printf("Supervisor %f %f %f\n",loc[i][0],loc[i][1],loc[i][2]);
 
-        migrx = wb_supervisor_field_get_sf_vec3f(goal)[0];  //X
-		offset = wb_supervisor_field_get_sf_vec3f(goal)[1]; //Y
-		migrz = wb_supervisor_field_get_sf_vec3f(goal)[2];  //Z
-		//printf("Migratory instinct: (%f, %f)\n",migrx,migrz);
-		orient_migr = -atan2f(migrx,migrz); // angle of migration urge
-		
-        if (orient_migr<0) {
-			orient_migr+=2*M_PI; // Keep value between 0 and 2PI
-		}
-	
 		// Send it out
 		sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz);
 		//printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
 		wb_emitter_send(emitter,buffer,strlen(buffer));
 
-		// Run one step
+		// Run one step --------------------------------------------------> 	HERE OR OUTSIDE THE FOR LOOP??????? TODO
 		wb_robot_step(TIME_STEP);
 	}
 }
@@ -166,9 +166,8 @@ int main(int argc, char *args[]) {
 						if (i==0) {
 							printf("Robot location %f %f\n",loc[i][0],loc[i][1]);
 						}
-
-				
-                    		// Sending positions to the robots, comment the following two lines if you don't want the supervisor sending it                   		
+						
+                    	// Sending positions to the robots, comment the following two lines if you don't want the supervisor sending it                   		
                   		sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
                   		wb_emitter_send(emitter,buffer,strlen(buffer));				
                   	}
