@@ -21,5 +21,5 @@
 void get_stat_obst_avoidance_vector(float* direction, int robot_id){
     // dummy direction
     direction[0] = 0;
-    direction[1] = 1;
+    direction[1] = 0;
 }
