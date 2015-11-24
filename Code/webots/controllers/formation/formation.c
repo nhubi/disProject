@@ -111,10 +111,10 @@ int main(){
 			
             	// check that received message comes from a member of the flock
             	if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE) {
-                	rob_nb %= FORMATION_SIZE;
+                  	rob_nb %= FORMATION_SIZE;
 
-                	// If robot is not initialised, initialise it. 
-                	if (initialized[rob_nb] == 0) {
+                  	// If robot is not initialised, initialise it. 
+                  	if (initialized[rob_nb] == 0) {
                     		loc[rob_nb][0] = rob_x;
                     		loc[rob_nb][1] = rob_z;
                     		loc[rob_nb][2] = rob_theta;
@@ -122,7 +122,7 @@ int main(){
                     		prev_loc[rob_nb][1] = loc[rob_nb][1];
                     		initialized[rob_nb] = 1;
 
-                	// Otherwise, update its position.
+                  	// Otherwise, update its position.
 			} else {
 				// Remember previous position
 				prev_loc[rob_nb][0] = loc[rob_nb][0];
