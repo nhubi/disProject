@@ -9,27 +9,11 @@
 #include "ms_move_to_goal.h"
 #include "ms_keep_formation.h"
 #include "ms_avoid_static_obstacles.h"
+#include "local_communications.h"
 
 // The swarm's center
 // Defined also in robot state, it will have to be defined here with local_communications
 // float unit_center[2];
-
-
-
-
-
-/*
- * Each robot sends a ping message, so the other robots can measure relative range and bearing to 
- * the sender. This is useful if you want to use relative range and bearing. This would be more 
- * realistic and less dependent on the supervisor. Try to make this work use 
- * process_received_ping_messages() function in lab 4 as a base to calculate range and bearing to 
- * the other robots.
- */
-void send_ping(void)  {
-    char out[10];
-    strcpy(out,robot_name);  // in the ping message we send the name of the robot.
-    wb_emitter_send(emitter,out,strlen(out)+1); 
-}
 
 
 
@@ -103,6 +87,7 @@ int main(){
 	for(;;){
 
 	// Get information from other robots
+	// (Stefano) each robot updates only his position from the supervisor
 	int count = 0;
 	while (wb_receiver_get_queue_length(receiver) > 0 && count < FORMATION_SIZE) {
 		inbuffer = (char*) wb_receiver_get_data(receiver);
@@ -148,8 +133,17 @@ int main(){
 	prev_loc[robot_id][0] = loc[robot_id][0];
 	prev_loc[robot_id][1] = loc[robot_id][1];
 		
-	update_self_motion(msl,msr);
-
+		
+        // (Stefano) This is necessary only for odometry. 
+        //update_self_motion(msl,msr);
+        
+        // Send a ping to other robots to process their position
+        send_ping();
+        
+        // Receive other robots positions
+        process_received_ping_messages(robot_id);
+        compute_other_robots_localisation(robot_id);
+        
         // Compute the unit center at each iteration
         compute_unit_center();
         
@@ -161,8 +155,8 @@ int main(){
         compute_wheel_speeds(&msl, &msr);
 
 
-		// set your speeds here (I just put a constant number which you need to overwrite)
-  	    	wb_differential_wheels_set_speed(msl,msr);
+	// set your speeds here (I just put a constant number which you need to overwrite)
+      	wb_differential_wheels_set_speed(msl,msr);
 		
 
         // Send current position to neighbors, uncomment for I14, don't forget to uncomment the 
