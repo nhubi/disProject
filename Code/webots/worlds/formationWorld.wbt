@@ -143,7 +143,7 @@ DEF obs5 Solid {
   ]
   boundingObject USE cyl
 }
-DEF goal-node Solid {
+DEF goal Solid {
   translation 0.351711 1.9984e-15 -2.21704
   rotation 0 1 0 4.45059
   children [
@@ -161,7 +161,7 @@ DEF goal-node Solid {
       }
     }
   ]
-  name "goal-node"
+  name "goal"
   boundingObject USE goal
 }
 DEF rob0 E-puck {
