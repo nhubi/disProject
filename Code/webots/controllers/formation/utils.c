@@ -47,3 +47,14 @@ void normalize(float* normal_vec, float* vector, int dim) {
 	for(i = 0; i < dim; i++)
 		normal_vec[i] = vector[i] / vec_norm;
 }
+
+/*
+ * Computes the product of a vector of dimension dim by a factor "factor". 
+ */
+void multiply_vector_by(float* vector, int dim, float factor) {
+	int i;
+	for(i = 0; i < dim; i++) {
+		vector[i] = vector[i] * factor;
+	}
+}
+

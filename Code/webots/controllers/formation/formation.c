@@ -69,6 +69,11 @@ int main(){
     // for I14, sending current position to neighbors
     // char outbuffer[255];
   	
+    // Set the weight at the beginning
+    move_to_goal_min_threshold=0.1;
+    move_to_goal_max_threshold=0.5;
+    
+    
     int msl, msr;                   // Wheel speeds
     int rob_nb;                     // Robot number
     float rob_x, rob_z, rob_theta;  // Robot position and orientation
