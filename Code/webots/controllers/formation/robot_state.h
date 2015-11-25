@@ -54,6 +54,8 @@ float unit_center[3];		    	// X, Z, Theta of the unit center of all robots
 WbDeviceTag dist_sens[NB_SENSORS];  // Handle for the infra-red distance sensors
 WbDeviceTag receiver;		        // Handle for the receiver node
 WbDeviceTag emitter;		        // Handle for the emitter node
+WbDeviceTag receiver2;		        // Handle for the receiver node
+WbDeviceTag emitter2;		        // Handle for the emitter node
 
 float migr[2];//={25, 25};          // Migration vector
 

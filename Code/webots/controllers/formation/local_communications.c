@@ -22,7 +22,7 @@
 void send_ping(void)  {
     char out[10];
     strcpy(out,robot_name);  // in the ping message we send the name of the robot.
-    wb_emitter_send(emitter,out,strlen(out)+1); 
+    wb_emitter_send(emitter2,out,strlen(out)+1); 
 }
 
 /*
@@ -37,11 +37,11 @@ void process_received_ping_messages(int robot_id) {
     char *inbuffer;	// Buffer for the receiver node
     int other_robot_id;
     int count=0;
-    while (wb_receiver_get_queue_length(receiver) > 0) {// && count < FORMATION_SIZE) {
+    while (wb_receiver_get_queue_length(receiver2) > 0) {// && count < FORMATION_SIZE) {
         count++;
-        inbuffer = (char*) wb_receiver_get_data(receiver);
-        message_direction = wb_receiver_get_emitter_direction(receiver);
-        message_rssi = wb_receiver_get_signal_strength(receiver);
+        inbuffer = (char*) wb_receiver_get_data(receiver2);
+        message_direction = wb_receiver_get_emitter_direction(receiver2);
+        message_rssi = wb_receiver_get_signal_strength(receiver2);
         double y = message_direction[2];
         double x = message_direction[1];
 
@@ -50,7 +50,7 @@ void process_received_ping_messages(int robot_id) {
         range = sqrt((1/message_rssi)); 
 
         other_robot_id = (int)(inbuffer[3]-'0');  // since the name of the sender is in the received message. Note: this does not work for robots having id bigger than 9!
-        printf("Other robot %d\n",other_robot_id);
+        //printf("Other robot %d\n",other_robot_id);
 		
         // Get position update
         prev_relative_pos[other_robot_id][0] = relative_pos[other_robot_id][0];
@@ -67,7 +67,7 @@ void process_received_ping_messages(int robot_id) {
         // (Stefano) not important by now
         //relative_speed[other_robot_id][0] = (1/DELTA_T)*(relative_pos[other_robot_id][0]-prev_relative_pos[other_robot_id][0]);
         //relative_speed[other_robot_id][1] = (1/DELTA_T)*(relative_pos[other_robot_id][1]-prev_relative_pos[other_robot_id][1]);
-        wb_receiver_next_packet(receiver);
+        wb_receiver_next_packet(receiver2);
     }
 }
 
@@ -84,4 +84,6 @@ void compute_other_robots_localisation(int robot_id) {
             loc[i][j]=loc[robot_id][j]+relative_pos[i][j];
         }
     }
+    //printf("robot id %d\n",robot_id);
+    //printf("Positions %f %f\n%f %f\n%f %f\n%f %f\n",relative_pos[0][0],relative_pos[0][1],relative_pos[1][0],relative_pos[1][1],relative_pos[2][0],relative_pos[2][1],relative_pos[3][0],relative_pos[3][1]);
 }

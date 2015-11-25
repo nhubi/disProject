@@ -124,8 +124,8 @@ int main(){
             speed[rob_nb][1] = (1/TIME_STEP/1000)*(loc[rob_nb][1]-prev_loc[rob_nb][1]);
             count++;
         }
-        printf("robot id %d\n",robot_id);
-        printf("Positions %f %f\n%f %f\n%f %f\n%f %f\n",loc[0][0],loc[0][1],loc[1][0],loc[1][1],loc[2][0],loc[2][1],loc[3][0],loc[3][1]);
+        //printf("robot id %d\n",robot_id);
+        //printf("Positions %f %f\n%f %f\n%f %f\n%f %f\n",loc[0][0],loc[0][1],loc[1][0],loc[1][1],loc[2][0],loc[2][1],loc[3][0],loc[3][1]);
         wb_receiver_next_packet(receiver);
     }
 		
@@ -140,9 +140,9 @@ int main(){
     send_ping();
 		
     // Receive other robot's ping
-    printf("Fuori dal while\n");
+    //printf("Fuori dal while\n");
     process_received_ping_messages(robot_id);
-    printf("After received\n");
+    //printf("After received\n");
 
 		
     // Compute localisation of the other robots

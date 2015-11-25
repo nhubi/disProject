@@ -9,7 +9,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation -0.998051 -0.0526883 -0.0334248 0.426275
-  position -0.42209 1.22837 3.00982
+  position -0.423594 1.2614 3.08267
 }
 Background {
   skyColor [
@@ -181,6 +181,18 @@ DEF rob0 E-puck {
   name "rob0"
   emitter_channel 0
   receiver_channel 0
+  groundSensorsSlot [
+    DEF receiver2 Receiver {
+      name "receiver2"
+      type "infra-red"
+      channel 1
+    }
+    DEF emitter2 Emitter {
+      name "emitter2"
+      type "infra-red"
+      channel 1
+    }
+  ]
 }
 DEF rob1 E-puck {
   hidden linearVelocity_0 5.23096e-06 4.05308e-08 4.68585e-07
@@ -199,6 +211,18 @@ DEF rob1 E-puck {
   name "rob1"
   emitter_channel 0
   receiver_channel 0
+  groundSensorsSlot [
+    DEF receiver2 Receiver {
+      name "receiver2"
+      type "infra-red"
+      channel 1
+    }
+    DEF emitter2 Emitter {
+      name "emitter2"
+      type "infra-red"
+      channel 1
+    }
+  ]
 }
 DEF rob2 E-puck {
   hidden linearVelocity_0 -5.36196e-09 1.66991e-10 -0.00255802
@@ -217,6 +241,18 @@ DEF rob2 E-puck {
   name "rob2"
   emitter_channel 0
   receiver_channel 0
+  groundSensorsSlot [
+    DEF receiver2 Receiver {
+      name "receiver2"
+      type "infra-red"
+      channel 1
+    }
+    DEF emitter2 Emitter {
+      name "emitter2"
+      type "infra-red"
+      channel 1
+    }
+  ]
 }
 DEF rob3 E-puck {
   hidden linearVelocity_0 -5.36196e-09 1.66991e-10 -0.00255802
@@ -235,6 +271,18 @@ DEF rob3 E-puck {
   name "rob3"
   emitter_channel 0
   receiver_channel 0
+  groundSensorsSlot [
+    DEF receiver2 Receiver {
+      name "receiver2"
+      type "infra-red"
+      channel 1
+    }
+    DEF emitter2 Emitter {
+      name "emitter2"
+      type "infra-red"
+      channel 1
+    }
+  ]
 }
 Supervisor {
   children [
