@@ -59,7 +59,9 @@ WbDeviceTag emitter2;		        // Handle for the emitter node
 
 float migr[2];//={25, 25};          // Migration vector
 
-
+// THRESHOLDS
+float move_to_goal_min_threshold;
+float move_to_goal_max_threshold;
 
 // methods
 
