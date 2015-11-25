@@ -37,51 +37,51 @@ void process_received_ping_messages(int robot_id) {
     char *inbuffer;	// Buffer for the receiver node
     int other_robot_id;
     int count=0;
-    while (wb_receiver_get_queue_length(receiver) > 0 && count < FORMATION_SIZE) {
-	count++;
-	inbuffer = (char*) wb_receiver_get_data(receiver);
-	message_direction = wb_receiver_get_emitter_direction(receiver);
-  	message_rssi = wb_receiver_get_signal_strength(receiver);
-         double y = message_direction[2];
-		double x = message_direction[1];
+    while (wb_receiver_get_queue_length(receiver) > 0) {// && count < FORMATION_SIZE) {
+        count++;
+        inbuffer = (char*) wb_receiver_get_data(receiver);
+        message_direction = wb_receiver_get_emitter_direction(receiver);
+        message_rssi = wb_receiver_get_signal_strength(receiver);
+        double y = message_direction[2];
+        double x = message_direction[1];
 
         theta =	-atan2(y,x);
         theta = theta + loc[robot_id][2]; // find the relative theta;
-		range = sqrt((1/message_rssi)); 
+        range = sqrt((1/message_rssi)); 
 
-		other_robot_id = (int)(inbuffer[3]-'0');  // since the name of the sender is in the received message. Note: this does not work for robots having id bigger than 9!
-		printf("Other robot %d\n",other_robot_id);
+        other_robot_id = (int)(inbuffer[3]-'0');  // since the name of the sender is in the received message. Note: this does not work for robots having id bigger than 9!
+        printf("Other robot %d\n",other_robot_id);
 		
-		// Get position update
-		prev_relative_pos[other_robot_id][0] = relative_pos[other_robot_id][0];
-		prev_relative_pos[other_robot_id][1] = relative_pos[other_robot_id][1];
-		prev_relative_pos[other_robot_id][2] = relative_pos[other_robot_id][2];
+        // Get position update
+        prev_relative_pos[other_robot_id][0] = relative_pos[other_robot_id][0];
+        prev_relative_pos[other_robot_id][1] = relative_pos[other_robot_id][1];
+        prev_relative_pos[other_robot_id][2] = relative_pos[other_robot_id][2];
 
-		relative_pos[other_robot_id][0] = range*cos(theta);  // relative x pos
-		relative_pos[other_robot_id][1] = -1.0 * range*sin(theta);   // relative y pos
-		relative_pos[other_robot_id][2] = theta; // relative theta pos 
+        relative_pos[other_robot_id][0] = range*cos(theta);  // relative x pos
+        relative_pos[other_robot_id][1] = -1.0 * range*sin(theta);   // relative y pos
+        relative_pos[other_robot_id][2] = theta; // relative theta pos 
 
-		//printf("Robot %s, from robot %d, x: %g, y: %g, theta %g, my theta %g\n",robot_name,other_robot_id,relative_pos[other_robot_id][0],relative_pos[other_robot_id][1],my_position[2]*180.0/3.141592,my_position[2]*180.0/3.141592);
+        //printf("Robot %s, from robot %d, x: %g, y: %g, theta %g, my theta %g\n",robot_name,other_robot_id,relative_pos[other_robot_id][0],relative_pos[other_robot_id][1],my_position[2]*180.0/3.141592,my_position[2]*180.0/3.141592);
 
 		
-		// (Stefano) not important by now
-		//relative_speed[other_robot_id][0] = (1/DELTA_T)*(relative_pos[other_robot_id][0]-prev_relative_pos[other_robot_id][0]);
-		//relative_speed[other_robot_id][1] = (1/DELTA_T)*(relative_pos[other_robot_id][1]-prev_relative_pos[other_robot_id][1]);		
-		wb_receiver_next_packet(receiver);
-	}
+        // (Stefano) not important by now
+        //relative_speed[other_robot_id][0] = (1/DELTA_T)*(relative_pos[other_robot_id][0]-prev_relative_pos[other_robot_id][0]);
+        //relative_speed[other_robot_id][1] = (1/DELTA_T)*(relative_pos[other_robot_id][1]-prev_relative_pos[other_robot_id][1]);
+        wb_receiver_next_packet(receiver);
+    }
 }
 
 /*
  * Compute the localisation of the other robot using relative_pos
  */
 void compute_other_robots_localisation(int robot_id) {
-	int i,j;
-	for (i=0;i<FORMATION_SIZE;i++) {
-		if (i==robot_id) {
-			continue;
-		}
-		for (j=0;j<3;j++) {
-                	loc[i][j]=loc[robot_id][j]+relative_pos[i][j];
-		}
-	}
+    int i,j;
+    for (i=0;i<FORMATION_SIZE;i++) {
+        if (i==robot_id) {
+            continue;
+        }
+        for (j=0;j<3;j++) {
+            loc[i][j]=loc[robot_id][j]+relative_pos[i][j];
+        }
+    }
 }
