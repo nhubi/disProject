@@ -82,7 +82,7 @@ void computeDirection(){
  * The main function
  */
 int main(){
-	// for I14, sending current position to neighbors
+         // for I14, sending current position to neighbors
 	// char outbuffer[255];
 	
 	int msl, msr;                   // Wheel speeds
