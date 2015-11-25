@@ -60,7 +60,7 @@ void reset(void) {
 		robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
 		robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
 	}
-	goal_id = wb_supervisor_node_get_from_def("goal");
+	goal_id = wb_supervisor_node_get_from_def("goal-node");
 	goal_field = wb_supervisor_node_get_field(goal_id,"translation");
 }
 
