@@ -45,9 +45,10 @@ void reset(void) {
 	wb_receiver_enable(receiver,64);
 
 	//Reading the robot's name.
-	sscanf(robot_name,"rob%d",&robot_id);   // read robot id from the robot's name
+	sscanf(robot_name,"rob%d",&robot_id_u);   // read robot id from the robot's name
 	
 	robot_id = robot_id_u%FORMATION_SIZE;   // normalize between 0 and FORMATION_SIZE-1
+	
 	
 	for(i=0; i<FORMATION_SIZE; i++) {
 		initialized[i] = 0;                 // Set initialization to 0 (= not yet initialized)
@@ -83,6 +84,7 @@ void initial_pos(void){
 		// Only info about self will be taken into account at first.
 		
 		//robot_nb %= FORMATION_SIZE;
+		printf("initial pos %d %d\n",rob_nb,robot_id);
 		if (rob_nb == robot_id)
 		{
 			// Initialize self position
