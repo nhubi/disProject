@@ -49,16 +49,19 @@ void computeDirection(){
 
     // each motorschema's weight
     float w_goal            = 1;
-    float w_keep_formation  = 2;
+    float w_keep_formation  = 1;
     float w_avoid_robot     = 1;
-    float w_avoid_obstacles = 1;
+    float w_avoid_obstacles = 4;
+
+    float min_avoid_obst_thrsh = 140;
+    float max_avoid_obst_thrsh = 170;
 
     //TODO: We probably need a more complicated combination method than just weighted addition
     //      --> state machine?
 
     get_move_to_goal_vector(dir_goal, robot_id);
     get_keep_formation_vector(dir_keep_formation, robot_id);
-    get_stat_obst_avoidance_vector(dir_avoid_obstacles, robot_id);
+    get_stat_obst_avoidance_vector(dir_avoid_obstacles, robot_id, min_avoid_obst_thrsh, max_avoid_obst_thrsh);
 
     int d;
     //for each dimension d...
