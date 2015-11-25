@@ -35,7 +35,7 @@ int t;
  most of the codes that you need for both approaches can be found in the labs (lab4 is particularly useful) 
 Think about the obstacles, do you need to know their exact position? 
 how can you differentiate between a robot and an obstacle if you use local perception? in one of your labs you had communication between robots where the distance 
-between a pair of robots could be found
+  between a pair of robots could be found
 if you decide to use the absolute positions of all the obstacles through the supervisor,how can you make it more realistic? e.g define a region around the robot where you include the obstacles? 
 The more realistic and less dependent on the supervisor you are, the better.
 goal is the red cylinder which can be moved around between different trials of your code
@@ -153,9 +153,9 @@ int main(int argc, char *args[]) {
 		        loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
 		        loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 
-		        if (i==0) {
-			        printf("Robot location %f %f\n",loc[i][0],loc[i][1]);
-		        }
+//		        if (i==0) {
+//			        printf("Robot location %f %f\n",loc[i][0],loc[i][1]);
+//		        }
 
             	// Sending positions to the robots
           		sprintf(buffer,"%1d#%f#%f#%f#%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
