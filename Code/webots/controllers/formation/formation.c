@@ -49,7 +49,7 @@ void computeDirection(){
 
     // each motorschema's weight
     float w_goal            = 1;
-    float w_keep_formation  = 1;
+    float w_keep_formation  = 2;
     float w_avoid_robot     = 1;
     float w_avoid_obstacles = 1;
 
@@ -72,6 +72,8 @@ void computeDirection(){
         speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
     }
+    if(robot_id < 2)
+        printf("\t  --> Direction[%d]: (%f,%f)\n", robot_id, speed[robot_id][0], speed[robot_id][1]);
 }
 
 
@@ -82,20 +84,20 @@ void computeDirection(){
  * The main function
  */
 int main(){
-         // for I14, sending current position to neighbors
-	// char outbuffer[255];
+    // for I14, sending current position to neighbors
+    // char outbuffer[255];
 	
-	int msl, msr;                   // Wheel speeds
-	int rob_nb;                     // Robot number
-	float rob_x, rob_z, rob_theta;  // Robot position and orientation
-	char *inbuffer;                 // Buffer for the receiver node
+    int msl, msr;                   // Wheel speeds
+    int rob_nb;                     // Robot number
+    float rob_x, rob_z, rob_theta;  // Robot position and orientation
+    char *inbuffer;                 // Buffer for the receiver node
 	
 	
-	// In this initialization, the common goal is communicated to the robot
-	reset();        // Resetting the robot
-	initial_pos();  // Initializing the robot's position
+    // In this initialization, the common goal is communicated to the robot
+    reset();        // Resetting the robot
+    initial_pos();  // Initializing the robot's position
 	
-	msl = 0; msr = 0;
+    msl = 0; msr = 0;
 	
 
 	
