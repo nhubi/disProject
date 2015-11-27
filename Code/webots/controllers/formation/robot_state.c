@@ -84,7 +84,7 @@ void initial_pos(void){
         }
 		
 		inbuffer = (char*) wb_receiver_get_data(receiver);
-		sscanf(inbuffer,"%d#%f#%f#%f##%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1]);
+		sscanf(inbuffer,"%d#%f#%f#%f##%f#%f#%d",&rob_nb,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1],&formation_type);
 		// Only info about self will be taken into account at first.
 		
 		//robot_nb %= FORMATION_SIZE;
@@ -97,7 +97,7 @@ void initial_pos(void){
 			prev_loc[rob_nb][0] = loc[rob_nb][0];
 			prev_loc[rob_nb][1] = loc[rob_nb][1];
 			initialized[rob_nb] = 1;    // initialized = true
-			//printf("initialPos %f %f %f %f\n",loc[rob_nb][0],loc[rob_nb][1],prev_loc[rob_nb][0],prev_loc[rob_nb][1]);
+			//printf("initialPos %f %f %f %f %d\n",loc[rob_nb][0],loc[rob_nb][1],prev_loc[rob_nb][0],prev_loc[rob_nb][1],formation_type);
 		}
 		wb_receiver_next_packet(receiver);
 	}

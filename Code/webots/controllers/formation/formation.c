@@ -16,9 +16,6 @@
 // float unit_center[2];
 
 
-
-
-
 /*
  * Combines the vectors from the 4 motorschemas and computes the corresponding wheel speed vector.
  * This vector can then be translated in actual wheel speeds.

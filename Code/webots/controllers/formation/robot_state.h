@@ -2,8 +2,6 @@
 // This file contains any definition related to the robots' current states                        //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 #ifndef ROBOT_STATE_H
 #define ROBOT_STATE_H
 
@@ -29,7 +27,10 @@
 #define MAX_SENS         4096       // Minimum sensibility value
 #define MAX_SPEED         800       // Maximum speed
 
-
+#define LINE          0
+#define COLUMN        1
+#define WEDGE         2
+#define DIAMOND       3
 
 // other definitions
 
@@ -58,6 +59,7 @@ WbDeviceTag receiver2;		        // Handle for the receiver node
 WbDeviceTag emitter2;		        // Handle for the emitter node
 
 float migr[2];//={25, 25};          // Migration vector
+int formation_type;                 // Type of formation
 
 // THRESHOLDS
 float move_to_goal_min_threshold;

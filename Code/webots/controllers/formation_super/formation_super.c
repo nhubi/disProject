@@ -11,6 +11,8 @@
 #define FORMATION_SIZE  4	// Number of robots in formation
 #define TIME_STEP      64	// [ms] Length of time step
 
+//Formation types
+#define DEFAULT_FORMATION "line"// Line formation as default
 
 WbNodeRef  robs[FORMATION_SIZE];            // Robots nodes
 WbFieldRef robs_trans[FORMATION_SIZE];      // Robots translation fields
@@ -18,6 +20,8 @@ WbFieldRef robs_rotation[FORMATION_SIZE];   // Robots rotation fields
 WbDeviceTag emitter;                        // Single emitter
 
 float loc[FORMATION_SIZE][3];               // Location of everybody in the formation: X,Y and Theta
+
+int formation_type;
 
 // Variable for goal:
 int offset;         // Offset of robots number
@@ -98,7 +102,7 @@ void send_init_poses(void)
         }
 	
         // Send it out
-        sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz);
+        sprintf(buffer,"%1d#%f#%f#%f##%f#%f#%1d",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
         //printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
         wb_emitter_send(emitter,buffer,strlen(buffer));
 
@@ -132,13 +136,27 @@ int main(int argc, char *args[]) {
   	if (orient_migr<0) {
           	orient_migr+=2*M_PI; // Keep value between 0 and 2PI
 	}*/
-         
-         
+    
+    char* formation = DEFAULT_FORMATION; 
+    if(argc == 2) {
+          formation_type = atoi(args[1]); // The type of formation is decided by 
+                               // the user through the world
+    }
+    
+    if(formation_type == 0)
+          formation = "line";
+    else if(formation_type == 1)
+          formation = "column";
+    else if(formation_type == 2)
+          formation = "wedge";
+    else if(formation_type == 3)
+          formation = "diamond";
+    
     // reset and communication part
     reset();
     printf("Supervisor resetted.\n");
     send_init_poses(); //this function is here as an example for communication using the supervisor
-    printf("Init poses sent.\n");
+    printf("Init poses sent.\n Chosen formation: %s.\n", formation);
 
 	
     int i; // necessary declaration - not possible to declare it inside the for loop
@@ -158,7 +176,7 @@ int main(int argc, char *args[]) {
 //		        }
 
                 // Sending positions to the robots
-                sprintf(buffer,"%1d#%f#%f#%f#%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
+                sprintf(buffer,"%1d#%f#%f#%f#%f#%f#%1d",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
                 wb_emitter_send(emitter,buffer,strlen(buffer));				
             }
 
