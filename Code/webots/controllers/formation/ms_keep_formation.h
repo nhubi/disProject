@@ -22,8 +22,8 @@
 
 
 // initializations
-const float coef = 1.0; // Coefficient that determines the distance between the robots,
-                     // to be changed depending on the robots' size. 
+extern const float robot_dist;  // Coefficient that determines the distance between the robots,
+                                // to be changed depending on the robots' size. 
 
 
 // methods

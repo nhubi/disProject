@@ -13,6 +13,11 @@
 
 
 
+//definitions
+const float robot_dist = 1.0;
+
+
+
 /*
  * Calculates a robot's vector that points to a direction which avoids obstacles.
  */
@@ -42,53 +47,53 @@ void get_formation_coordinates(float* coordinates, int robot_id, int formation_t
     if(formation_type == LINE) {
         coordinates[1] = 0.0;
         if(robot_id == 0)
-            coordinates[0] = coef;
+            coordinates[0] = robot_dist;
         else if(robot_id == 1)
-            coordinates[0] = 3.0 * coef;
+            coordinates[0] = 3.0 * robot_dist;
         else if(robot_id == 2)
-            coordinates[0] = -1.0 * coef;
+            coordinates[0] = -1.0 * robot_dist;
         else
-            coordinates[0] = -3.0 * coef;
+            coordinates[0] = -3.0 * robot_dist;
     } 
     else if(formation_type == COLUMN) {
         coordinates[0] = 0.0;
         if(robot_id == 0)
-            coordinates[1] = 3.0 * coef;
+            coordinates[1] = 3.0 * robot_dist;
         else if(robot_id == 1)
-            coordinates[1] = -1.0 * coef;
+            coordinates[1] = -1.0 * robot_dist;
         else if(robot_id == 2)
-            coordinates[1] = 1.0 * coef;
+            coordinates[1] = 1.0 * robot_dist;
         else
-            coordinates[1] = -3.0 * coef;
+            coordinates[1] = -3.0 * robot_dist;
     } 
     else if(formation_type == WEDGE) {
         if(robot_id == 0) {
-            coordinates[0] = coef;
-            coordinates[1] = coef;
+            coordinates[0] = robot_dist;
+            coordinates[1] = robot_dist;
         } else if(robot_id == 1) {
-            coordinates[0] = 3.0 * coef;
-            coordinates[1] = -1.0 * coef;
+            coordinates[0] = 3.0 * robot_dist;
+            coordinates[1] = -1.0 * robot_dist;
         } else if(robot_id == 2) {
-            coordinates[0] = -1.0 * coef;
-            coordinates[1] = coef;
+            coordinates[0] = -1.0 * robot_dist;
+            coordinates[1] = robot_dist;
         } else {
-            coordinates[0] = -3.0 * coef;
-            coordinates[1] = -1.0 * coef;
+            coordinates[0] = -3.0 * robot_dist;
+            coordinates[1] = -1.0 * robot_dist;
         }
     } 
     else if(formation_type == DIAMOND) {
         if(robot_id == 0) {
             coordinates[0] = 0.0;
-            coordinates[1] = 2.0 * coef;
+            coordinates[1] = 2.0 * robot_dist;
         } else if(robot_id == 1) {
-            coordinates[0] = 2.0 * coef;
+            coordinates[0] = 2.0 * robot_dist;
             coordinates[1] = 0.0;
         } else if(robot_id == 2) {
-            coordinates[0] = -2.0 * coef;
+            coordinates[0] = -2.0 * robot_dist;
             coordinates[1] = 0.0;
         } else {
             coordinates[0] = 0.0;
-            coordinates[1] = -2.0 * coef;
+            coordinates[1] = -2.0 * robot_dist;
         }
     } 
     else {
