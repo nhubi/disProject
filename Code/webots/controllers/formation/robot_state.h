@@ -27,6 +27,9 @@
 #define MAX_SENS         4096       // Minimum sensibility value
 #define MAX_SPEED         800       // Maximum speed
 
+
+//Formation types
+
 #define LINE          0
 #define COLUMN        1
 #define WEDGE         2
