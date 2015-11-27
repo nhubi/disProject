@@ -15,6 +15,25 @@
 
 
 
+// definitions
+
+// values from: https://www.cyberbotics.com/guide/using-the-e-puck-robot.php
+// - The forward direction of the e-puck (the direction the eye of the camera is looking 
+//   to) is given by the negative z-axis. The direction vector of the camera is pointing 
+//   in the opposite direction, namely the direction of the positive z-axis
+// - The axle's direction is given by the positive x-axis. It points to the robot's right (in 
+//   driving direction)
+const float sens_dir[NB_SENSORS] = { 72.77,
+                                     44.12,
+                                      0.00,
+                                    298.51,
+                                    241.22,
+                                    180.00,
+                                    135.79,
+                                    107.14};
+
+
+
 
 
 /*
@@ -38,7 +57,7 @@ void reset(void) {
 
     // enable distance sensors
 	for(i=0; i<NB_SENSORS; i++) {
-		wb_distance_sensor_enable(dist_sens[i],64);
+		wb_distance_sensor_enable(dist_sens[i], TIME_STEP);
 	}
 
     // enable receiver
@@ -52,18 +71,6 @@ void reset(void) {
 	for(i=0; i<FORMATION_SIZE; i++) {
 		initialized[i] = 0;                 // Set initialization to 0 (= not yet initialized)
 	}
-
-
-    // values from: https://www.cyberbotics.com/guide/using-the-e-puck-robot.php
-    sens_dir[0] =  72.77;
-    sens_dir[1] =  44.12;
-    sens_dir[2] =   0.00;
-    sens_dir[3] = 298.51;
-    sens_dir[4] = 241.22;
-    sens_dir[5] = 180.00;
-    sens_dir[6] = 135.79;
-    sens_dir[7] = 107.14;
-	
 	
 	printf("Reset: robot %d\n",robot_id);
 }
@@ -160,9 +167,8 @@ void update_self_motion(int msl, int msr) {
  */
 void compute_wheel_speeds(int *msl, int *msr)
 {
-//	printf("reynolds %f %f %f\n",migr[0],loc[robot_id][0],speed[robot_id][0]);
 
-	// Compute wanted position from Reynold's speed and current location
+	// Compute wanted position from speed vector and current location
     // x in robot coordinates
 	float x = speed[robot_id][0]*cosf(loc[robot_id][2]) - speed[robot_id][1]*sinf(loc[robot_id][2]);
     // z in robot coordinates
