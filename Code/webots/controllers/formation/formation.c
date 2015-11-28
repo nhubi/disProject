@@ -10,6 +10,7 @@
 #include "ms_keep_formation.h"
 #include "ms_avoid_static_obstacles.h"
 #include "local_communications.h"
+#include "avoid_robot.h"
 
 // The swarm's center
 // Defined also in robot state, it will have to be defined here with local_communications
@@ -42,6 +43,7 @@ void computeDirection(){
 
     get_move_to_goal_vector(dir_goal, robot_id);
     get_keep_formation_vector(dir_keep_formation, robot_id);
+    get_avoid_robot_vector(dir_avoid_robot,robot_id);
     get_stat_obst_avoidance_vector(dir_avoid_obstacles, robot_id);
 
     int d;
@@ -72,6 +74,8 @@ int main(){
     // Set the weight at the beginning
     move_to_goal_min_threshold=0.1;
     move_to_goal_max_threshold=0.5;
+    avoid_robot_min_threshold=0.05;
+    avoid_robot_max_threshold=0.2;
     
     
     int msl, msr;                   // Wheel speeds
