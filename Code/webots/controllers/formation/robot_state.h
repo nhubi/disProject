@@ -44,12 +44,14 @@ int robot_id_u, robot_id;           // Unique and normalized robot ID(between 0 
 char* robot_name; 
 
 int initialized[FORMATION_SIZE];    // != 0 if initial positions have been received
-float prev_loc[FORMATION_SIZE][3];  // Previous X, Z, Theta values
-float loc[FORMATION_SIZE][3];       // X, Z, Theta of all robots
+
 float speed[FORMATION_SIZE][2];     // Speeds in x and z direction
 float unit_center[3];		    	// X, Z, Theta of the unit center of all robots
-
 extern const float sens_dir[NB_SENSORS];    // angles between negative x-axis and sensor directions
+float loc[FORMATION_SIZE][3];       // X, Z, Theta
+float prev_loc[FORMATION_SIZE][3];  // Previous X, Z, Theta values
+                                    //  --> Theta is between negative z-axis and forward direction, 
+                                    //      measured counter-clockwise
 
 WbDeviceTag dist_sens[NB_SENSORS];  // Handle for the infra-red distance sensors
 WbDeviceTag receiver;		        // Handle for the receiver node

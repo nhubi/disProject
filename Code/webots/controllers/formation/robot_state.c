@@ -23,16 +23,14 @@
 //   in the opposite direction, namely the direction of the positive z-axis
 // - The axle's direction is given by the positive x-axis. It points to the robot's right (in 
 //   driving direction)
-const float sens_dir[NB_SENSORS] = { 72.77,
-                                     44.12,
-                                      0.00,
-                                    298.51,
-                                    241.22,
-                                    180.00,
-                                    135.79,
-                                    107.14};
-
-
+const float sens_dir[NB_SENSORS] = {1.27,
+                                    0.77,
+                                    0.00,
+                                    5.21,
+                                    4.21,
+                                    3.14159,
+                                    2.37,
+                                    1.87};
 
 
 
@@ -167,7 +165,6 @@ void update_self_motion(int msl, int msr) {
  */
 void compute_wheel_speeds(int *msl, int *msr)
 {
-
 	// Compute wanted position from speed vector and current location
     // x in robot coordinates
 	float x = speed[robot_id][0]*cosf(loc[robot_id][2]) - speed[robot_id][1]*sinf(loc[robot_id][2]);
@@ -189,8 +186,6 @@ void compute_wheel_speeds(int *msl, int *msr)
 	*msr = 50*(u + AXLE_LENGTH*w/2.0) / WHEEL_RADIUS;
 	limit(msl,MAX_SPEED);
 	limit(msr,MAX_SPEED);
-	
-//	printf("Wheel speed after reynolds %d %d\n",*msl,*msr);
 }
 
 
