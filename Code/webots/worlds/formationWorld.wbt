@@ -1,4 +1,4 @@
-#VRML_SIM V8.0.0 utf8
+#VRML_SIM V8.3.0 utf8
 WorldInfo {
   info [
     "Description"
@@ -8,8 +8,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation -0.998051 -0.0526883 -0.0334248 0.426275
-  position -0.42209 1.22837 3.00982
+  orientation -0.985745 -0.157473 -0.0592439 0.512188
+  position -0.544008 1.21516 2.63611
 }
 Background {
   skyColor [
@@ -104,7 +104,7 @@ DEF obs3 Solid {
   boundingObject USE cyl
 }
 DEF obs4 Solid {
-  translation -1.00485 4.44089e-16 0.194545
+  translation -0.348021 4.44089e-16 0.370541
   rotation 0 1 0 4.45059
   children [
     DEF cyl Shape {
@@ -143,7 +143,7 @@ DEF obs5 Solid {
   ]
   boundingObject USE cyl
 }
-DEF goal Solid {
+DEF goal-node Solid {
   translation 0.351711 1.9984e-15 -2.21704
   rotation 0 1 0 4.45059
   children [
