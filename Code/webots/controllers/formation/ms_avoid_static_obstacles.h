@@ -19,13 +19,13 @@
 
 // definitions
 
-#define PERC_WINDOW_SIZE 3 // defines, over how many steps to average the sensor perceptions 
+#define PERC_WINDOW_SIZE 2 // defines, over how many steps to average the sensor perceptions 
 
 
 
 // initializations
 
-// int whatever;
+float sens_back_weight;  
 
 
 

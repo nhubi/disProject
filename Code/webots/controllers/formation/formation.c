@@ -53,7 +53,7 @@ void computeDirection(){
     float w_avoid_robot     = 1;
     float w_avoid_obstacles = 5;
 
-    float min_avoid_obst_thrsh = 100;
+    float min_avoid_obst_thrsh = 60;
     float max_avoid_obst_thrsh = 200;
 
     //TODO: We probably need a more complicated combination method than just weighted addition
