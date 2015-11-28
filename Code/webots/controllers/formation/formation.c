@@ -51,10 +51,10 @@ void computeDirection(){
     float w_goal            = 1;
     float w_keep_formation  = 1;
     float w_avoid_robot     = 1;
-    float w_avoid_obstacles = 4;
+    float w_avoid_obstacles = 5;
 
-    float min_avoid_obst_thrsh = 140;
-    float max_avoid_obst_thrsh = 170;
+    float min_avoid_obst_thrsh = 100;
+    float max_avoid_obst_thrsh = 200;
 
     //TODO: We probably need a more complicated combination method than just weighted addition
     //      --> state machine?

@@ -19,13 +19,13 @@
 
 // definitions
 
-//#define WHATEVER
+#define PERC_WINDOW_SIZE 3 // defines, over how many steps to average the sensor perceptions 
 
 
 
 // initializations
 
-//int dummy = 1
+// int whatever;
 
 
 
