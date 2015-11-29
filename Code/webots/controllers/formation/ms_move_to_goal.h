@@ -25,9 +25,10 @@
 
 
 
-// initializations
+// declarations
 
-//int dummy = 1
+float move_to_goal_min_threshold;
+float move_to_goal_max_threshold;
 
 
 

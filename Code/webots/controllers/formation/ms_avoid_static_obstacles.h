@@ -23,9 +23,11 @@
 
 
 
-// initializations
+// declarations
 
-float sens_back_weight;  
+float sens_back_weight;
+float avoid_obst_min_threshold;
+float avoid_obst_max_threshold;
 
 
 

@@ -52,6 +52,7 @@ int initialized[FORMATION_SIZE];
 float loc[FORMATION_SIZE][3];               // X, Z, Theta
                                             //  --> Theta is between negative z-axis and forward 
                                             //      direction, measured counter-clockwise
+float prev_loc[FORMATION_SIZE][3];          // Previous X, Z, Theta values
 float prev_relative_pos[FORMATION_SIZE][3];
 float relative_pos[FORMATION_SIZE][3];
 float unit_center[3];		    	        // X, Z, Theta of the unit center of all robots
@@ -77,23 +78,12 @@ WbDeviceTag receiver2;		        // Handle for the receiver node
 WbDeviceTag emitter2;		        // Handle for the emitter node
 
 
-
-// MOTORSCHEMES
-
-// weights
+// motorschema weights
 float w_goal;
 float w_keep_formation;
 float w_avoid_robot;
 float w_avoid_obstacles;
 float w_noise;
-
-// thresholds
-float move_to_goal_min_threshold;
-float move_to_goal_max_threshold;
-float avoid_robot_min_threshold;
-float avoid_robot_max_threshold;
-float avoid_obst_min_threshold;
-float avoid_obst_max_threshold;
 
 
 

@@ -22,9 +22,9 @@
 
 
 
-// initializations
+// declarations
 
-//int dummy = 1
+//int dummy;
 
 
 
