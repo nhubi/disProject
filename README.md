@@ -1,2 +1,2 @@
-# disProject
-Optimized Navigation behavior of multiple robots based on motor-schema
+# Optimized Navigation Behavior of Multiple Robots Based on Motor-schema
+A project in the scope of the course 'Distributed Intelligent Systems' at EPFL.
