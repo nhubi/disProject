@@ -12,25 +12,26 @@
 
 // includes
 
-//#include <???>
+#include "robot_state.h"
+#include "utils.h"
 
 
 
 // definitions
 
-//#define WHATEVER
+#define PERC_WINDOW_SIZE 2 // defines, over how many steps to average the sensor perceptions 
 
 
 
 // initializations
 
-//int dummy = 1
+float sens_back_weight;  
 
 
 
 // methods
 
-void get_stat_obst_avoidance_vector(float * direction, int robot_id);
+void get_stat_obst_avoidance_vector(float * direction, int robot_id, float lwb, float upb);
 
 
 #endif

@@ -36,15 +36,19 @@ void computeDirection(){
     float w_goal            = 1;
     float w_keep_formation  = 1;
     float w_avoid_robot     = 1;
-    float w_avoid_obstacles = 1;
+    float w_avoid_obstacles = 5;
+
+    float min_avoid_obst_thrsh = 60;
+    float max_avoid_obst_thrsh = 200;
 
     //TODO: We probably need a more complicated combination method than just weighted addition
     //      --> state machine?
 
     get_move_to_goal_vector(dir_goal, robot_id);
     get_keep_formation_vector(dir_keep_formation, robot_id);
+    get_stat_obst_avoidance_vector(dir_avoid_obstacles, robot_id, min_avoid_obst_thrsh, max_avoid_obst_thrsh);
     get_avoid_robot_vector(dir_avoid_robot,robot_id);
-    get_stat_obst_avoidance_vector(dir_avoid_obstacles, robot_id);
+
 
     int d;
     //for each dimension d...
@@ -58,6 +62,8 @@ void computeDirection(){
         speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
     }
+    if(robot_id < 2)
+        printf("\t  --> Direction[%d]: (%f,%f)\n", robot_id, speed[robot_id][0], speed[robot_id][1]);
 }
 
 
@@ -75,7 +81,7 @@ int main(){
     move_to_goal_min_threshold=0.1;
     move_to_goal_max_threshold=0.5;
     avoid_robot_min_threshold=0.05;
-    avoid_robot_max_threshold=0.2;
+    avoid_robot_max_threshold=0.1;
     
     
     int msl, msr;                   // Wheel speeds
@@ -176,6 +182,7 @@ int main(){
     // sprintf(outbuffer,"%1d#%f#%f#%f", robot_id, loc[robot_id][0], loc[robot_id][1], loc[robot_id][2]);
     // wb_emitter_send(emitter,outbuffer,strlen(outbuffer));
 	
+
     // Continue one step
     wb_robot_step(TIME_STEP);
     }

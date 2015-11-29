@@ -104,7 +104,7 @@ DEF obs3 Solid {
   boundingObject USE cyl
 }
 DEF obs4 Solid {
-  translation -1.00485 4.44089e-16 0.194545
+  translation -0.0147719 -4.4409e-16 -0.15636
   rotation 0 1 0 4.45059
   children [
     DEF cyl Shape {
