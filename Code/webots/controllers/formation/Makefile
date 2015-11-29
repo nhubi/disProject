@@ -44,9 +44,9 @@
 ###
 ###-----------------------------------------------------------------------------
 
-C_SOURCES = utils.c robot_state.c ms_avoid_static_obstacles.c ms_move_to_goal.c ms_keep_formation.c formation.c local_communications.c
+C_SOURCES = utils.c robot_state.c local_communications.c ms_avoid_static_obstacles.c ms_move_to_goal.c ms_keep_formation.c formation.c ms_avoid_robots.c ms_noise.c
 
-### Do not modify: this includes Webots global Makefile.include
+### Do not modify: this includes Webots global Makefile.include_
 space :=
 space +=
 WEBOTS_HOME_PATH=$(subst $(space),\ ,$(strip $(subst \,/,$(WEBOTS_HOME))))

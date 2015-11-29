@@ -8,8 +8,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation -0.998051 -0.0526883 -0.0334248 0.426275
-  position -0.423594 1.2614 3.08267
+  orientation -0.999674 -0.00705081 -0.0245455 0.405689
+  position -0.375676 1.21269 3.13769
 }
 Background {
   skyColor [
@@ -24,7 +24,7 @@ DirectionalLight {
   direction 0 -1 0
 }
 DEF obs0 Solid {
-  translation -1.07691 -2.22045e-16 -1.40776
+  translation -0.119863 -2.22045e-16 -0.188514
   rotation 0 1 0 4.45059
   children [
     DEF cyl Shape {
@@ -84,7 +84,7 @@ DEF obs2 Solid {
   boundingObject USE cyl
 }
 DEF obs3 Solid {
-  translation 0.740433 4.44089e-16 0.147462
+  translation 0.0546256 4.44089e-16 -0.0362992
   rotation 0 1 0 4.45059
   children [
     DEF cyl Shape {
@@ -104,7 +104,7 @@ DEF obs3 Solid {
   boundingObject USE cyl
 }
 DEF obs4 Solid {
-  translation -1.00485 4.44089e-16 0.194545
+  translation -0.0147719 -4.4409e-16 -0.15636
   rotation 0 1 0 4.45059
   children [
     DEF cyl Shape {

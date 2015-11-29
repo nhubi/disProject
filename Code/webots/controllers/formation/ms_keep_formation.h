@@ -13,6 +13,7 @@
 #include "robot_state.h"
 #include "utils.h"
 
+
 // initializations
 extern const float robot_dist;  // Coefficient that determines the distance between the robots,
                                 // to be changed depending on the robots' size. 

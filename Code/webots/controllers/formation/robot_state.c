@@ -15,6 +15,23 @@
 
 
 
+// definitions
+
+// values from: https://www.cyberbotics.com/guide/using-the-e-puck-robot.php
+// - The forward direction of the e-puck (the direction the eye of the camera is looking 
+//   to) is given by the negative z-axis. The direction vector of the camera is pointing 
+//   in the opposite direction, namely the direction of the positive z-axis
+// - The axle's direction is given by the positive x-axis. It points to the robot's right (in 
+//   driving direction)
+const float sens_dir[NB_SENSORS] = {1.27,
+                                    0.77,
+                                    0.00,
+                                    5.21,
+                                    4.21,
+                                    3.14159,
+                                    2.37,
+                                    1.87};
+
 
 
 /*
@@ -43,7 +60,7 @@ void reset(void) {
 
     // enable distance sensors
 	for(i=0; i<NB_SENSORS; i++) {
-		wb_distance_sensor_enable(dist_sens[i],64);
+		wb_distance_sensor_enable(dist_sens[i], TIME_STEP);
 	}
 
     // enable receiver
@@ -57,7 +74,6 @@ void reset(void) {
 	for(i=0; i<FORMATION_SIZE; i++) {
 		initialized[i] = 0;                 // Set initialization to 0 (= not yet initialized)
 	}
-	
 	
 	printf("Reset: robot %d\n",robot_id);
 }
@@ -154,9 +170,7 @@ void update_self_motion(int msl, int msr) {
  */
 void compute_wheel_speeds(int *msl, int *msr)
 {
-//	printf("reynolds %f %f %f\n",migr[0],loc[robot_id][0],speed[robot_id][0]);
-
-	// Compute wanted position from Reynold's speed and current location
+	// Compute wanted position from speed vector and current location
     // x in robot coordinates
 	float x = speed[robot_id][0]*cosf(loc[robot_id][2]) - speed[robot_id][1]*sinf(loc[robot_id][2]);
     // z in robot coordinates
@@ -177,8 +191,6 @@ void compute_wheel_speeds(int *msl, int *msr)
 	*msr = 50*(u + AXLE_LENGTH*w/2.0) / WHEEL_RADIUS;
 	limit(msl,MAX_SPEED);
 	limit(msr,MAX_SPEED);
-	
-//	printf("Wheel speed after reynolds %d %d\n",*msl,*msr);
 }
 
 

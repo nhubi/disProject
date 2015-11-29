@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// This file contains the definitions related to the motorschema 'move_to_goal'.                  //
+// This file contains the definitions related to the motorschema 'avoid_robot'.                  //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef MS_MOVE_TO_GOAL
-#define MS_MOVE_TO_GOAL
+#ifndef AVOID_ROBOT
+#define AVOID_ROBOT
 
 
 #include "robot_state.h"
@@ -27,15 +27,14 @@
 
 // declarations
 
-float move_to_goal_min_threshold;
-float move_to_goal_max_threshold;
+float avoid_robot_min_threshold;
+float avoid_robot_max_threshold;
 
 
 
 // methods
 
-void get_move_to_goal_vector(float * direction);
-
+void get_avoid_robot_vector(float* direction);
 
 
 #endif
