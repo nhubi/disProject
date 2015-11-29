@@ -14,7 +14,7 @@
 
 
 //definitions
-const float robot_dist = 1.0;
+const float robot_dist = 1.0/12.0;
 
 
 
@@ -32,8 +32,11 @@ void get_keep_formation_vector(float* direction, float* dir_goal){//, int robot_
     
     float relative_coordinates[3] = {0, 0, 0};
     float absolute_coordinates[3] = {0, 0, 0};
+    
     get_relative_formation_coordinates(relative_coordinates);
     get_absolute_formation_coordinates(absolute_coordinates, relative_coordinates, dir_goal);
+    direction[0] = absolute_coordinates[0] - loc[robot_id][0];
+    direction[1] = absolute_coordinates[1] - loc[robot_id][1];
 }
 
 
