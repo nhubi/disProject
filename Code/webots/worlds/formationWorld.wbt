@@ -8,8 +8,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation -0.985745 -0.157473 -0.0592439 0.512188
-  position -0.544008 1.21516 2.63611
+  orientation -0.998051 -0.0526883 -0.0334248 0.426275
+  position -0.423594 1.2614 3.08267
 }
 Background {
   skyColor [
@@ -104,7 +104,7 @@ DEF obs3 Solid {
   boundingObject USE cyl
 }
 DEF obs4 Solid {
-  translation -0.348021 4.44089e-16 0.370541
+  translation -0.0147719 -4.4409e-16 -0.15636
   rotation 0 1 0 4.45059
   children [
     DEF cyl Shape {
@@ -181,6 +181,18 @@ DEF rob0 E-puck {
   name "rob0"
   emitter_channel 0
   receiver_channel 0
+  groundSensorsSlot [
+    DEF receiver2 Receiver {
+      name "receiver2"
+      type "infra-red"
+      channel 1
+    }
+    DEF emitter2 Emitter {
+      name "emitter2"
+      type "infra-red"
+      channel 1
+    }
+  ]
 }
 DEF rob1 E-puck {
   hidden linearVelocity_0 5.23096e-06 4.05308e-08 4.68585e-07
@@ -199,6 +211,18 @@ DEF rob1 E-puck {
   name "rob1"
   emitter_channel 0
   receiver_channel 0
+  groundSensorsSlot [
+    DEF receiver2 Receiver {
+      name "receiver2"
+      type "infra-red"
+      channel 1
+    }
+    DEF emitter2 Emitter {
+      name "emitter2"
+      type "infra-red"
+      channel 1
+    }
+  ]
 }
 DEF rob2 E-puck {
   hidden linearVelocity_0 -5.36196e-09 1.66991e-10 -0.00255802
@@ -217,6 +241,18 @@ DEF rob2 E-puck {
   name "rob2"
   emitter_channel 0
   receiver_channel 0
+  groundSensorsSlot [
+    DEF receiver2 Receiver {
+      name "receiver2"
+      type "infra-red"
+      channel 1
+    }
+    DEF emitter2 Emitter {
+      name "emitter2"
+      type "infra-red"
+      channel 1
+    }
+  ]
 }
 DEF rob3 E-puck {
   hidden linearVelocity_0 -5.36196e-09 1.66991e-10 -0.00255802
@@ -235,6 +271,18 @@ DEF rob3 E-puck {
   name "rob3"
   emitter_channel 0
   receiver_channel 0
+  groundSensorsSlot [
+    DEF receiver2 Receiver {
+      name "receiver2"
+      type "infra-red"
+      channel 1
+    }
+    DEF emitter2 Emitter {
+      name "emitter2"
+      type "infra-red"
+      channel 1
+    }
+  ]
 }
 Supervisor {
   children [

@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// This file contains the definitions related to the motorschema 'move_to_goal'.                  //
+// This file contains the definitions related to the motorschema 'avoid_robot'.                  //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef MS_MOVE_TO_GOAL
-#define MS_MOVE_TO_GOAL
+#ifndef AVOID_ROBOT
+#define AVOID_ROBOT
 
 
 #include "robot_state.h"
@@ -33,8 +33,7 @@
 
 // methods
 
-void get_move_to_goal_vector(float * direction, int robot_id);
-
+void get_avoid_robot_vector(float* direction,int robot_id);
 
 
 #endif

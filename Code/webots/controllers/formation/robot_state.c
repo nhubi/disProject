@@ -42,6 +42,11 @@ void reset(void) {
 
 	receiver = wb_robot_get_device("receiver");
 	emitter  = wb_robot_get_device("emitter");
+	receiver2 = wb_robot_get_device("receiver2");
+	emitter2  = wb_robot_get_device("emitter2");
+	wb_receiver_enable(receiver2,64);
+
+	
 	if (emitter == 0)printf("missing emitter\n");
 	
 	int i;

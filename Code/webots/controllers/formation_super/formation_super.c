@@ -35,7 +35,7 @@ int t;
  most of the codes that you need for both approaches can be found in the labs (lab4 is particularly useful) 
 Think about the obstacles, do you need to know their exact position? 
 how can you differentiate between a robot and an obstacle if you use local perception? in one of your labs you had communication between robots where the distance 
-between a pair of robots could be found
+  between a pair of robots could be found
 if you decide to use the absolute positions of all the obstacles through the supervisor,how can you make it more realistic? e.g define a region around the robot where you include the obstacles? 
 The more realistic and less dependent on the supervisor you are, the better.
 goal is the red cylinder which can be moved around between different trials of your code
@@ -81,30 +81,30 @@ void send_init_poses(void)
     int i;
      
     for (i=0;i<FORMATION_SIZE;i++) {
-		// Get data
-		loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
-		loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
-		loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
+        // Get data
+        loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
+        loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
+        loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 //		printf("Supervisor %f %f %f\n",loc[i][0],loc[i][1],loc[i][2]);
 
         migrx = wb_supervisor_field_get_sf_vec3f(goal_field)[0];  //X
-		offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1]; //Y
-		migrz = wb_supervisor_field_get_sf_vec3f(goal_field)[2];  //Z
-		//printf("Migratory instinct: (%f, %f)\n",migrx,migrz);
-		orient_migr = -atan2f(migrx,migrz); // angle of migration urge
+        offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1]; //Y
+        migrz = wb_supervisor_field_get_sf_vec3f(goal_field)[2];  //Z
+        //printf("Migratory instinct: (%f, %f)\n",migrx,migrz);
+        orient_migr = -atan2f(migrx,migrz); // angle of migration urge
 		
         if (orient_migr<0) {
-			orient_migr+=2*M_PI; // Keep value between 0 and 2PI
-		}
+            orient_migr+=2*M_PI; // Keep value between 0 and 2PI
+        }
 	
-		// Send it out
-		sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz);
-		//printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
-		wb_emitter_send(emitter,buffer,strlen(buffer));
+        // Send it out
+        sprintf(buffer,"%1d#%f#%f#%f##%f#%f",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz);
+        //printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
+        wb_emitter_send(emitter,buffer,strlen(buffer));
 
-		// Run one step
-		wb_robot_step(TIME_STEP);
-	}
+        // Run one step
+        wb_robot_step(TIME_STEP);
+    }
 }
 
 
@@ -113,7 +113,7 @@ void send_init_poses(void)
  */
  
 int main(int argc, char *args[]) {
-	char buffer[255]; // buffer for sending data
+    char buffer[255]; // buffer for sending data
 	
 	//////////////////
 	// DEFINE GOAL  //
@@ -135,32 +135,32 @@ int main(int argc, char *args[]) {
          
          
     // reset and communication part
-	reset();
+    reset();
     printf("Supervisor resetted.\n");
-	send_init_poses(); //this function is here as an example for communication using the supervisor
-	printf("Init poses sent.\n");
+    send_init_poses(); //this function is here as an example for communication using the supervisor
+    printf("Init poses sent.\n");
 
 	
-	int i; // necessary declaration - not possible to declare it inside the for loop
-	// infinite loop
-	for(;;) {
+    int i; // necessary declaration - not possible to declare it inside the for loop
+    // infinite loop
+    for(;;) {
         wb_robot_step(TIME_STEP);
 
         if (t%10 == 0) { // every 10 TIME_STEP (640ms)
-          	for (i=0;i<FORMATION_SIZE;i++) {
+            for (i=0;i<FORMATION_SIZE;i++) {
                 // Get data
-		        loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
-		        loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
-		        loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
+                loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
+                loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
+                loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 
-		        if (i==0) {
-			        printf("Robot location %f %f\n",loc[i][0],loc[i][1]);
-		        }
+//		        if (i==0) {
+//			        printf("Robot location %f %f\n",loc[i][0],loc[i][1]);
+//		        }
 
-            	// Sending positions to the robots
-          		sprintf(buffer,"%1d#%f#%f#%f#%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
-          		wb_emitter_send(emitter,buffer,strlen(buffer));				
-          	}
+                // Sending positions to the robots
+                sprintf(buffer,"%1d#%f#%f#%f#%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
+                wb_emitter_send(emitter,buffer,strlen(buffer));				
+            }
 
             //////////////////////////////////////////////////
           	// Here we should then add the fitness function //
@@ -168,5 +168,11 @@ int main(int argc, char *args[]) {
           	
         }
         t += TIME_STEP;
-	}
+
+    }
 }
+
+
+
+
+

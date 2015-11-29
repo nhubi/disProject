@@ -1,39 +1,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// This file contains the definitions related to the motorschema 'move_to_goal'.                  //
+// This file contains the definitions related to the local communications                         //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef MS_MOVE_TO_GOAL
-#define MS_MOVE_TO_GOAL
+#ifndef LOCAL_COMMUNICATIONS
+#define LOCAL_COMMUNICATIONS
 
 
 #include "robot_state.h"
-#include "utils.h"
 
+void send_ping(void);
 
-// includes
+void process_received_ping_messages(int robot_id);
 
-//#include <???>
+void compute_other_robots_localisation(int robot_id);
 
-
-
-// definitions
-
-//#define WHATEVER
-
-
-
-// initializations
-
-//int dummy = 1
-
-
-
-// methods
-
-void get_move_to_goal_vector(float * direction, int robot_id);
 
 
 
