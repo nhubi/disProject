@@ -40,17 +40,12 @@ void get_noise_vector(float* direction) {
 	    x_rand = rand()/(float)RAND_MAX * 2 - 1;
         z_rand = rand()/(float)RAND_MAX * 2 - 1;
     }
-    if(robot_id == 0)
-        printf("Step %d    [%s] rand: (%1.2f, %1.2f)\n", step_counter, robot_name, x_rand, z_rand);
 
     if(fading){
         // if fading, the current direction is a linear combination of current and previous noise.
         float factor = (float)(step_counter+1)/noise_gen_frequency;
         direction[0] = factor*x_rand + (1.0 - factor)*prev_x_rand;
         direction[1] = factor*z_rand + (1.0 - factor)*prev_z_rand;
-
-        if(robot_id == 0)
-            printf("factor =  %1.2f --> (%1.2f, %1.2f)\n", factor, direction[0], direction[1]);
     
     } else {
         direction[0] = x_rand;
@@ -63,8 +58,6 @@ void get_noise_vector(float* direction) {
 
     // increase the step_counter
     step_counter++;
-    if(robot_id == 0)
-        printf("[%s] noise: (%1.2f, %1.2f)\n", robot_name, direction[0], direction[1]);
     
 	return;
 	

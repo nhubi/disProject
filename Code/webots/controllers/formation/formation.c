@@ -35,7 +35,7 @@ void computeDirection(){
     w_keep_formation  = 1;
     w_avoid_robot     = 1;
     w_avoid_obstacles = 5;
-    w_noise           = 5;
+    w_noise           = 2;
 
     // thresholds
     avoid_obst_min_threshold   =  60;
@@ -47,7 +47,7 @@ void computeDirection(){
 
     // noise parameters
     noise_gen_frequency = 10;
-    fading              = false;
+    fading              = true;
 
 
     // compute the direction vectors
