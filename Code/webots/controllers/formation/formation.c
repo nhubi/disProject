@@ -38,7 +38,7 @@ void computeDirection(){
     //      --> state machine?
 
     get_move_to_goal_vector(dir_goal, robot_id);
-    get_keep_formation_vector(dir_keep_formation, dir_goal);//, robot_id);
+    get_keep_formation_vector(dir_keep_formation, dir_goal);
     get_stat_obst_avoidance_vector(dir_avoid_obstacles, robot_id);
 
     int d;

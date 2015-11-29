@@ -19,9 +19,10 @@ const float robot_dist = 1.0/12.0;
 
 
 /*
- * Calculates a robot's vector that points to a direction which avoids obstacles.
+ * Calculates a robot's vector that points to a direction which allows
+ * him to reach his right position in the formation.
  */
-void get_keep_formation_vector(float* direction, float* dir_goal){//, int robot_id){
+void get_keep_formation_vector(float* direction, float* dir_goal){
     if(FORMATION_SIZE != 4)
     {
         printf("No formation is set for %d robots. Formation is considered only for a set of 4 robots.\n", FORMATION_SIZE);
@@ -48,7 +49,7 @@ void get_keep_formation_vector(float* direction, float* dir_goal){//, int robot_
  *    -> Direction of the x-axis : perpendicular to the z-axis so that the angle 
  *       from the z-axis to the x-axis is -pi/2
  */
-void get_relative_formation_coordinates(float* coordinates){//, int robot_id) {
+void get_relative_formation_coordinates(float* coordinates){
     if(formation_type == LINE) {
         coordinates[1] = 0.0;
         if(robot_id == 0)
