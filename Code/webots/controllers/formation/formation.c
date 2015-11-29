@@ -11,6 +11,7 @@
 #include "ms_keep_formation.h"
 #include "ms_avoid_static_obstacles.h"
 #include "ms_avoid_robots.h"
+#include "ms_noise.h"
 
 
 
@@ -27,13 +28,14 @@ void computeDirection(){
     float dir_keep_formation[2]  = {0, 0};
     float dir_avoid_robot[2]     = {0, 0};
     float dir_avoid_obstacles[2] = {0, 0};
+    float dir_noise[2]           = {0, 0};
 
     // each motorschema's weight
     w_goal            = 1;
     w_keep_formation  = 1;
     w_avoid_robot     = 1;
     w_avoid_obstacles = 5;
-    w_noise           = 1;
+    w_noise           = 5;
 
     // thresholds
     avoid_obst_min_threshold   =  60;
@@ -43,12 +45,17 @@ void computeDirection(){
     avoid_robot_min_threshold  =   0.05;
     avoid_robot_max_threshold  =   0.1;
 
+    // noise parameters
+    noise_gen_frequency = 10;
+    fading              = false;
+
 
     // compute the direction vectors
     get_move_to_goal_vector(dir_goal);
     get_keep_formation_vector(dir_keep_formation);
     get_stat_obst_avoidance_vector(dir_avoid_obstacles);
     get_avoid_robot_vector(dir_avoid_robot);
+    get_noise_vector(dir_noise);
 
 
     int d;
