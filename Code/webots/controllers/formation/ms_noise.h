@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// This file contains the definitions related to the motorschema 'avoid_robot'.                  //
+// This file contains the definitions related to the motorschema 'noise'.                         //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef AVOID_ROBOT
-#define AVOID_ROBOT
+#ifndef MS_NOISE_H
+#define MS_NOISE_H
 
 
 #include "robot_state.h"
@@ -25,15 +25,15 @@
 
 
 
-// initializations
+// declarations
 
-//int dummy = 1
-
+int noise_gen_frequency;  // defines, after how many steps a new random vector should be generated
+bool fading;              // true, if nice transition is wished from one random vector to the next
 
 
 // methods
 
-void get_avoid_robot_vector(float* direction,int robot_id);
+void get_noise_vector(float* direction);
 
 
 #endif

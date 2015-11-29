@@ -7,12 +7,12 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// This file contains everything related to the motorschema 'avoid_static_obstacles'.              //
+// This file contains everything related to the motorschema 'avoid_static_obstacles'.             //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-int distances[NB_SENSORS];      // contains the values of each sensor
+int distances[NB_SENSORS];                      // contains the values of each sensor
 int perc_pointer = 0;
 int perc_window[NB_SENSORS][PERC_WINDOW_SIZE];  // the last measured perceptions
 
@@ -23,7 +23,7 @@ int perc_window[NB_SENSORS][PERC_WINDOW_SIZE];  // the last measured perceptions
 /*
  * Calculates a robot's vector that points to a direction which avoids obstacles.
  */
-void get_stat_obst_avoidance_vector(float* direction, int robot_id, float lwb, float upb){
+void get_stat_obst_avoidance_vector(float* direction){
 
     // init direction (robot coordinates)
     float x_rob  = 0;
@@ -41,6 +41,10 @@ void get_stat_obst_avoidance_vector(float* direction, int robot_id, float lwb, f
 
     // sens_back_weight defines, how much sensor 3 and 4 should be weighted in z direction. 
     float sens_back_weight = -((sin(sens_dir[0])+sin(sens_dir[1])) / sin(sens_dir[3]));
+
+    // lower and upper bound (for not needing to use the long variable name)
+    float lwb = avoid_obst_min_threshold;
+    float upb = avoid_obst_max_threshold;
 
 
 
@@ -108,7 +112,4 @@ void get_stat_obst_avoidance_vector(float* direction, int robot_id, float lwb, f
             //dir_norm = norm(direction, 2);
         }
     } else {dir_norm = 0;}
-
-    if(robot_id == 0 || robot_id == 2)
-        printf("%s: avoid_obstacles rob_coords(%4.2f,%4.2f)\t-->\tabs_coords(%1.4f,%1.4f)\t-- tot_norm: %4.4f --> normed_norm: %1.3f -- sensor values <%d|%d|%d|%d|%d|%d|%d|%d>\n", robot_name, x_rob, z_rob, direction[0], direction[1], dir_norm, norm(direction, 2), distances[4], distances[5], distances[6], distances[7], distances[0], distances[1], distances[2], distances[3]);
 }

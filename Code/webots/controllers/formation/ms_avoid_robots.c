@@ -2,12 +2,12 @@
 #include <math.h>
 #include <string.h>
 
-#include "avoid_robot.h"
+#include "ms_avoid_robots.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// This file contains everything related to the motorschema 'move_to_goal'.                       //
+// This file contains everything related to the motorschema 'avoid_robots'.                       //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,7 +15,7 @@
 
 
 
-void get_avoid_robot_vector(float* direction,int robot_id) {
+void get_avoid_robot_vector(float* direction) {
 	int i;
 	float distance_matrix[FORMATION_SIZE][2];
 	float weight_vector[FORMATION_SIZE]; // It's initialized to 0 next
@@ -50,8 +50,6 @@ void get_avoid_robot_vector(float* direction,int robot_id) {
 		}
 
 	}
-	
-//	printf("Weight vector %f %f %f %f\n",weight_vector[0],weight_vector[1],weight_vector[2],weight_vector[3]);
 
 	
 	// normalise weight_vector (if sum<1 continue, else normalise to sum 1)
@@ -76,9 +74,9 @@ void get_avoid_robot_vector(float* direction,int robot_id) {
 		direction[0]-=(weight_vector[i]*distance_matrix[i][0]);
 		direction[1]-=(weight_vector[i]*distance_matrix[i][1]);
 	}
-//	printf("Robot %d\n",robot_id);
-//	printf("Direction %f %f\n",direction[0],direction[1]);
-//	printf("Weight vector %f %f %f %f\n",weight_vector[0],weight_vector[1],weight_vector[2],weight_vector[3]);
+    // printf("Robot %d\n",robot_id);
+    // printf("Direction %f %f\n",direction[0],direction[1]);
+    // printf("Weight vector %f %f %f %f\n",weight_vector[0],weight_vector[1],weight_vector[2],weight_vector[3]);
 	
 	return;
 	

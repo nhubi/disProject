@@ -1,25 +1,40 @@
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-
-#include "ms_keep_formation.h"
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// This file contains everything related to the motorschema 'keep_formation'.                     //
+// This file contains the definitions related to the motorschema 'avoid_robot'.                  //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+#ifndef AVOID_ROBOT
+#define AVOID_ROBOT
+
+
+#include "robot_state.h"
+#include "utils.h"
+
+
+// includes
+
+//#include <???>
 
 
 
+// definitions
 
-/*
- * Calculates a robot's vector that points to a direction which avoids obstacles.
- */
-void get_keep_formation_vector(float* direction){
-    direction[0] = 0.0;
-    direction[1] = 0.0;
-}
+//#define WHATEVER
+
+
+
+// declarations
+
+float avoid_robot_min_threshold;
+float avoid_robot_max_threshold;
+
+
+
+// methods
+
+void get_avoid_robot_vector(float* direction);
+
+
+#endif

@@ -23,15 +23,17 @@
 
 
 
-// initializations
+// declarations
 
-float sens_back_weight;  
+float sens_back_weight;
+float avoid_obst_min_threshold;
+float avoid_obst_max_threshold;
 
 
 
 // methods
 
-void get_stat_obst_avoidance_vector(float * direction, int robot_id, float lwb, float upb);
+void get_stat_obst_avoidance_vector(float * direction);
 
 
 #endif

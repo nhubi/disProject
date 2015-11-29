@@ -25,15 +25,16 @@
 
 
 
-// initializations
+// declarations
 
-//int dummy = 1
+float move_to_goal_min_threshold;
+float move_to_goal_max_threshold;
 
 
 
 // methods
 
-void get_move_to_goal_vector(float * direction, int robot_id);
+void get_move_to_goal_vector(float * direction);
 
 
 
