@@ -12,7 +12,7 @@
 
 // includes
 #include "robot_state.h"
-
+#include "utils.h"
 
 
 // definitions
@@ -27,7 +27,9 @@ extern const float robot_dist;  // Coefficient that determines the distance betw
 
 
 // methods
-void get_keep_formation_vector(float* direction, int robot_id, int formation_type);
-void get_formation_coordinates(float* coordinates, int robot_id, int formation_type);
+void get_keep_formation_vector(float* direction, float* dir_goal);
+void get_relative_formation_coordinates(float* coordinates);
+void get_absolute_formation_coordinates(float* coordinates, float* relative_coordinates, float* dir_goal); 
+
 
 #endif
