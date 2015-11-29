@@ -31,7 +31,7 @@ float sens_back_weight;
 
 // methods
 
-void get_stat_obst_avoidance_vector(float * direction, int robot_id, float lwb, float upb);
+void get_stat_obst_avoidance_vector(float * direction);
 
 
 #endif

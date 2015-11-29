@@ -33,7 +33,7 @@
 
 // methods
 
-void get_avoid_robot_vector(float* direction,int robot_id);
+void get_avoid_robot_vector(float* direction);
 
 
 #endif

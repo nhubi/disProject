@@ -15,7 +15,7 @@
 
 
 
-void get_move_to_goal_vector(float * direction, int robot_id) {
+void get_move_to_goal_vector(float * direction) {
 	int j;
 	for (j=0;j<2;j++) {
 		direction[j] = (migr[j]-unit_center[j]);

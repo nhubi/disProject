@@ -30,7 +30,7 @@
 
 // methods
 
-void get_keep_formation_vector(float* direction, int robot_id);
+void get_keep_formation_vector(float* direction);
 
 
 #endif
