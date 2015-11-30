@@ -14,6 +14,9 @@
 #include "ms_noise.h"
 
 
+
+
+
 /*
  * Combines the vectors from the 4 motorschemas and computes the corresponding wheel speed vector.
  * This vector can then be translated in actual wheel speeds.
@@ -35,12 +38,15 @@ void computeDirection(){
     w_noise           = 2;
 
     // thresholds
-    avoid_obst_min_threshold   =  60;
-    avoid_obst_max_threshold   = 200;
-    move_to_goal_min_threshold =   0.1;
-    move_to_goal_max_threshold =   0.5;
-    avoid_robot_min_threshold  =   0.05;
-    avoid_robot_max_threshold  =   0.1;
+    avoid_obst_min_threshold     =  60;
+    avoid_obst_max_threshold     = 200;
+    move_to_goal_min_threshold   =   0.1;
+    move_to_goal_max_threshold   =   0.5;
+    avoid_robot_min_threshold    =   0.05;
+    avoid_robot_max_threshold    =   0.1;
+    keep_formation_min_threshold =   0.03;
+    keep_formation_max_threshold =   0.1;
+
 
     // noise parameters
     noise_gen_frequency = 10;
@@ -87,12 +93,11 @@ int main(){
     msl = 0; msr = 0;
 	
 
-	
+
     // In this initialization, the common goal is communicated to the robot
     reset();        // Resetting the robot
     initial_pos();  // Initializing the robot's position
 	
-    
 	
     // Forever
     for(;;){
@@ -150,7 +155,7 @@ int main(){
 
     // Compute the unit center of the flock
     compute_unit_center();
-        
+    
     // Get direction vectors from each motorscheme and combine them in speed table
     computeDirection();
 

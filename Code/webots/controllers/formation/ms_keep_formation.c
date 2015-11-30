@@ -12,9 +12,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+//declarations
+void get_relative_formation_coordinates(float* coordinates);
+void get_absolute_formation_coordinates(float* coordinates, float* relative_coordinates, float* dir_goal); 
+
 
 //definitions
 const float robot_dist = 1.0/12.0;
+
+
 
 
 
@@ -38,7 +44,34 @@ void get_keep_formation_vector(float* direction, float* dir_goal){
     get_absolute_formation_coordinates(absolute_coordinates, relative_coordinates, dir_goal);
     direction[0] = absolute_coordinates[0] - loc[robot_id][0];
     direction[1] = absolute_coordinates[1] - loc[robot_id][1];
+
+
+    // zoning
+    float dir_norm = norm(direction, 2);
+    if(dir_norm < keep_formation_min_threshold){
+        // dead zone: don't correct the robot's direction
+        direction[0] = 0;
+        direction[1] = 0;
+
+    } else if(dir_norm > keep_formation_max_threshold){
+        // ballistic zone: correction vector has max length (norm = 1)
+        normalize(direction, direction, 2);
+    
+    } else {
+        // controlled zone: correction vector's norm is in [0, 1]
+        float range = (keep_formation_max_threshold - keep_formation_min_threshold);
+        float factor = (dir_norm - keep_formation_min_threshold) / range;
+        normalize(direction, direction, 2);
+        direction[0] *= factor;
+        direction[1] *= factor;
+    }
+
+    if(robot_id == 0)
+        printf("keep formation: (%1.4f, %1.4f); norm = %2.3f --> %2.3f\n", direction[0], direction[1], dir_norm, norm(direction, 2));
 }
+
+
+
 
 
 /* 
@@ -53,9 +86,9 @@ void get_relative_formation_coordinates(float* coordinates){
     if(formation_type == LINE) {
         coordinates[1] = 0.0;
         if(robot_id == 0)
-            coordinates[0] = robot_dist;
-        else if(robot_id == 1)
             coordinates[0] = 3.0 * robot_dist;
+        else if(robot_id == 1)
+            coordinates[0] = 1.0 * robot_dist;
         else if(robot_id == 2)
             coordinates[0] = -1.0 * robot_dist;
         else
@@ -109,6 +142,9 @@ void get_relative_formation_coordinates(float* coordinates){
 }
 
 
+
+
+
 /* 
  * Computes the position where each robot should be if it where on formation
  * in the carthesian system defined by the world, from the relative position
@@ -131,6 +167,6 @@ void get_absolute_formation_coordinates(float* coordinates, float* relative_coor
                    + unit_center[0];
     coordinates[1] = - relative_coordinates[0] * cosTheta
                    + relative_coordinates[1] * sinTheta 
-                   + unit_center[1];  
+                   + unit_center[1];
 }
 
