@@ -14,7 +14,7 @@
 #include "ms_noise.h"
 
 
-
+const float stop_criterion_distance_to_goal = 10E-20;
 
 
 /*
@@ -55,6 +55,7 @@ void computeDirection(){
 
     // compute the direction vectors
     get_move_to_goal_vector(dir_goal);
+    if(norm(dir_goal,2) < stop_criterion_distance_to_goal) return;
     get_keep_formation_vector(dir_keep_formation, dir_goal);
     get_stat_obst_avoidance_vector(dir_avoid_obstacles);
     get_avoid_robot_vector(dir_avoid_robot);
