@@ -2,8 +2,6 @@
 // This file contains any definition related to the robots' current states                        //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 #ifndef ROBOT_STATE_H
 #define ROBOT_STATE_H
 
@@ -30,6 +28,12 @@
 #define MAX_SPEED         800       // Maximum speed
 
 
+//Formation types
+
+#define LINE          0
+#define COLUMN        1
+#define WEDGE         2
+#define DIAMOND       3
 
 // other definitions
 
@@ -76,6 +80,10 @@ WbDeviceTag receiver;		        // Handle for the receiver node
 WbDeviceTag emitter;		        // Handle for the emitter node
 WbDeviceTag receiver2;		        // Handle for the receiver node
 WbDeviceTag emitter2;		        // Handle for the emitter node
+
+
+// Type of formation
+int formation_type;
 
 
 // motorschema weights

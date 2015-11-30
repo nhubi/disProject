@@ -32,18 +32,21 @@ void computeDirection(){
 
     // each motorschema's weight
     w_goal            = 1;
-    w_keep_formation  = 1;
+    w_keep_formation  = 5;
     w_avoid_robot     = 1;
     w_avoid_obstacles = 5;
     w_noise           = 2;
 
     // thresholds
-    avoid_obst_min_threshold   =  60;
-    avoid_obst_max_threshold   = 200;
-    move_to_goal_min_threshold =   0.1;
-    move_to_goal_max_threshold =   0.5;
-    avoid_robot_min_threshold  =   0.05;
-    avoid_robot_max_threshold  =   0.1;
+    avoid_obst_min_threshold     =  60;
+    avoid_obst_max_threshold     = 200;
+    move_to_goal_min_threshold   =   0.1;
+    move_to_goal_max_threshold   =   0.5;
+    avoid_robot_min_threshold    =   0.05;
+    avoid_robot_max_threshold    =   0.1;
+    keep_formation_min_threshold =   0.03;
+    keep_formation_max_threshold =   0.1;
+
 
     // noise parameters
     noise_gen_frequency = 10;
@@ -52,7 +55,7 @@ void computeDirection(){
 
     // compute the direction vectors
     get_move_to_goal_vector(dir_goal);
-    get_keep_formation_vector(dir_keep_formation);
+    get_keep_formation_vector(dir_keep_formation, dir_goal);
     get_stat_obst_avoidance_vector(dir_avoid_obstacles);
     get_avoid_robot_vector(dir_avoid_robot);
     get_noise_vector(dir_noise);
@@ -90,12 +93,11 @@ int main(){
     msl = 0; msr = 0;
 	
 
-	
+
     // In this initialization, the common goal is communicated to the robot
     reset();        // Resetting the robot
     initial_pos();  // Initializing the robot's position
 	
-    
 	
     // Forever
     for(;;){
@@ -153,7 +155,7 @@ int main(){
 
     // Compute the unit center of the flock
     compute_unit_center();
-        
+    
     // Get direction vectors from each motorscheme and combine them in speed table
     computeDirection();
 
