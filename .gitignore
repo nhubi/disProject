@@ -20,3 +20,9 @@ build/
 
 # Ignore all DS_Store (for mac)
 *.DS_Store
+
+# Ignore LaTeX stuff
+*.pdf
+*.log
+*.aux
+*.gz
