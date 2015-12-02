@@ -1,4 +1,4 @@
-#VRML_SIM V8.0.0 utf8
+#VRML_SIM V8.3.0 utf8
 WorldInfo {
   info [
     "Description"
@@ -290,5 +290,5 @@ Supervisor {
     }
   ]
   controller "formation_super"
-  controllerArgs "2"
+  controllerArgs "3"
 }

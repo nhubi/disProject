@@ -78,7 +78,7 @@ int main(){
     // In this initialization, the common goal is communicated to the robot
     reset();        // Resetting the robot
     initial_pos();  // Initializing the robot's position
-	initial_weights(); //Initializing the robot's weights
+    initial_weights(); //Initializing the robot's weights
 	
 	
     // Forever

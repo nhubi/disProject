@@ -8,6 +8,8 @@
 #include <webots/emitter.h>
 #include <webots/supervisor.h>
 
+#include "fitness.h"
+
 #define FORMATION_SIZE  4	// Number of robots in formation
 #define TIME_STEP      64	// [ms] Length of time step
 
@@ -20,6 +22,8 @@ WbFieldRef robs_rotation[FORMATION_SIZE];   // Robots rotation fields
 WbDeviceTag emitter;                        // Single emitter
 
 float loc[FORMATION_SIZE][3];               // Location of everybody in the formation: X,Y and Theta
+float prev_loc[FORMATION_SIZE][3];          // Previous location of everybody
+float speed[FORMATION_SIZE][3];             // Speed computed between the last 2 positions
 
 int formation_type;
 
@@ -128,10 +132,12 @@ void send_init_poses(void)
         }
 	
         // Send it out
-		// the scond paramether is 0 if we are sending poses, 1 if we are sending weights
-		sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",i,0,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
-		//printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
+        // the scond paramether is 0 if we are sending poses, 1 if we are sending weights
+        sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%d#",i,0,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
+        //printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
         wb_emitter_send(emitter,buffer,strlen(buffer));
+        
+        printf("%d\n",formation_type);
 
         // Run one step
         wb_robot_step(TIME_STEP);
@@ -146,7 +152,7 @@ void send_weights(void)
     for (i=0;i<FORMATION_SIZE;i++) {
 	
         // Send it out
-        sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",i,1,
+        sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f#",i,1,
             w_goal,w_keep_formation,w_avoid_robot,w_avoid_obstacles,w_noise,
             noise_gen_frequency,fading,
             avoid_obst_min_threshold,avoid_obst_max_threshold,move_to_goal_min_threshold,move_to_goal_max_threshold,
@@ -157,6 +163,32 @@ void send_weights(void)
         // Run one step
         wb_robot_step(TIME_STEP);
     }
+}
+
+int simulation_is_ended(void) {
+	float centre_x=0;
+	float centre_y=0;
+	float distance_to_goal=0;
+	
+	
+	// compute the formation center
+	int i;
+	for (i=0; i<FORMATION_SIZE; i++) {
+		centre_x+=loc[i][0];
+		centre_y+=loc[i][1];
+	}
+	centre_x/=FORMATION_SIZE;
+	centre_y/=FORMATION_SIZE;
+	
+	distance_to_goal+=(centre_x-migrx)*(centre_x-migrx);
+	distance_to_goal+=(centre_y-migrz)*(centre_y-migrz);
+	distance_to_goal=sqrt(distance_to_goal);
+		
+	if (distance_to_goal<0.2) {
+		return 1;
+	}
+	
+	return 0;
 }
 
 /*
@@ -233,6 +265,8 @@ int main(int argc, char *args[]) {
     send_weights();
     printf("Weights sent\n");
 
+	// setting up the fitness computation
+	reset_fitness_computation(FORMATION_SIZE);
 	
     int i; // necessary declaration - not possible to declare it inside the for loop
     // infinite loop
@@ -246,23 +280,29 @@ int main(int argc, char *args[]) {
                 loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
                 loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 
-//		        if (i==0) {
-//			        printf("Robot location %f %f\n",loc[i][0],loc[i][1]);
-//		        }
+				// Process the value
+				update_fitness_computation_for_robot(loc,prev_loc,speed,i,TIME_STEP*10);
 
                 // Sending positions to the robots
-                sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d",i+offset,0,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
-                wb_emitter_send(emitter,buffer,strlen(buffer));				
+                sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#",i+offset,0,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
+                wb_emitter_send(emitter,buffer,strlen(buffer));
+				
             }
-
+			
             //////////////////////////////////////////////////
           	// Here we should then add the fitness function //
             //////////////////////////////////////////////////
+			if (simulation_is_ended()) {
+				break;
+			}
           	
         }
         t += TIME_STEP;
 
     }
+    
+    float fitness=compute_fitness(FORMATION_SIZE);
+    printf("fitness = %f\n",fitness);
 }
 
 

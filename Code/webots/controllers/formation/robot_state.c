@@ -102,6 +102,7 @@ void initial_pos(void){
 		
 		inbuffer = (char*) wb_receiver_get_data(receiver);
 		sscanf(inbuffer,"%d#%d#%f#%f#%f##%f#%f#%d",&rob_nb,&initial_pos_flag,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1],&formation_type);
+		printf("Initial pos %d\n",formation_type);
 		// Only info about self will be taken into account at first.
 		
 		//robot_nb %= FORMATION_SIZE;
@@ -166,10 +167,9 @@ void initial_weights(void){
 			   &move_to_goal_min_threshold_temp,&move_to_goal_max_threshold_temp,
 			   &avoid_robot_min_threshold_temp,&avoid_robot_max_threshold_temp,
 			   &keep_formation_min_threshold_temp,&keep_formation_max_threshold_temp);
-//		sscanf(inbuffer,"%d#%f#%f#%f##%f#%f#%d",&rob_nb,&initial_weights_flag,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1],&formation_type);
+
 		// Only info about self will be taken into account at first.
 		
-		//robot_nb %= FORMATION_SIZE;
 		if (rob_nb == robot_id && initial_pos_flag==1)
 		{
 			// Initialize robot's weights
@@ -193,14 +193,6 @@ void initial_weights(void){
 			// noise
 			noise_gen_frequency=noise_gen_frequency_temp;
 			fading=fading_temp;
-			
-//			printf("weights\n%f\n%f\n%f\n%f\n%f\n",w_goal,w_keep_formation,w_avoid_robot,w_avoid_obstacles,w_noise);
-//			printf("thresholds\n%f\n%f\n%f\n%f\n%f\n%f\n%f\n%f\n",avoid_robot_min_threshold,avoid_robot_max_threshold,
-//				   avoid_obst_min_threshold,avoid_obst_max_threshold
-//				   ,keep_formation_min_threshold,keep_formation_max_threshold,
-//				   move_to_goal_min_threshold,move_to_goal_max_threshold);
-//			printf("noise\n%d\n%c\n",noise_gen_frequency,fading);
-//			
 			
 			initialized_weights[rob_nb] = 1;    // initialized = true
 			
