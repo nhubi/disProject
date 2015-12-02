@@ -120,6 +120,11 @@ void send_init_poses(void)
         loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
         loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 //		printf("Supervisor %f %f %f\n",loc[i][0],loc[i][1],loc[i][2]);
+		
+		// Initialise prev_loc
+		prev_loc[i][0]=loc[i][0];
+		prev_loc[i][1]=loc[i][1];
+		prev_loc[i][2]=loc[i][2];
 
         migrx = wb_supervisor_field_get_sf_vec3f(goal_field)[0];  //X
         offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1]; //Y
@@ -273,16 +278,25 @@ int main(int argc, char *args[]) {
     for(;;) {
         wb_robot_step(TIME_STEP);
 
-        if (t%10 == 0) { // every 10 TIME_STEP (640ms)
+        if (t%320 == 0) { // every 10 TIME_STEP (320ms)
+            //printf("%d\n",t);
             for (i=0;i<FORMATION_SIZE;i++) {
+                // Set prev_loc
+                prev_loc[i][0]=loc[i][0];
+                prev_loc[i][1]=loc[i][1];
+                prev_loc[i][2]=loc[i][2];
+				
                 // Get data
                 loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
                 loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
                 loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 
-				// Process the value
-				update_fitness_computation_for_robot(loc,prev_loc,speed,i,TIME_STEP*10);
-
+				
+				
+                // Process the value
+                update_fitness_computation_for_robot(loc,prev_loc,speed,i,TIME_STEP*5/1000.0);
+                  
+                
                 // Sending positions to the robots
                 sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#",i+offset,0,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
                 wb_emitter_send(emitter,buffer,strlen(buffer));
@@ -291,10 +305,10 @@ int main(int argc, char *args[]) {
 			
             //////////////////////////////////////////////////
           	// Here we should then add the fitness function //
-            //////////////////////////////////////////////////
-			if (simulation_is_ended()) {
-				break;
-			}
+              //////////////////////////////////////////////////
+            if (simulation_is_ended()) {
+                break;
+            }
           	
         }
         t += TIME_STEP;

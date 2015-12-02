@@ -18,11 +18,15 @@ double compute_fitness(int FORMATION_SIZE) {
 	printf("%f\n",speed_sum[1][0]);
 	printf("%f\n",speed_sum[2][0]);
 	printf("%f\n",speed_sum[3][0]);
-	printf("%f\n",mean_delta_v);
+	printf("%d\n",number_of_time_step);
+
 
 	
 	mean_v=mean_v/number_of_time_step/FORMATION_SIZE;
 	mean_delta_v=mean_delta_v/number_of_time_step/FORMATION_SIZE;
+
+	printf("%f\n",mean_v);
+	printf("%f\n",mean_delta_v);
 	
 	return mean_v*(1-sqrt(mean_delta_v));
 }
@@ -34,8 +38,10 @@ void update_fitness_computation_for_robot(float loc[4][3],float prev_loc[4][3],f
 	// compute the speed
 	compute_speed(loc,prev_loc,speed,robot_id,time_step);
 	
+//	printf("%f\n",sqrt(speed[robot_id][0]*speed[robot_id][0]));
+	
 	// compute the absolute value of the speed (speed_sum[robot_id][0])
-	speed_sum[robot_id][0]+=sqrt(speed[robot_id][0]*speed[robot_id][0]+speed[robot_id][1]*speed[robot_id][2]);
+	speed_sum[robot_id][0]+=sqrt(speed[robot_id][0]*speed[robot_id][0]+speed[robot_id][1]*speed[robot_id][1]);
 	
 	// compute the absolute value of the "turning speed"
 	speed_sum[robot_id][1]+=fabs(speed[robot_id][2]);
