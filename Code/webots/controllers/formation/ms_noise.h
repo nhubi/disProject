@@ -27,8 +27,7 @@
 
 // declarations
 
-int noise_gen_frequency;  // defines, after how many steps a new random vector should be generated
-bool fading;              // true, if nice transition is wished from one random vector to the next
+
 
 
 // methods

@@ -31,6 +31,32 @@ WbNodeRef goal_id;  // Goal node
 WbFieldRef goal_field;    // Goal translation field
 int t;
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Declaration of all the paramethers that have to be modified by PSO. They have to be passed to the robot controllers. //
+
+// motorschema weights
+float w_goal;
+float w_keep_formation;
+float w_avoid_robot;
+float w_avoid_obstacles;
+float w_noise;
+
+// Noise paramethers
+int noise_gen_frequency;  // defines, after how many steps a new random vector should be generated
+int fading;              // 1, if nice transition is wished from one random vector to the next, otherwise 0
+
+// Thresholds
+float avoid_obst_min_threshold;
+float avoid_obst_max_threshold;
+float move_to_goal_min_threshold;
+float move_to_goal_max_threshold;
+float avoid_robot_min_threshold;
+float avoid_robot_max_threshold;
+float keep_formation_min_threshold; // < min threshold: dead zone, no correction of direction
+float keep_formation_max_threshold; // > max threshold: ballistic zone, full correction of direction
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 //You can add the rest of the required variables in a similar fashion and initialize them similar to the robots in the simplest case!
 
 /*----------------- for the goal and obstacles you might also need to ask the supervisor depending on the approach you take:
@@ -102,8 +128,9 @@ void send_init_poses(void)
         }
 	
         // Send it out
-        sprintf(buffer,"%1d#%f#%f#%f##%f#%f#%1d",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
-        //printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
+		// the scond paramether is 0 if we are sending poses, 1 if we are sending weights
+		sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",i,0,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
+		//printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
         wb_emitter_send(emitter,buffer,strlen(buffer));
 
         // Run one step
@@ -111,6 +138,26 @@ void send_init_poses(void)
     }
 }
 
+void send_weights(void)
+{
+    char buffer[255];	// Buffer for sending data
+    int i;
+     
+    for (i=0;i<FORMATION_SIZE;i++) {
+	
+        // Send it out
+        sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",i,1,
+            w_goal,w_keep_formation,w_avoid_robot,w_avoid_obstacles,w_noise,
+            noise_gen_frequency,fading,
+            avoid_obst_min_threshold,avoid_obst_max_threshold,move_to_goal_min_threshold,move_to_goal_max_threshold,
+            avoid_robot_min_threshold,avoid_robot_max_threshold,keep_formation_min_threshold,keep_formation_max_threshold);
+
+        wb_emitter_send(emitter,buffer,strlen(buffer));
+
+        // Run one step
+        wb_robot_step(TIME_STEP);
+    }
+}
 
 /*
  * Main function.
@@ -157,6 +204,34 @@ int main(int argc, char *args[]) {
     printf("Supervisor resetted.\n");
     send_init_poses(); //this function is here as an example for communication using the supervisor
     printf("Init poses sent.\n Chosen formation: %s.\n", formation);
+    
+    // declare the starting weights
+    
+    // each motorschema's weight
+    w_goal            = 1;
+    w_keep_formation  = 5;
+    w_avoid_robot     = 1;
+    w_avoid_obstacles = 5;
+    w_noise           = 2;
+
+    // thresholds
+    avoid_obst_min_threshold     =  60;
+    avoid_obst_max_threshold     = 200;
+    move_to_goal_min_threshold   =   0.1;
+    move_to_goal_max_threshold   =   0.5;
+    avoid_robot_min_threshold    =   0.05;
+    avoid_robot_max_threshold    =   0.1;
+    keep_formation_min_threshold =   0.03;
+    keep_formation_max_threshold =   0.1;
+
+
+    // noise parameters
+    noise_gen_frequency = 10;
+    fading              = 1;
+    
+    // sending weights
+    send_weights();
+    printf("Weights sent\n");
 
 	
     int i; // necessary declaration - not possible to declare it inside the for loop
@@ -176,7 +251,7 @@ int main(int argc, char *args[]) {
 //		        }
 
                 // Sending positions to the robots
-                sprintf(buffer,"%1d#%f#%f#%f#%f#%f#%1d",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
+                sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d",i+offset,0,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
                 wb_emitter_send(emitter,buffer,strlen(buffer));				
             }
 
