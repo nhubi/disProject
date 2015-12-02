@@ -43,7 +43,7 @@ float w_noise;
 
 // Noise paramethers
 int noise_gen_frequency;  // defines, after how many steps a new random vector should be generated
-bool fading;              // true, if nice transition is wished from one random vector to the next
+int fading;              // 1, if nice transition is wished from one random vector to the next, otherwise 0
 
 // Thresholds
 float avoid_obst_min_threshold;
@@ -128,8 +128,9 @@ void send_init_poses(void)
         }
 	
         // Send it out
-        sprintf(buffer,"%1d#%f#%f#%f##%f#%f#%1d",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
-        //printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
+		// the scond paramether is 0 if we are sending poses, 1 if we are sending weights
+		sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",i,0,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
+		//printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
         wb_emitter_send(emitter,buffer,strlen(buffer));
 
         // Run one step
@@ -145,8 +146,12 @@ void send_weights(void)
     for (i=0;i<FORMATION_SIZE;i++) {
 	
         // Send it out
-        sprintf(buffer,"%1d#%f#%f#%f##%f#%f#%1d",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
-        //printf("%1d#%f#%f#%f\n",i,loc[i][0],loc[i][1],loc[i][2]);
+        sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",i,1,
+            w_goal,w_keep_formation,w_avoid_robot,w_avoid_obstacles,w_noise,
+            noise_gen_frequency,fading,
+            avoid_obst_min_threshold,avoid_obst_max_threshold,move_to_goal_min_threshold,move_to_goal_max_threshold,
+            avoid_robot_min_threshold,avoid_robot_max_threshold,keep_formation_min_threshold,keep_formation_max_threshold);
+
         wb_emitter_send(emitter,buffer,strlen(buffer));
 
         // Run one step
@@ -222,10 +227,10 @@ int main(int argc, char *args[]) {
 
     // noise parameters
     noise_gen_frequency = 10;
-    fading              = true;
+    fading              = 1;
     
     // sending weights
-    send_weight();
+    send_weights();
     printf("Weights sent\n");
 
 	
@@ -246,7 +251,7 @@ int main(int argc, char *args[]) {
 //		        }
 
                 // Sending positions to the robots
-                sprintf(buffer,"%1d#%f#%f#%f#%f#%f#%1d",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
+                sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d",i+offset,0,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
                 wb_emitter_send(emitter,buffer,strlen(buffer));				
             }
 

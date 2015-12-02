@@ -27,8 +27,7 @@
 
 // declarations
 
-float avoid_robot_min_threshold;
-float avoid_robot_max_threshold;
+
 
 
 
