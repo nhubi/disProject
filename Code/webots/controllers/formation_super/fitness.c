@@ -38,16 +38,24 @@ void update_fitness_computation_for_robot(float loc[4][3],float prev_loc[4][3],f
 	// compute the speed
 	compute_speed(loc,prev_loc,speed,robot_id,time_step);
 	
-//	printf("%f\n",sqrt(speed[robot_id][0]*speed[robot_id][0]));
 	
 	// compute the absolute value of the speed (speed_sum[robot_id][0])
 	speed_sum[robot_id][0]+=sqrt(speed[robot_id][0]*speed[robot_id][0]+speed[robot_id][1]*speed[robot_id][1]);
+	
+	
+	if (robot_id==0) {
+//		printf("partial %f %f\n",speed[robot_id][0],speed[robot_id][1]);
+//		printf("total speed %f\n",sqrt(speed[robot_id][0]*speed[robot_id][0]+speed[robot_id][1]*speed[robot_id][1]));
+//		printf("sum %f\n",speed_sum[robot_id][0]	);
+	}
 	
 	// compute the absolute value of the "turning speed"
 	speed_sum[robot_id][1]+=fabs(speed[robot_id][2]);
 	
 	// update time_step
-	number_of_time_step++;
+	if (robot_id==0) {
+		number_of_time_step++;
+	}
 }
 
 
