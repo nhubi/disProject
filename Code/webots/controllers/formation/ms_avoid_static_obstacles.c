@@ -12,9 +12,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-int distances[NB_SENSORS];                      // contains the values of each sensor
+float distances[NB_SENSORS];                      // contains the values of each sensor
 int perc_pointer = 0;
-int perc_window[NB_SENSORS][PERC_WINDOW_SIZE];  // the last measured perceptions
+float perc_window[NB_SENSORS][PERC_WINDOW_SIZE];  // the last measured perceptions
 
 
 
