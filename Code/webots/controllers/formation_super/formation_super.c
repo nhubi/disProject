@@ -10,8 +10,9 @@
 
 #include "fitness.h"
 
-#define FORMATION_SIZE  4	// Number of robots in formation
-#define TIME_STEP      64	// [ms] Length of time step
+#define FORMATION_SIZE       4	// Number of robots in formation
+#define TIME_STEP            64	// [ms] Length of time step
+#define NUMBER_OF_OBSTACLES  6     // Number of obstacles 
 
 //Formation types
 #define DEFAULT_FORMATION "line"// Line formation as default
@@ -21,11 +22,16 @@ WbFieldRef robs_trans[FORMATION_SIZE];      // Robots translation fields
 WbFieldRef robs_rotation[FORMATION_SIZE];   // Robots rotation fields
 WbDeviceTag emitter;                        // Single emitter
 
+WbNodeRef  obstacles[NUMBER_OF_OBSTACLES];            // Obstacles nodes
+WbFieldRef obstacles_trans[NUMBER_OF_OBSTACLES];      // Obstacles translation fields
+
 float loc[FORMATION_SIZE][3];               // Location of everybody in the formation: X,Y and Theta
 float prev_loc[FORMATION_SIZE][3];          // Previous location of everybody
 float speed[FORMATION_SIZE][3];             // Speed computed between the last 2 positions
 
 int formation_type;
+
+float obstacle_loc[NUMBER_OF_OBSTACLES][2];               // Location of everybody in the formation: X,Y and Theta
 
 // Variable for goal:
 int offset;         // Offset of robots number
@@ -82,20 +88,35 @@ goal is the red cylinder which can be moved around between different trials of y
  * Initialize robot positions and devices
  */
 void reset(void) {
-	wb_robot_init();
-	emitter = wb_robot_get_device("emitter");
-	if (emitter==0) printf("missing emitter\n");
+    wb_robot_init();
+    emitter = wb_robot_get_device("emitter");
+    if (emitter==0) printf("missing emitter\n");
 	
-	char rob[5] = "rob0";
-	int i;
-	for (i=0;i<FORMATION_SIZE;i++) {
-		sprintf(rob,"rob%d",i);
-		robs[i]          = wb_supervisor_node_get_from_def(rob);
-		robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
-		robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
-	}
-	goal_id = wb_supervisor_node_get_from_def("goal-node");
-	goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+    char rob[5] = "rob0";
+    int i;
+    for (i=0;i<FORMATION_SIZE;i++) {
+        sprintf(rob,"rob%d",i);
+        robs[i]          = wb_supervisor_node_get_from_def(rob);
+        robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
+        robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
+    }
+	
+    goal_id = wb_supervisor_node_get_from_def("goal-node");
+    goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+
+    
+    //obstacle initialisation    	
+    char obs[5]="obs0";
+    for (i=0;i<NUMBER_OF_OBSTACLES;i++) {
+        sprintf(obs,"obs%d",i);
+        obstacles[i]= wb_supervisor_node_get_from_def(obs);
+        obstacles_trans[i]=wb_supervisor_node_get_field(obstacles[i],"translation");
+        
+        obstacle_loc[i][0] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[0];       // X
+        obstacle_loc[i][1] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[2];       // Z
+    }
+    
+
 }
 
 
@@ -121,10 +142,10 @@ void send_init_poses(void)
         loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 //		printf("Supervisor %f %f %f\n",loc[i][0],loc[i][1],loc[i][2]);
 		
-		// Initialise prev_loc
-		prev_loc[i][0]=loc[i][0];
-		prev_loc[i][1]=loc[i][1];
-		prev_loc[i][2]=loc[i][2];
+        // Initialise prev_loc
+        prev_loc[i][0]=loc[i][0];
+        prev_loc[i][1]=loc[i][1];
+        prev_loc[i][2]=loc[i][2];
 
         migrx = wb_supervisor_field_get_sf_vec3f(goal_field)[0];  //X
         offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1]; //Y
@@ -271,7 +292,7 @@ int main(int argc, char *args[]) {
     printf("Weights sent\n");
 
     // setting up the fitness computation
-    reset_fitness_computation(FORMATION_SIZE,migrx,migrz);
+    reset_fitness_computation(FORMATION_SIZE,migrx,migrz,obstacle_loc);
 	
     int i; // necessary declaration - not possible to declare it inside the for loop
     // infinite loop

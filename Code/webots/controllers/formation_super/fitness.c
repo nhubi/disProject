@@ -113,16 +113,24 @@ void compute_speed(float loc[4][3],float prev_loc[4][3],float speed[4][3],int ro
 /*
  * Called at the beginning of the simulation to reset it
  */
-void reset_fitness_computation(int FORMATION_SIZE,float migrx,float migrz) {
-	number_of_time_step=0;
-	int i;
-	for (i=0; i<FORMATION_SIZE; i++) {
-		speed_sum[i][0]=0;
-		speed_sum[i][1]=0;
-		keep_formation_distance[i]=0;
-	}
-	migr[0]=migrx;
-	migr[1]=migrz;
+void reset_fitness_computation(int FORMATION_SIZE,float migrx,float migrz,float obstacle_loc[6][2]) {
+    number_of_time_step=0;
+    int i;
+    for (i=0; i<FORMATION_SIZE; i++) {
+        speed_sum[i][0]=0;
+        speed_sum[i][1]=0;
+        keep_formation_distance[i]=0;
+    }
+    
+    // Goal
+    migr[0]=migrx;
+    migr[1]=migrz;
+    
+    //Obstacle
+    for (i=0; i<6; i++) {
+        fitness_obstacle_loc[i][0]=obstacle_loc[i][0];        
+        fitness_obstacle_loc[i][1]=obstacle_loc[i][1];
+    }
 }
 
 
