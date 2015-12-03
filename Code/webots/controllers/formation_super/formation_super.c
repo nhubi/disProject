@@ -270,8 +270,8 @@ int main(int argc, char *args[]) {
     send_weights();
     printf("Weights sent\n");
 
-	// setting up the fitness computation
-	reset_fitness_computation(FORMATION_SIZE);
+    // setting up the fitness computation
+    reset_fitness_computation(FORMATION_SIZE,migrx,migrz);
 	
     int i; // necessary declaration - not possible to declare it inside the for loop
     // infinite loop
@@ -290,11 +290,10 @@ int main(int argc, char *args[]) {
                 loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
                 loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
                 loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
-                if (i==0)
-                  printf("partial %f\n",loc[i][2]);	
+             
 				
                 // Process the value
-                update_fitness_computation_for_robot(loc,prev_loc,speed,i,TIME_STEP*5/1000.0);
+                update_fitness_computation_for_robot(loc,prev_loc,speed,i,TIME_STEP*5/1000.0,formation_type);
                   
                 
                 // Sending positions to the robots
