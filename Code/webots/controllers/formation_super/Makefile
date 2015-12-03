@@ -44,6 +44,8 @@
 ###
 ###-----------------------------------------------------------------------------
 
+C_SOURCES = pso_ocba.c simulation.c formation_super.c
+
 ### Do not modify: this includes Webots global Makefile.include
 space :=
 space +=
