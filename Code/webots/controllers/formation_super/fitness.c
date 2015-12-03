@@ -7,11 +7,13 @@
 double compute_fitness(int FORMATION_SIZE) {
 	double mean_v=0;
 	double mean_delta_v=0;
+	double mean_formation_distance=0;
 	
 	int i;
 	for (i=0; i<FORMATION_SIZE; i++) {
 		mean_v+=speed_sum[i][0];
 		mean_delta_v+=speed_sum[i][1];
+		mean_formation_distance+=keep_formation_distance[i];
 	}
 	
 	/*
@@ -19,15 +21,17 @@ double compute_fitness(int FORMATION_SIZE) {
 	printf("%f\n",speed_sum[1][0]);
 	printf("%f\n",speed_sum[2][0]);
 	*/
-	printf("%f\n",keep_formation_distance[0]);
          
 
 	
 	mean_v=mean_v/number_of_time_step/FORMATION_SIZE;
 	mean_delta_v=mean_delta_v/number_of_time_step/FORMATION_SIZE;
+	mean_formation_distance=mean_formation_distance/FORMATION_SIZE/number_of_time_step;
 
 	printf("%f\n",mean_v);
 	printf("%f\n",mean_delta_v);
+	printf("%f\n",mean_formation_distance);
+
 	
 	return mean_v*(1-sqrt(mean_delta_v));
 }
@@ -80,11 +84,13 @@ void update_keep_formation_distance(float loc[4][3],int robot_id, int formation_
         unit_center[j] /= 4;
     }
     
+    get_move_to_goal_vector(dir_goal,unit_center);
     get_relative_formation_coordinates(relative_coordinates,formation_type,robot_id);
     get_absolute_formation_coordinates(absolute_coordinates, relative_coordinates, dir_goal,unit_center);
     direction[0] = absolute_coordinates[0] - loc[robot_id][0];
     direction[1] = absolute_coordinates[1] - loc[robot_id][1];
-    
+    //printf("%f %f %f\n",relative_coordinates[0],relative_coordinates[1],relative_coordinates[2]);
+    //printf("%f %f\n",direction[0],direction[1]);
     // compute the norm of direction
     keep_formation_distance[robot_id]+=sqrt(direction[0]*direction[0]+direction[1]*direction[1]);
 }
@@ -211,6 +217,8 @@ void get_absolute_formation_coordinates(float* coordinates, float* relative_coor
     // Theta is the angle between the x-axis and the direction vector to the goal.  
     float cosTheta = dir_goal[0] / dist_to_goal;
     float sinTheta = dir_goal[1] / dist_to_goal;
+
+    //printf("%f %f\n",dir_goal[0],dir_goal[1]);
 
     // Changing system coordinates, rotation + translation, taking care of the right angle Theta
     coordinates[0] = relative_coordinates[0] * sinTheta
