@@ -10,12 +10,15 @@
 
 #define AXLE_LENGTH         0.052   // Distance between wheels of robot (meters)
 
+// Global variables
+float fitness_obstacle_loc[6][2]; // Position of obstacle
+
 // At every time step we add the quantity, at the end we compute the mean
 float speed_sum[4][2]; // Speed and the variation of angle in absolute value
 float keep_formation_distance[4]; // Sum of the distances from the place in formation where they should be
-float maximum_sensor_sum[4]; // Sum of the maximum values of the sensors
-float fitness_obstacle_loc[6][2]; // Position of obstacle
+float obstacle_term_sum[4]; // Sum of the maximum values of the sensors
 int number_of_time_step;         // necessary to compute the mean
+
 
 double compute_fitness(int FORMATION_SIZE);
 
@@ -24,6 +27,8 @@ void compute_speed(float loc[4][3],float prev_loc[4][3],float speed[4][3],int ro
 void update_fitness_computation_for_robot(float loc[4][3],float prev_loc[4][3],float speed[4][3],int robot_id,float time_step,int formation_type);
 
 void update_speed_sum(float loc[4][3],float prev_loc[4][3],float speed[4][3],int robot_id,float time_step);
+
+void update_obstacle_term(float loc[4][3],int robot_id);
 
 void update_keep_formation_distance(float loc[4][3],int robot_id, int formation_type);
 

@@ -8,12 +8,14 @@ double compute_fitness(int FORMATION_SIZE) {
 	double mean_v=0;
 	double mean_delta_v=0;
 	double mean_formation_distance=0;
+	double mean_obstacle_term=0;
 	
 	int i;
 	for (i=0; i<FORMATION_SIZE; i++) {
 		mean_v+=speed_sum[i][0];
 		mean_delta_v+=speed_sum[i][1];
 		mean_formation_distance+=keep_formation_distance[i];
+		mean_obstacle_term+=obstacle_term_sum[i];
 	}
 	
 	/*
@@ -27,10 +29,13 @@ double compute_fitness(int FORMATION_SIZE) {
 	mean_v=mean_v/number_of_time_step/FORMATION_SIZE;
 	mean_delta_v=mean_delta_v/number_of_time_step/FORMATION_SIZE;
 	mean_formation_distance=mean_formation_distance/FORMATION_SIZE/number_of_time_step;
+	mean_obstacle_term=mean_obstacle_term/FORMATION_SIZE/number_of_time_step;
 
 	printf("%f\n",mean_v);
 	printf("%f\n",mean_delta_v);
 	printf("%f\n",mean_formation_distance);
+	printf("%f\n",mean_obstacle_term);
+
 
 	
 	return mean_v*(1-sqrt(mean_delta_v));
@@ -44,6 +49,7 @@ void update_fitness_computation_for_robot(float loc[4][3],float prev_loc[4][3],f
 	
 	update_keep_formation_distance(loc,robot_id,formation_type);
 	
+	update_obstacle_term(loc,robot_id);
 	// update time_step
 	if (robot_id==0) {
 		number_of_time_step++;
@@ -62,6 +68,26 @@ void update_speed_sum(float loc[4][3],float prev_loc[4][3],float speed[4][3],int
 	
     // compute the absolute value of the "turning speed"
     speed_sum[robot_id][1]+=fabs(speed[robot_id][2]);
+}
+
+/*
+ * Computes the obstacle term
+ */
+void update_obstacle_term(float loc[4][3],int robot_id) {
+    float minimum_obstacle_distance=1000000;
+    float distance_vector[2];
+    float distance;
+    int i;
+    for (i=0;i<6;i++) {
+        distance_vector[0]=loc[robot_id][0]-fitness_obstacle_loc[i][0];
+        distance_vector[1]=loc[robot_id][1]-fitness_obstacle_loc[i][1];
+        distance=sqrt(distance_vector[0]*distance_vector[0]+distance_vector[1]*distance_vector[1]);
+        if (distance<minimum_obstacle_distance) {
+            minimum_obstacle_distance=distance;
+        }
+    }
+    
+    obstacle_term_sum[robot_id]+=minimum_obstacle_distance;
 }
 
 /*
