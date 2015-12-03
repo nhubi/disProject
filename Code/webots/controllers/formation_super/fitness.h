@@ -8,6 +8,8 @@
 #include <math.h>
 #include <stdio.h>
 
+#define AXLE_LENGTH         0.052   // Distance between wheels of robot (meters)
+
 // At every time step we add the quantity, at the end we compute the mean
 // We store the speed and the variation of angle in absolute value
 float speed_sum[4][2]; 

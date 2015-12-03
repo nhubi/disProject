@@ -44,7 +44,7 @@ void update_fitness_computation_for_robot(float loc[4][3],float prev_loc[4][3],f
 	
 	
 	if (robot_id==0) {
-//		printf("partial %f %f\n",speed[robot_id][0],speed[robot_id][1]);
+		//printf("partial %f\n",speed[robot_id][2]);
 //		printf("total speed %f\n",sqrt(speed[robot_id][0]*speed[robot_id][0]+speed[robot_id][1]*speed[robot_id][1]));
 //		printf("sum %f\n",speed_sum[robot_id][0]	);
 	}
@@ -64,9 +64,12 @@ void update_fitness_computation_for_robot(float loc[4][3],float prev_loc[4][3],f
  */
 void compute_speed(float loc[4][3],float prev_loc[4][3],float speed[4][3],int robot_id,float time_step) {
 	int i;
-	for (i=0; i<3; i++) {
+	for (i=0; i<2; i++) {
 		speed[robot_id][i]=(loc[robot_id][i]-prev_loc[robot_id][i])/time_step;
 	}
+	
+	// for the difference in speed between wheels: DeltaV=2*DeltaTheta*(AXLE_LENGTH/2)/DeltaT
+	speed[robot_id][2]=AXLE_LENGTH*(loc[robot_id][2]-prev_loc[robot_id][2])/time_step;
 }
 
 
