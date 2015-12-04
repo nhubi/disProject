@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// The methods in this file are used to modify the world, communicating with the robots starting  //
+// The methods in this file are used to modify the world, communicating with the robots, starting //
 // simulations etc.                                                                               //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@ double new_rot[FORMATION_SIZE][4];
 
 
 
+
 /*
  * Initialize robot positions and devices
  */
@@ -43,6 +44,8 @@ void reset(void) {
     }
     goal_id = wb_supervisor_node_get_from_def("goal-node");
     goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+    
+    simulation_duration = 0;
 }
 
 
@@ -57,7 +60,7 @@ void send_init_poses(void)
     char buffer[255];	// Buffer for sending data
     int i;
      
-    for (i=0;i<FORMATION_SIZE;i++) {
+    for (i = 0; i < FORMATION_SIZE; i++) {
 
         // Get robot's position
         loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
@@ -86,12 +89,33 @@ void send_init_poses(void)
 
 
 
+void send_current_poses(void){
+    char buffer[255]; // buffer for sending data
+    int i;
+
+    for (i = 0; i < FORMATION_SIZE; i++) {
+        // Get data
+        loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
+        loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
+        loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
+
+        // Sending positions to the robots
+        sprintf(buffer,"%1d#%f#%f#%f#%f#%f#%1d",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
+        wb_emitter_send(emitter,buffer,strlen(buffer));				
+    }
+}
+
+
+
+
+
 /*
  * Generates random number in [0,1]
  */
 float rand_01(void) {
     return ((float)rand_01())/((float)RAND_MAX);
 }
+
 
 
 
@@ -117,6 +141,7 @@ void random_pos(int robot_id) {
     wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[robot_id],"rotation"), 
                                         new_rot[robot_id]);
 }
+
 
 
 

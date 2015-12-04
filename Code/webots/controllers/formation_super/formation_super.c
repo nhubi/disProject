@@ -14,9 +14,6 @@
 
 
 
-int t;
-
-
 
 
 
@@ -24,7 +21,6 @@ int t;
  * Main function.
  */
 int main(int argc, char *args[]) {
-    char buffer[255]; // buffer for sending data
     
     char* formation = DEFAULT_FORMATION; 
     if(argc == 2) {
@@ -47,31 +43,21 @@ int main(int argc, char *args[]) {
     send_init_poses(); //this function is here as an example for communication using the supervisor
     printf("Init poses sent.\n Chosen formation: %s.\n", formation);
 
-	
-    int i; // counter for inner for loop
     
     // infinite loop
     for(;;) {
         wb_robot_step(TIME_STEP);
 
-        if (t%10 == 0) { // every 10 TIME_STEP (640ms)
-            for (i=0;i<FORMATION_SIZE;i++) {
-                // Get data
-                loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
-                loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
-                loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
-
-                // Sending positions to the robots
-                sprintf(buffer,"%1d#%f#%f#%f#%f#%f#%1d",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
-                wb_emitter_send(emitter,buffer,strlen(buffer));				
-            }
+        // every 10 TIME_STEP (640ms)
+        if (simulation_duration % 10 == 0) {
+            send_current_poses();
 
             //////////////////////////////////////////////////
           	// Here we should then add the fitness function //
             //////////////////////////////////////////////////
           	
         }
-        t += TIME_STEP;
+        simulation_duration += TIME_STEP;
     }
 }
 

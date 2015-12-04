@@ -42,8 +42,9 @@ float orient_migr;      // Migration orientation
 WbNodeRef goal_id;      // Goal node
 WbFieldRef goal_field;  // Goal translation field
 
-float loc[FORMATION_SIZE][3];               // Each robot's locations: X,Y and Theta
-int formation_type;
+float loc[FORMATION_SIZE][3];   // Each robot's locations: X,Y and Theta
+int formation_type;             // line, column, wedge or diamond
+int simulation_duration;        // ms since simulation start
 
 
 
@@ -53,6 +54,7 @@ void reset(void);
 void send_init_poses(void);
 float rand_01(void);
 void random_pos(int robot_id);
+void send_current_poses(void);
 
 
 #endif
