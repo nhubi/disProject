@@ -23,17 +23,25 @@ double new_loc[FORMATION_SIZE][3];
 double new_rot[FORMATION_SIZE][4];
 double new_loc_obs[NB_OBSTACLES][3];
 double new_rot_obs[NB_OBSTACLES][4];
+double new_loc_goal[3];
 
+
+/* 
+ * Initialization common to the running world AND the pso worlds;
+ * it should be called only once at the beginning of the run. 
+ */
+void initialize(void) {
+  wb_robot_init();
+  
+  emitter = wb_robot_get_device("emitter");
+  if (emitter == 0) printf("missing emmiter\n");
+}
 
 
 /*
- * Initialize robot positions and devices
+ * Initialize robot positions and devices from the world given by the user.
  */
 void reset(void) {
-    wb_robot_init();
-    emitter = wb_robot_get_device("emitter");
-    if (emitter==0) printf("missing emitter\n");
-
     char rob[5] = "rob0";
     int i;
     for (i=0;i<FORMATION_SIZE;i++) {
@@ -49,6 +57,57 @@ void reset(void) {
 }
 
 
+/* 
+ * Initialize robot positions and devices such that:
+ * - there is a barrier of obstacles
+ * - robots are on one side; the goal on the other one.
+ * Function used for PSO. 
+ */
+void set_barrier_world(void) {
+    char obs[5] = "obs0";
+    char rob[5] = "rob0";
+    int obs_id, i;
+    float dist_between_obs = 0.1;
+    
+    // Set up the obstacles
+    for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
+      sprintf(obs,"obs%d",obs_id);
+      obss[obs_id]          = wb_supervisor_node_get_from_def(obs);
+      new_rot_obs[obs_id][0] = 0.0;
+      new_rot_obs[obs_id][1] = 1.0;
+      new_rot_obs[obs_id][2] = 0.0;
+      new_rot_obs[obs_id][3] = 4.45059;
+    
+      new_loc_obs[obs_id][0] = -0.25 + obs_id*dist_between_obs;
+      new_loc_obs[obs_id][1] = -1.25566e-13;
+      new_loc_obs[obs_id][2] = -1.23;
+      
+      wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(obss[obs_id],"translation"),
+                                     new_loc_obs[obs_id]);
+      wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(obss[obs_id],"rotation"), 
+                                        new_rot_obs[obs_id]);
+    }
+    
+    // Set up the goal behind the wall of obstacles
+    goal_id = wb_supervisor_node_get_from_def("goal-node");
+    new_loc_goal[0] = 0.2;
+    new_loc_goal[0] = 0.0;
+    new_loc_goal[0] = -4.0;
+    wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(goal_id,"translation"), new_loc_goal);
+    goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+    
+    // Randomly set up robots on the other side of the wall of obstacles
+    for (i=0; i<FORMATION_SIZE; i++) {
+        sprintf(rob,"rob%d",i);
+        robs[i]          = wb_supervisor_node_get_from_def(rob);
+        random_pos(i, -2.0, -1.5);
+        robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
+        robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
+    }
+    
+    simulation_duration = 0;
+
+}
 
 
 
@@ -87,8 +146,10 @@ void send_init_poses(void)
 
 
 
-
-
+/*
+ * Send to each robot its current position and orientation. 
+ * This function is here as an example for communication using the supervisor
+ */
 void send_current_poses(void){
     char buffer[255]; // buffer for sending data
     int i;
@@ -100,7 +161,7 @@ void send_current_poses(void){
         loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 
         // Sending positions to the robots
-        sprintf(buffer,"%1d#%f#%f#%f#%f#%f#%1d",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
+        sprintf(buffer,"%1d#%f#%f#%f#%f#%f",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz);
         wb_emitter_send(emitter,buffer,strlen(buffer));				
     }
 }
@@ -118,13 +179,10 @@ float rand_01(void) {
 
 
 
-
-
 /*
- * Randomly position the specified robot
- * TODO: Ondine
+ * Randomly position the specified robot within a certain zone
  */
-void random_pos(int robot_id) {
+void random_pos(int robot_id, float x_min, float z_min) {
     //printf("Setting random position for %d\n",robot_id);
     new_rot[robot_id][0] = 0.0;
     new_rot[robot_id][1] = 1.0;
@@ -132,8 +190,8 @@ void random_pos(int robot_id) {
     new_rot[robot_id][3] = 2.0*3.14159*rand_01();
   
     do {
-        new_loc[robot_id][0] = ARENA_SIZE*rand_01() - ARENA_SIZE/2.0;
-        new_loc[robot_id][2] = ARENA_SIZE*rand_01() - ARENA_SIZE/2.0;
+        new_loc[robot_id][0] = x_min + ARENA_SIZE*rand_01();
+        new_loc[robot_id][2] = z_min + ARENA_SIZE*rand_01();
     } while (!valid_locs(robot_id));
 
     wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[robot_id],"translation"),
@@ -144,40 +202,9 @@ void random_pos(int robot_id) {
 
 
 
-void set_barrier_world() {
-    char obs[5] = "obs0";
-    int obs_id;
-    float dist_between_robots = 0.1;
-    
-    for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
-      sprintf(obs,"obs%d",obs_id);
-      obss[obs_id]          = wb_supervisor_node_get_from_def(obs);
-      new_rot_obs[obs_id][0] = 0.0;
-      new_rot_obs[obs_id][1] = 1.0;
-      new_rot_obs[obs_id][2] = 0.0;
-      new_rot_obs[obs_id][3] = 4.45059;
-    
-      new_loc_obs[obs_id][0] = -0.25 + obs_id*dist_between_robots;
-      new_loc_obs[obs_id][1] = -1.25566e-13;
-      new_loc_obs[obs_id][2] = -1.23;
-      
-      wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(obss[obs_id],"translation"),
-                                     new_loc_obs[obs_id]);
-      wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(obss[obs_id],"rotation"), 
-                                        new_rot_obs[obs_id]);
-    }
-    
-    goal_id = wb_supervisor_node_get_from_def("goal-node");
-    goal_field = wb_supervisor_node_get_field(goal_id,"translation");
-    
-    simulation_duration = 0;
-
-}
-
 
 /*
  * Makes sure no robots are overlapping
- * TODO: Ondine
  */
 char valid_locs(int r_id) {
     int i;

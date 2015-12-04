@@ -38,6 +38,7 @@ int main(int argc, char *args[]) {
           formation = "diamond";
     
     // reset and communication part
+    initialize();
     reset();
     printf("Supervisor resetted.\n");
     send_init_poses();

@@ -23,7 +23,7 @@
 #define FORMATION_SIZE  4	    // Number of robots in formation
 #define NB_OBSTACLES    6      // Number of present obstacles
 #define TIME_STEP      64	    // [ms] Length of time step
-#define ARENA_SIZE      0.94    // TODO: is this value correct? copied from pso_obs_sup.c, lab08
+#define ARENA_SIZE      4.0    // size of the arena where can the robots be randomly positioned
 #define ROB_DIST        0.035
 
 
@@ -51,12 +51,12 @@ int simulation_duration;        // ms since simulation start
 
 
 // methods
-
+void initialize(void);
 void reset(void);
+void set_barrier_world(void);
 void send_init_poses(void);
-float rand_01(void);
-void random_pos(int robot_id);
 void send_current_poses(void);
-
+float rand_01(void);
+void random_pos(int robot_id, float x_min, float z_min);
 
 #endif
