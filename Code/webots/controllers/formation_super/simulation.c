@@ -95,7 +95,7 @@ void set_barrier_world(void) {
     new_loc_goal[0] = -4.0;
     wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(goal_id,"translation"), new_loc_goal);
     goal_field = wb_supervisor_node_get_field(goal_id,"translation");
-    
+
     // Randomly set up robots on the other side of the wall of obstacles
     for (i=0; i<FORMATION_SIZE; i++) {
         sprintf(rob,"rob%d",i);
@@ -105,6 +105,7 @@ void set_barrier_world(void) {
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }
     
+printf("everything set\n");
     simulation_duration = 0;
 
 }
@@ -174,7 +175,8 @@ void send_current_poses(void){
  * Generates random number in [0,1]
  */
 float rand_01(void) {
-    return ((float)rand_01())/((float)RAND_MAX);
+printf("rand_01\n");
+    return ((float)rand())/((float)RAND_MAX);
 }
 
 
@@ -183,12 +185,13 @@ float rand_01(void) {
  * Randomly position the specified robot within a certain zone
  */
 void random_pos(int robot_id, float x_min, float z_min) {
-    //printf("Setting random position for %d\n",robot_id);
+    printf("Setting random position for %d\n",robot_id);
+
     new_rot[robot_id][0] = 0.0;
     new_rot[robot_id][1] = 1.0;
     new_rot[robot_id][2] = 0.0;
     new_rot[robot_id][3] = 2.0*3.14159*rand_01();
-  
+printf("afterbis\n");
     do {
         new_loc[robot_id][0] = x_min + ARENA_SIZE*rand_01();
         new_loc[robot_id][2] = z_min + ARENA_SIZE*rand_01();

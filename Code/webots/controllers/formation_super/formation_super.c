@@ -39,6 +39,8 @@ int main(int argc, char *args[]) {
     
     // reset and communication part
     initialize();
+//    set_barrier_world();
+    printf("world initialized\n");
     reset();
     printf("Supervisor resetted.\n");
     send_init_poses();

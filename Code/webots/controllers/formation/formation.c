@@ -35,7 +35,7 @@ void computeDirection(){
     w_keep_formation  = 5;
     w_avoid_robot     = 1;
     w_avoid_obstacles = 5;
-    w_noise           = 2;
+    w_noise           = 0.5;
 
     // thresholds
     avoid_obst_min_threshold     =  60;
@@ -74,6 +74,7 @@ void computeDirection(){
         speed[robot_id][d] += w_keep_formation  * dir_keep_formation[d];
         speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
+        speed[robot_id][d] += w_noise           * dir_noise[d];
     }
 }
 
