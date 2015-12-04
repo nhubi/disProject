@@ -80,7 +80,6 @@ void computeDirection(){
 
 
 
-
 /* 
  * The main function
  */
