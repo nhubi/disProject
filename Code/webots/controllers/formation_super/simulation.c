@@ -197,7 +197,7 @@ void random_pos(int robot_id, float x_min, float z_min) {
         new_loc[robot_id][2] = z_min + ARENA_SIZE*rand_01();
     } while (!valid_locs(robot_id));
     
-    printf("Robot_id=%d, x=%f, z=%f\n", robot_id, new_loc[robot_id][0], (float)rand());
+    //printf("Robot_id=%d, x=%f, z=%f\n", robot_id, new_loc[robot_id][0], (float)rand());
     
     wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[robot_id],"translation"),
                                      new_loc[robot_id]);
