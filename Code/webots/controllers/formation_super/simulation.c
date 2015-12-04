@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "simulation.h"
 
@@ -63,7 +64,7 @@ void reset(void) {
  * - robots are on one side; the goal on the other one.
  * Function used for PSO. 
  */
-void set_barrier_world(void) {
+void reset_barrier_world(void) {
     char obs[5] = "obs0";
     char rob[5] = "rob0";
     int obs_id, i;
@@ -91,8 +92,8 @@ void set_barrier_world(void) {
     // Set up the goal behind the wall of obstacles
     goal_id = wb_supervisor_node_get_from_def("goal-node");
     new_loc_goal[0] = 0.2;
-    new_loc_goal[0] = 0.0;
-    new_loc_goal[0] = -4.0;
+    new_loc_goal[1] = 0.0;
+    new_loc_goal[2] = -4.0;
     wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(goal_id,"translation"), new_loc_goal);
     goal_field = wb_supervisor_node_get_field(goal_id,"translation");
 
@@ -105,7 +106,6 @@ void set_barrier_world(void) {
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }
     
-printf("everything set\n");
     simulation_duration = 0;
 
 }
@@ -175,7 +175,7 @@ void send_current_poses(void){
  * Generates random number in [0,1]
  */
 float rand_01(void) {
-printf("rand_01\n");
+    srand(time(NULL));
     return ((float)rand())/((float)RAND_MAX);
 }
 
@@ -185,18 +185,20 @@ printf("rand_01\n");
  * Randomly position the specified robot within a certain zone
  */
 void random_pos(int robot_id, float x_min, float z_min) {
-    printf("Setting random position for %d\n",robot_id);
+    //printf("Setting random position for %d\n",robot_id);
 
     new_rot[robot_id][0] = 0.0;
     new_rot[robot_id][1] = 1.0;
     new_rot[robot_id][2] = 0.0;
     new_rot[robot_id][3] = 2.0*3.14159*rand_01();
-printf("afterbis\n");
+
     do {
         new_loc[robot_id][0] = x_min + ARENA_SIZE*rand_01();
         new_loc[robot_id][2] = z_min + ARENA_SIZE*rand_01();
     } while (!valid_locs(robot_id));
-
+    
+    printf("Robot_id=%d, x=%f, z=%f\n", robot_id, new_loc[robot_id][0], (float)rand());
+    
     wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[robot_id],"translation"),
                                      new_loc[robot_id]);
     wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[robot_id],"rotation"), 
@@ -212,9 +214,10 @@ printf("afterbis\n");
 char valid_locs(int r_id) {
     int i;
 
-    for (i = 0; i < FORMATION_SIZE; i++) {
-        if (r_id == i)
-            continue;
+    // This for loops stops when i = r_id because new_loc[i] for i > r_id are not initialized yet
+    // when this function is called. Moreoever, it does not make sense to verify the distance between
+    // a robot and itself. 
+    for (i = 0; i < r_id; i++) {
 
         float dist = pow(new_loc[i][0]-new_loc[r_id][0],2)+pow(new_loc[i][2]-new_loc[r_id][2],2);
         float max_dist = pow((2*ROB_DIST+0.01), 2);

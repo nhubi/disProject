@@ -53,7 +53,7 @@ int simulation_duration;        // ms since simulation start
 // methods
 void initialize(void);
 void reset(void);
-void set_barrier_world(void);
+void reset_barrier_world(void);
 void send_init_poses(void);
 void send_current_poses(void);
 float rand_01(void);
