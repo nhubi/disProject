@@ -21,8 +21,8 @@ char valid_locs(int r_id);
 // private variables
 double new_loc[FORMATION_SIZE][3];
 double new_rot[FORMATION_SIZE][4];
-
-
+double new_loc_obs[NB_OBSTACLES][3];
+double new_rot_obs[NB_OBSTACLES][4];
 
 
 
@@ -144,6 +144,35 @@ void random_pos(int robot_id) {
 
 
 
+void set_barrier_world() {
+    char obs[5] = "obs0";
+    int obs_id;
+    float dist_between_robots = 0.1;
+    
+    for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
+      sprintf(obs,"obs%d",obs_id);
+      obss[obs_id]          = wb_supervisor_node_get_from_def(obs);
+      new_rot_obs[obs_id][0] = 0.0;
+      new_rot_obs[obs_id][1] = 1.0;
+      new_rot_obs[obs_id][2] = 0.0;
+      new_rot_obs[obs_id][3] = 4.45059;
+    
+      new_loc_obs[obs_id][0] = -0.25 + obs_id*dist_between_robots;
+      new_loc_obs[obs_id][1] = -1.25566e-13;
+      new_loc_obs[obs_id][2] = -1.23;
+      
+      wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(obss[obs_id],"translation"),
+                                     new_loc_obs[obs_id]);
+      wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(obss[obs_id],"rotation"), 
+                                        new_rot_obs[obs_id]);
+    }
+    
+    goal_id = wb_supervisor_node_get_from_def("goal-node");
+    goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+    
+    simulation_duration = 0;
+
+}
 
 
 /*
@@ -165,3 +194,7 @@ char valid_locs(int r_id) {
     }
     return 1;
 }
+
+
+
+

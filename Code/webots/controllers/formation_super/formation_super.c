@@ -40,7 +40,7 @@ int main(int argc, char *args[]) {
     // reset and communication part
     reset();
     printf("Supervisor resetted.\n");
-    send_init_poses(); //this function is here as an example for communication using the supervisor
+    send_init_poses();
     printf("Init poses sent.\n Chosen formation: %s.\n", formation);
 
     

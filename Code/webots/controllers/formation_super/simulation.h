@@ -21,6 +21,7 @@
 // definitions
 
 #define FORMATION_SIZE  4	    // Number of robots in formation
+#define NB_OBSTACLES    6      // Number of present obstacles
 #define TIME_STEP      64	    // [ms] Length of time step
 #define ARENA_SIZE      0.94    // TODO: is this value correct? copied from pso_obs_sup.c, lab08
 #define ROB_DIST        0.035
@@ -31,6 +32,7 @@
 
 // devices
 WbNodeRef robs[FORMATION_SIZE];             // Robots nodes
+WbNodeRef obss[NB_OBSTACLES];               // Obstacles nodes
 WbFieldRef robs_trans[FORMATION_SIZE];      // Robots translation fields
 WbFieldRef robs_rotation[FORMATION_SIZE];   // Robots rotation fields
 WbDeviceTag emitter;                        // Single emitter
