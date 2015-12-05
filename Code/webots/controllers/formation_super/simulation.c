@@ -16,16 +16,25 @@
 
 
 
-// private methods
+// Private methods
 char valid_locs(int r_id);
 
-// private variables
+
+
+// Private variables
+
+// Variables used for PSO
 double new_loc[FORMATION_SIZE][3];
 double new_rot[FORMATION_SIZE][4];
 double new_loc_obs[NB_OBSTACLES][3];
 double new_rot_obs[NB_OBSTACLES][4];
 double new_loc_goal[3];
-
+// Variables for the actual run
+double initial_loc[FORMATION_SIZE][3];
+double initial_rot[FORMATION_SIZE][4];
+double initial_loc_obs[NB_OBSTACLES][3];
+double initial_rot_obs[NB_OBSTACLES][4];
+double initial_loc_goal[3];
 
 /* 
  * Initialization common to the running world AND the pso worlds;
@@ -42,19 +51,52 @@ void initialize(void) {
 /*
  * Initialize robot positions and devices from the world given by the user.
  */
-void reset(void) {
+void reset(void) {     
+     
     char rob[5] = "rob0";
-    int i;
-    for (i=0;i<FORMATION_SIZE;i++) {
+    char obs[5] = "obs0";
+    int i,j;
+    
+    for (i=0; i<FORMATION_SIZE; i++) {
         sprintf(rob,"rob%d",i);
         robs[i]          = wb_supervisor_node_get_from_def(rob);
-        robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
-        robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
-    }
-    goal_id = wb_supervisor_node_get_from_def("goal-node");
-    goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+        initial_robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
+        initial_robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation"); 
     
-    simulation_duration = 0;
+        initial_loc[i][0] = wb_supervisor_field_get_sf_vec3f(initial_robs_trans[i])[0];       // X
+        initial_loc[i][1] = wb_supervisor_field_get_sf_vec3f(initial_robs_trans[i])[1];       // Y
+        initial_loc[i][2] = wb_supervisor_field_get_sf_vec3f(initial_robs_trans[i])[2];       // Z
+        initial_rot[i][0] = wb_supervisor_field_get_sf_rotation(initial_robs_rotation[i])[0];            
+        initial_rot[i][1] = wb_supervisor_field_get_sf_rotation(initial_robs_rotation[i])[1];           
+        initial_rot[i][2] = wb_supervisor_field_get_sf_rotation(initial_robs_rotation[i])[2];           
+        initial_rot[i][3] = wb_supervisor_field_get_sf_rotation(initial_robs_rotation[i])[3];    // THETA        
+    }
+    
+    for (j=0; j<NB_OBSTACLES; j++) {
+        sprintf(obs,"obs%d",j);
+        obss[j] = wb_supervisor_node_get_from_def(obs);
+        initial_obs_trans[j] = wb_supervisor_node_get_field(obss[j],"translation");
+        initial_obs_rotation[j] = wb_supervisor_node_get_field(obss[j],"rotation");
+        
+        initial_loc_obs[j][0] = wb_supervisor_field_get_sf_vec3f(initial_obs_trans[j])[0];
+        initial_loc_obs[j][1] = wb_supervisor_field_get_sf_vec3f(initial_obs_trans[j])[1];
+        initial_loc_obs[j][2] = wb_supervisor_field_get_sf_vec3f(initial_obs_trans[j])[2];
+      
+        initial_rot_obs[j][0] = wb_supervisor_field_get_sf_rotation(initial_obs_rotation[j])[0];
+        initial_rot_obs[j][1] = wb_supervisor_field_get_sf_rotation(initial_obs_rotation[j])[1];
+        initial_rot_obs[j][2] = wb_supervisor_field_get_sf_rotation(initial_obs_rotation[j])[2];
+        initial_rot_obs[j][3] = wb_supervisor_field_get_sf_rotation(initial_obs_rotation[j])[3];
+    
+    }
+    
+    goal_id = wb_supervisor_node_get_from_def("goal-node");
+    initial_goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+    
+    initial_loc_goal[0] = wb_supervisor_field_get_sf_vec3f(initial_goal_field)[0];
+    initial_loc_goal[1] = wb_supervisor_field_get_sf_vec3f(initial_goal_field)[1];
+    initial_loc_goal[2] = wb_supervisor_field_get_sf_vec3f(initial_goal_field)[2];
+    
+    //simulation_duration = 0;
 }
 
 
@@ -65,15 +107,15 @@ void reset(void) {
  * Function used for PSO. 
  */
 void reset_barrier_world(void) {
-    char obs[5] = "obs0";
-    char rob[5] = "rob0";
+    //char obs[5] = "obs0";
+    //char rob[5] = "rob0";
     int obs_id, i;
     float dist_between_obs = 0.1;
     
     // Set up the obstacles
     for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
-      sprintf(obs,"obs%d",obs_id);
-      obss[obs_id]          = wb_supervisor_node_get_from_def(obs);
+      //sprintf(obs,"obs%d",obs_id);
+      //obss[obs_id]          = wb_supervisor_node_get_from_def(obs);
       new_rot_obs[obs_id][0] = 0.0;
       new_rot_obs[obs_id][1] = 1.0;
       new_rot_obs[obs_id][2] = 0.0;
@@ -86,21 +128,21 @@ void reset_barrier_world(void) {
       wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(obss[obs_id],"translation"),
                                      new_loc_obs[obs_id]);
       wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(obss[obs_id],"rotation"), 
-                                        new_rot_obs[obs_id]);
+                                     new_rot_obs[obs_id]);
     }
     
     // Set up the goal behind the wall of obstacles
-    goal_id = wb_supervisor_node_get_from_def("goal-node");
+    //goal_id = wb_supervisor_node_get_from_def("goal-node");
     new_loc_goal[0] = 0.2;
     new_loc_goal[1] = 0.0;
     new_loc_goal[2] = -4.0;
-    wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(goal_id,"translation"), new_loc_goal);
     goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+    wb_supervisor_field_set_sf_vec3f(goal_field, new_loc_goal);
 
     // Randomly set up robots on the other side of the wall of obstacles
     for (i=0; i<FORMATION_SIZE; i++) {
-        sprintf(rob,"rob%d",i);
-        robs[i]          = wb_supervisor_node_get_from_def(rob);
+        //sprintf(rob,"rob%d",i);
+        //robs[i]          = wb_supervisor_node_get_from_def(rob);
         random_pos(i, -2.0, -1.5);
         robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
@@ -111,6 +153,37 @@ void reset_barrier_world(void) {
 }
 
 
+void reset_to_initial_values(void) {
+    int obs_id, i;
+    
+    // Set up the obstacles
+    for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
+      //sprintf(obs,"obs%d",obs_id);
+      //obss[obs_id]          = wb_supervisor_node_get_from_def(obs);
+      wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(obss[obs_id],"translation"),
+                                     initial_loc_obs[obs_id]);
+      wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(obss[obs_id],"rotation"), 
+                                     initial_rot_obs[obs_id]);
+    }
+    
+    // Set up the goal behind the wall of obstacles
+    //goal_id = wb_supervisor_node_get_from_def("goal-node");
+
+    wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(goal_id,"translation"), initial_loc_goal);
+    //goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+
+    // Randomly set up robots on the other side of the wall of obstacles
+    for (i=0; i<FORMATION_SIZE; i++) {
+        //sprintf(rob,"rob%d",i);
+        //robs[i]          = wb_supervisor_node_get_from_def(rob);
+        //initial_pos(i);
+        robs_trans[i]    = initial_robs_trans[i];
+        robs_rotation[i] = initial_robs_rotation[i];
+    }
+    
+    simulation_duration = 0;
+}
+
 
 /*
  * Send to each robot its initial position the goal's position and the formation type. 
@@ -119,19 +192,54 @@ void send_init_poses(void)
 {
     char buffer[255];	// Buffer for sending data
     int i;
-     
+
     for (i = 0; i < FORMATION_SIZE; i++) {
 
         // Get robot's position
         loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
         loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
-        loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
-
+        loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA                                     
+                                     
         migrx = wb_supervisor_field_get_sf_vec3f(goal_field)[0];    // X
         offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1];   // Y
         migrz = wb_supervisor_field_get_sf_vec3f(goal_field)[2];    // Z
+        
         orient_migr = -atan2f(migrx,migrz);                         // angle of migration urge
-		
+        if (orient_migr<0) {
+            orient_migr+=2*M_PI; // Keep value between 0 and 2PI
+        }
+	
+        // Send it out
+        sprintf(buffer,"%1d#%f#%f#%f##%f#%f#%1d",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
+        wb_emitter_send(emitter,buffer,strlen(buffer));
+
+        // Run one step
+        wb_robot_step(TIME_STEP);
+    }
+}
+
+
+void send_real_run_init_poses(void) {
+    char buffer[255];	// Buffer for sending data
+    int i;
+
+    for (i = 0; i < FORMATION_SIZE; i++) {
+
+        // Get robot's position
+        loc[i][0] = initial_loc[i][0]; // X
+        loc[i][1] = initial_loc[i][2]; // Z
+        loc[i][2] = initial_rot[i][3]; // THETA
+                
+        wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[i],"translation"),
+                                     initial_loc[i]);
+        wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[i],"rotation"), 
+                                     initial_rot[i]);
+                                     
+        migrx = initial_loc_goal[0];    // X
+        offset = initial_loc_goal[1];   // Y
+        migrz = initial_loc_goal[2];    // Z
+        
+        orient_migr = -atan2f(migrx,migrz);                         // angle of migration urge
         if (orient_migr<0) {
             orient_migr+=2*M_PI; // Keep value between 0 and 2PI
         }
@@ -206,7 +314,12 @@ void random_pos(int robot_id, float x_min, float z_min) {
 }
 
 
-
+/*void initial_pos(int robot_id) {
+    wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[robot_id],"translation"),
+                                     initial_loc[robot_id]);
+    wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[robot_id],"rotation"), 
+                                        initial_rot[robot_id]);
+}*/
 
 /*
  * Makes sure no robots are overlapping
