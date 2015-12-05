@@ -21,7 +21,7 @@
  * Main function.
  */
 int main(int argc, char *args[]) {
-    
+
     char* formation = DEFAULT_FORMATION; 
     if(argc == 2) {
           formation_type = atoi(args[1]); // The type of formation is decided by 
@@ -43,6 +43,32 @@ int main(int argc, char *args[]) {
     send_init_poses(); //this function is here as an example for communication using the supervisor
     printf("Init poses sent.\n Chosen formation: %s.\n", formation);
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // TESTING PSO HERE
+
+
+    int d;
+
+    parameter_ranges[0][0] = -1;
+    parameter_ranges[0][1] =  1;
+    parameter_ranges[1][0] = -3;
+    parameter_ranges[1][1] =  1;
+
+    float optimal_params[DIMENSIONALITY];
+    pso_ocba(optimal_params);
+
+    printf("The optimal parameters are: \n");
+    for(d = 0; d < DIMENSIONALITY; d++){
+        printf("    Dimension %d: %1.4f\n", d, optimal_params[d]);
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
     
     // infinite loop
     for(;;) {
@@ -60,8 +86,3 @@ int main(int argc, char *args[]) {
         simulation_duration += TIME_STEP;
     }
 }
-
-
-
-
-

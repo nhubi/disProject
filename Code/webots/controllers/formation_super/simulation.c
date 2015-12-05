@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "simulation.h"
 
@@ -110,10 +111,21 @@ void send_current_poses(void){
 
 
 /*
+ * initializes random generator
+ */
+void init_rand_01(void) {
+    srand(time(NULL));
+}
+
+
+
+
+
+/*
  * Generates random number in [0,1]
  */
 float rand_01(void) {
-    return ((float)rand_01())/((float)RAND_MAX);
+    return ((float)rand())/((float)RAND_MAX);
 }
 
 
