@@ -31,7 +31,7 @@
 
 // PSO OCBA specific parameters
 #define NB_ITERATIONS 10
-#define ITERATION_BUDGED 150    // ca. 10 * nb_parameter
+#define ITERATION_BUDGED 80     // ca. 2 * nb_parameter * POPULATION_SIZE
 #define N_ZERO 2                // nb initial evaluations
 #define DELTA 4                 // nb samples for 'remaining-budged evaluations'
 
@@ -48,8 +48,13 @@ float perf_var[POPULATION_SIZE];                    // each particle's current p
 int perf_samples[POPULATION_SIZE];                  // nb samples for each particle's perf mean/var
 float p_best_pos[POPULATION_SIZE][DIMENSIONALITY];  // each particle's best position
 float p_best_val[POPULATION_SIZE];                  // each particle's best performance
+float p_best_var[POPULATION_SIZE];                  // variance of each particle's best performance
+int p_best_samples[POPULATION_SIZE];                // nb samples for each particle's best perf mean/var
 float n_best_pos[POPULATION_SIZE][DIMENSIONALITY];  // best position in each particle's neighbourhood
 float n_best_val[POPULATION_SIZE];                  // best performance in each particle's neighbourhood
+int additional_budget[2*POPULATION_SIZE];           // ocba calculated budget for each particle + best
+
+float ratio[2*POPULATION_SIZE]; // ratios N_i/N_s for each position i (where N_s is assumed to be 1)
 
 
 // methods

@@ -54,7 +54,7 @@ int main(int argc, char *args[]) {
 
     parameter_ranges[0][0] = -1;
     parameter_ranges[0][1] =  1;
-    parameter_ranges[1][0] = -3;
+    parameter_ranges[1][0] = -1;
     parameter_ranges[1][1] =  1;
 
     float optimal_params[DIMENSIONALITY];
