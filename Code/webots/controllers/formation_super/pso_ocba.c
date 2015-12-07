@@ -80,9 +80,9 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
                 if(debug == remaining_budget)
                     remaining_budget = -1;
 
-                printf("\n=========================================\n");
+                printf("\n\n=========================================\n");
                 printf("|| REMAINING BUDGET = %d\n", remaining_budget);
-                printf("=========================================\n\n");
+                printf("=========================================\n");
                 
                 // spend the allocated budget
                 for(p = 0; p < POPULATION_SIZE; p++){
@@ -93,9 +93,8 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
         }
 
 
-        // update values
+        // update personal best
         for(p = 0; p < POPULATION_SIZE; p++) {
-            // update personal best
             if(p_best_val[p] < perf_mean[p]){
                 p_best_val[p]     = perf_mean[p];
                 p_best_var[p]     = perf_var[p];
@@ -105,11 +104,12 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
                     p_best_pos[p][d] = positions[p][d];
                 }
             }
+        }
 
-            // update neighbourhood best
+        // update neighbourhood best (needs to be done AFTER all p_bests are found)
+        for(p = 0; p < POPULATION_SIZE; p++) {
             int neighbour_id;
-
-            for(n = 0; n < NB_NEIGHBOURS; n++){
+            for(n = 0; n < 2*NB_NEIGHBOURS; n++){
                 neighbour_id = neighbours[p][n];
 
                 // TODO: do we need to compare with the neighbours' current or best position?
@@ -130,7 +130,6 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
     // find globally best performance
     float best_val = 0;
     int best_idx = 0;
-
     printf("[PSO] Best positions: \n");
     for(p = 0; p < POPULATION_SIZE; p++){
         if(p_best_val[p] > best_val){
@@ -148,23 +147,32 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
 
 /*
  * Initializes particle parameters.
- * TODO init each particle's neighbours
  */
 void init_particles(void){
     int p;  // particle pointer
     int d;  // dimension pointer
+    int n;  // neighbour pointer
 
     // init the random generator
     init_rand_01();
     
     for(p = 0; p < POPULATION_SIZE; p++){
         perf_samples[p] = 0;
-        n_best_val[p]   = 0;        // TODO
+        n_best_val[p]   = 0;
         p_best_val[p]   = 0;
 
+        // init particle's position and velocity
         for(d = 0; d < DIMENSIONALITY; d++){
             positions[p][d]  = rand_01() * NORMALIZED_BORDER;
             velocities[p][d] = 0;
+        }
+
+        // init particle's neighbours 
+        //  --> particles with index: p-1-NB_NEIGHBOURS < i < p+1+NB_NEIGHBOURS
+        // Taking the modulo of negative values does not work. Therefore (POP_SIZE+p-1-n)%POP_SIZE.
+        for(n = 0; n < NB_NEIGHBOURS; n++){
+            neighbours[p][n] = (POPULATION_SIZE + p - 1 - n) % POPULATION_SIZE;
+            neighbours[p][n + NB_NEIGHBOURS] = (p + 1 + n) % POPULATION_SIZE;
         }
     }
 }
@@ -382,7 +390,7 @@ void ocba(int * remaining_budget){
         *remaining_budget -= additional_budget[idx];
 
         // debugging
-        printf("[OCBA] Candidate %d: \n", idx);
+/*        printf("[OCBA] Candidate %d: \n", idx);
         if(idx < POPULATION_SIZE){
             printf("___________ position = (%f, %f)\n", positions[idx][0], positions[idx][1]);
             printf("___________ (mean, var, samples) = (%1.3f, %1.3f, %d)\n", perf_mean[idx], perf_var[idx], perf_samples[idx]);
@@ -396,6 +404,7 @@ void ocba(int * remaining_budget){
         if(idx == s)
             printf("> > > > > > 2nd BEST CANDIDATE < < < < < <\n");
         printf("\n\n");
+*/
     }
 }
 
