@@ -19,7 +19,7 @@
 // definitions
 
 // PSO general parameters
-#define DIMENSIONALITY        2
+#define DIMENSIONALITY        5
 #define POPULATION_SIZE      20     // nb particles
 #define NB_NEIGHBOURS         5     // size of neighbourhoods
 #define EVALUATION_SPAN      30     // max time (in seconds) of evaluation run

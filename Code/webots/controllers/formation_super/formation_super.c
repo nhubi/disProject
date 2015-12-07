@@ -55,7 +55,13 @@ int main(int argc, char *args[]) {
     parameter_ranges[0][0] = -1;
     parameter_ranges[0][1] =  1;
     parameter_ranges[1][0] = -1;
-    parameter_ranges[1][1] =  1;
+    parameter_ranges[1][1] =  4;
+    parameter_ranges[2][0] = -1;
+    parameter_ranges[2][1] =  4;
+    parameter_ranges[3][0] =  3;
+    parameter_ranges[3][1] =  9.2;
+    parameter_ranges[4][0] = -0.8;
+    parameter_ranges[4][1] = -0.7;
 
     float optimal_params[DIMENSIONALITY];
     pso_ocba(optimal_params);
