@@ -21,7 +21,7 @@
 
 // definitions
 
-//#define WHATEVER
+#define GOAL_REACHED_DISTANCE 0.001
 
 
 
@@ -33,7 +33,7 @@
 
 // methods
 
-void get_move_to_goal_vector(float * direction);
+void get_move_to_goal_vector(float* direction, bool* goalReached);
 
 
 

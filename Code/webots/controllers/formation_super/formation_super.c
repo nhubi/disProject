@@ -24,10 +24,10 @@
  */
 int main(int argc, char *args[]) {
 
+    // The type of formation is decided by the user through the world
     char* formation = DEFAULT_FORMATION; 
     if(argc == 2) {
-          formation_type = atoi(args[1]); // The type of formation is decided by 
-                               // the user through the world
+        formation_type = atoi(args[1]); 
     }
     
     if(formation_type == 0)
@@ -39,19 +39,13 @@ int main(int argc, char *args[]) {
     else if(formation_type == 3)
           formation = "diamond";
     
-    // reset and communication part
-    reset();
-    printf("Supervisor resetted.\n");
-    send_init_poses(); //this function is here as an example for communication using the supervisor
-    printf("Init poses sent.\n Chosen formation: %s.\n", formation);
-    
     
     // each motorschema's weight
     w_goal            = 1;
     w_keep_formation  = 5;
     w_avoid_robot     = 1;
     w_avoid_obstacles = 5;
-    w_noise           = 0.5;
+    w_noise           = 2;
 
     // thresholds
     avoid_obst_min_threshold     =  60;
@@ -67,10 +61,6 @@ int main(int argc, char *args[]) {
     // noise parameters
     noise_gen_frequency = 10;
     fading              = 1;
-    
-    // sending weights
-    send_weights();
-    printf("Weights sent\n");
 
     // setting up the fitness computation TODO: put it in PSO somewhere?
     reset_fitness_computation(FORMATION_SIZE,migrx,migrz,obstacle_loc);
@@ -106,15 +96,27 @@ int main(int argc, char *args[]) {
     for(d = 0; d < DIMENSIONALITY; d++){
         printf("    Dimension %d: %1.4f\n", d, optimal_params[d]);
     }
+    printf("\n\n");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    
+    // reset and communication part
+    reset();
+    printf("Supervisor resetted.\n");
+    send_init_poses(); //this function is here as an example for communication using the supervisor
+    printf("Init poses sent.\n Chosen formation: %s.\n", formation);
+    
+    // sending weights
+    send_weights();
+    printf("Weights sent\n");
 
     // infinite loop
     for(;;) {
         wb_robot_step(TIME_STEP);
+        simulation_duration += TIME_STEP;
 
         // every 10 TIME_STEP (640ms)
         if (simulation_duration % 10 == 0) {
@@ -126,7 +128,6 @@ int main(int argc, char *args[]) {
                 break;
             }
         }
-        simulation_duration += TIME_STEP;
     }
     
     float fitness=compute_fitness(FORMATION_SIZE);

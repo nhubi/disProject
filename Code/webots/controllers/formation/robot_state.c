@@ -39,15 +39,17 @@ const float sens_dir[NB_SENSORS] = {1.27,
  */
 void reset(void) {
 	wb_robot_init();
-
-	receiver = wb_robot_get_device("receiver");
-	emitter  = wb_robot_get_device("emitter");
-	receiver2 = wb_robot_get_device("receiver2");
-	emitter2  = wb_robot_get_device("emitter2");
-	wb_receiver_enable(receiver2,64);
+	
+    // enable receiver
+	receiver = wb_robot_get_device("receiver");     // receiver and emitter for communication with
+	emitter  = wb_robot_get_device("emitter");      // supervisor.
+	receiver2 = wb_robot_get_device("receiver2");   // receiver2 and emitter2 for local 
+	emitter2  = wb_robot_get_device("emitter2");    // communication
+	wb_receiver_enable(receiver,64);
+    wb_receiver_enable(receiver2,64);
 
 	
-	if (emitter == 0)printf("missing emitter\n");
+	if (emitter == 0) printf("missing emitter\n");
 	
 	int i;
 	char s[4]="ps0";
@@ -59,22 +61,21 @@ void reset(void) {
 	robot_name = (char*)wb_robot_get_name(); 
 
     // enable distance sensors
-	for(i=0; i<NB_SENSORS; i++) {
+	for (i=0; i<NB_SENSORS; i++) {
 		wb_distance_sensor_enable(dist_sens[i], TIME_STEP);
 	}
 
-    // enable receiver
-	wb_receiver_enable(receiver,64);
-
-	//Reading the robot's name.
-	sscanf(robot_name,"rob%d",&robot_id_u);   // read robot id from the robot's name
+	//Reading the robot's name (and robot id from the robot's name)
+	sscanf(robot_name,"rob%d",&robot_id_u);
 	
-	robot_id = robot_id_u%FORMATION_SIZE;   // normalize between 0 and FORMATION_SIZE-1
-	
-	for(i=0; i<FORMATION_SIZE; i++) {
-		initialized[i] = 0;                 // Set initialization to 0 (= not yet initialized)
-		initialized_weights[i]=0;			// Set initialization of weights to 0(= not yet initialized)
+	robot_id = robot_id_u%FORMATION_SIZE;     // normalize between 0 and FORMATION_SIZE-1
+	for (i=0; i<FORMATION_SIZE; i++) {
+		initialized[i] = 0;                   // Set initialization to 0 (= not yet initialized)
+		initialized_weights[i]=0;			  // Set initialization of weights to 0(= not yet initialized)
 	}
+
+    // restart time
+    time_steps_since_start = 0;
 	
 	printf("Reset: robot %d\n",robot_id);
 }
@@ -101,21 +102,25 @@ void initial_pos(void){
         }
 		
 		inbuffer = (char*) wb_receiver_get_data(receiver);
-		sscanf(inbuffer,"%d#%d#%f#%f#%f##%f#%f#%d",&rob_nb,&initial_pos_flag,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1],&formation_type);
-		printf("Initial pos %d\n",formation_type);
-		// Only info about self will be taken into account at first.
+		sscanf(inbuffer,"%d#%d#%f#%f#%f##%f#%f#%d",
+                        &rob_nb,
+                        &initial_pos_flag,
+                        &rob_x,
+                        &rob_z,
+                        &rob_theta,
+                        &migr[0],
+                        &migr[1],
+                        &formation_type);
 		
-		//robot_nb %= FORMATION_SIZE;
-		if (rob_nb == robot_id && initial_pos_flag==0)
-		{
+
+		if (rob_nb == robot_id && initial_pos_flag==0) {
 			// Initialize self position
-			loc[rob_nb][0] = rob_x;     // x-position
-			loc[rob_nb][1] = rob_z;     // z-position
-			loc[rob_nb][2] = rob_theta; // theta
+			loc[rob_nb][0] = rob_x;                 // x-position
+			loc[rob_nb][1] = rob_z;                 // z-position
+			loc[rob_nb][2] = rob_theta;             // theta
 			prev_loc[rob_nb][0] = loc[rob_nb][0];
 			prev_loc[rob_nb][1] = loc[rob_nb][1];
-			initialized[rob_nb] = 1;    // initialized = true
-			//printf("initialPos %f %f %f %f %d\n",loc[rob_nb][0],loc[rob_nb][1],prev_loc[rob_nb][0],prev_loc[rob_nb][1],formation_type);
+			initialized[rob_nb] = 1;                // initialized = true
 		}
 		wb_receiver_next_packet(receiver);
 	}

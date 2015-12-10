@@ -110,6 +110,9 @@ float move_to_goal_max_threshold;
 int noise_gen_frequency;  // defines, after how many steps a new random vector should be generated
 int fading;               // true, if nice transition is wished from one random vector to the next
 
+// time steps since reset
+int time_steps_since_start;
+
 
 
 // Methods
