@@ -62,11 +62,13 @@ void initialize(void);
 void reset(void);
 void reset_barrier_world(void);
 void reset_world2(void);
+void reset_random_world(void);
 void reset_to_initial_values(void);
 void send_init_poses(void);
 void send_real_run_init_poses(void);
 void send_current_poses(void);
 float rand_01(void);
 void random_pos(int robot_id, float x_min, float z_min);
+void random_pos_obs(int obs_id, float x_min, float z_min);
 
 #endif

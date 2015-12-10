@@ -18,7 +18,7 @@
 
 // Private methods
 char valid_locs(int r_id);
-
+char valid_locs_obs(int obs_id);
 
 
 // Private variables
@@ -213,6 +213,45 @@ void reset_world2(void) {
 }
 
 
+/* 
+ * Initialize robot positions and devices such that:
+ * - there are 6 obstacles
+ * - robots are on one side; the goal on the other one
+ * - all features are randomly positioned in determined areas. 
+ * Function used for PSO. 
+ */
+void reset_random_world(void) {
+    int obs_id, i;
+    
+    // Set up the obstacles
+    for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
+      random_pos_obs(obs_id, -2.0, -3.5);
+    }
+    
+    printf("OK\n");
+    
+    // Set up the goal behind the wall of obstacles
+    new_loc_goal[0] = 0.2;
+    new_loc_goal[1] = 0.0;
+    new_loc_goal[2] = -4.0;
+    goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+    wb_supervisor_field_set_sf_vec3f(goal_field, new_loc_goal);
+
+    // Randomly set up robots on the other side of the wall of obstacles
+    for (i=0; i<FORMATION_SIZE; i++) {
+        random_pos(i, -2.0, -1.5);
+        robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
+        robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
+    }
+    
+    simulation_duration = 0;
+
+}
+
+
+/*
+ * Reinitializes robots and devices as decided in the initial world by the user. 
+ */
 void reset_to_initial_values(void) {
     int obs_id, i;
     
@@ -336,7 +375,7 @@ void send_current_poses(void){
  * Generates random number in [0,1]
  */
 float rand_01(void) {
-    srand(time(NULL));
+    //srand(time(NULL));
     return ((float)rand())/((float)RAND_MAX);
 }
 
@@ -367,12 +406,29 @@ void random_pos(int robot_id, float x_min, float z_min) {
 }
 
 
-/*void initial_pos(int robot_id) {
-    wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[robot_id],"translation"),
-                                     initial_loc[robot_id]);
-    wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[robot_id],"rotation"), 
-                                        initial_rot[robot_id]);
-}*/
+/*
+ * Randomly position the specified obstacle within a certain zone
+ */
+void random_pos_obs(int obs_id, float x_min, float z_min) {
+    //printf("Setting random position for %d\n",robot_id);
+
+    new_rot_obs[obs_id][0] = 0.0;
+    new_rot_obs[obs_id][1] = 1.0;
+    new_rot_obs[obs_id][2] = 0.0;
+    new_rot_obs[obs_id][3] = 4.45059;
+
+    // Note that it does not matter if obstacles are overlapping
+    do {
+        new_loc_obs[obs_id][0] = x_min + ARENA_SIZE*rand_01();
+        new_loc_obs[obs_id][2] = z_min + ARENA_SIZE*rand_01();
+    } while (!valid_locs_obs(obs_id));
+    //printf("Robot_id=%d, x=%f, z=%f\n", robot_id, new_loc[robot_id][0], (float)rand());
+    
+    wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(obss[obs_id],"translation"),
+                                     new_loc_obs[obs_id]);
+    wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(obss[obs_id],"rotation"), 
+                                     new_rot_obs[obs_id]);
+}
 
 /*
  * Makes sure no robots are overlapping
@@ -395,5 +451,22 @@ char valid_locs(int r_id) {
 }
 
 
+/*
+ * Makes sure obstacles are not overlapping too much
+ */
+char valid_locs_obs(int obs_id) {
+    int i;
 
+    // This for loops stops when i = obs_id because new_loc_obs[i] for i > obs_id are not initialized yet
+    // when this function is called. Moreoever, it does not make sense to verify the distance between
+    // an obstacle and itself. 
+    for (i = 0; i < obs_id; i++) {
 
+        float dist = pow(new_loc_obs[i][0]-new_loc_obs[obs_id][0],2)+pow(new_loc_obs[i][2]-new_loc_obs[obs_id][2],2);
+        float max_dist = pow((2*0.1+0.01), 2);
+
+        if (dist < max_dist)
+            return 0;
+    }
+    return 1;
+}
