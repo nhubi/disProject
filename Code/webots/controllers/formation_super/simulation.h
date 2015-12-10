@@ -61,6 +61,7 @@ int simulation_duration;        // ms since simulation start
 void initialize(void);
 void reset(void);
 void reset_barrier_world(void);
+void reset_world2(void);
 void reset_to_initial_values(void);
 void send_init_poses(void);
 void send_real_run_init_poses(void);

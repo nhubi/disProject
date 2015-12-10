@@ -95,8 +95,6 @@ void reset(void) {
     initial_loc_goal[0] = wb_supervisor_field_get_sf_vec3f(initial_goal_field)[0];
     initial_loc_goal[1] = wb_supervisor_field_get_sf_vec3f(initial_goal_field)[1];
     initial_loc_goal[2] = wb_supervisor_field_get_sf_vec3f(initial_goal_field)[2];
-    
-    //simulation_duration = 0;
 }
 
 
@@ -107,15 +105,11 @@ void reset(void) {
  * Function used for PSO. 
  */
 void reset_barrier_world(void) {
-    //char obs[5] = "obs0";
-    //char rob[5] = "rob0";
     int obs_id, i;
     float dist_between_obs = 0.1;
     
     // Set up the obstacles
     for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
-      //sprintf(obs,"obs%d",obs_id);
-      //obss[obs_id]          = wb_supervisor_node_get_from_def(obs);
       new_rot_obs[obs_id][0] = 0.0;
       new_rot_obs[obs_id][1] = 1.0;
       new_rot_obs[obs_id][2] = 0.0;
@@ -132,7 +126,6 @@ void reset_barrier_world(void) {
     }
     
     // Set up the goal behind the wall of obstacles
-    //goal_id = wb_supervisor_node_get_from_def("goal-node");
     new_loc_goal[0] = 0.2;
     new_loc_goal[1] = 0.0;
     new_loc_goal[2] = -4.0;
@@ -141,8 +134,6 @@ void reset_barrier_world(void) {
 
     // Randomly set up robots on the other side of the wall of obstacles
     for (i=0; i<FORMATION_SIZE; i++) {
-        //sprintf(rob,"rob%d",i);
-        //robs[i]          = wb_supervisor_node_get_from_def(rob);
         random_pos(i, -2.0, -1.5);
         robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
@@ -153,13 +144,80 @@ void reset_barrier_world(void) {
 }
 
 
+/* 
+ * Initialize robot positions and devices with a difficult obstacle_avoidance configuration.
+ * Function used for PSO. 
+ */
+void reset_world2(void) {
+    int obs_id, i;
+    
+    // Set the obstacles
+    if(NB_OBSTACLES < 3)
+    {
+        printf("PSO with the difficult configuration cannot be run on a world with less than 3 obstacles.\n");
+        return;
+    } else {
+    
+        int dist_between_obs = 1;
+        new_rot_obs[0][0] = 0.0; new_rot_obs[0][1] = 1.0; new_rot_obs[0][2] = 0.0; new_rot_obs[0][3] = 4.45059;
+        new_loc_obs[0][0] = -0.119863; new_loc_obs[0][1] = 0.0; new_loc_obs[0][2] = -0.188514; 
+        new_rot_obs[1][0] = 0.0; new_rot_obs[1][1] = 1.0; new_rot_obs[1][2] = 0.0; new_rot_obs[1][3] = 4.45059;
+        new_loc_obs[1][0] = -0.0147719; new_loc_obs[1][1] = 0.0; new_loc_obs[1][2] = -0.15636;
+        new_rot_obs[2][0] = 0.0; new_rot_obs[2][1] = 1.0; new_rot_obs[2][2] = 0.0; new_rot_obs[2][3] = 4.45059; 
+        new_loc_obs[2][0] = 0.0546256; new_loc_obs[2][1] = 0.0; new_loc_obs[2][2] = -0.0362992;
+        for (obs_id=3; obs_id<NB_OBSTACLES; obs_id++) {
+          new_rot_obs[obs_id][0] = 0.0;
+          new_rot_obs[obs_id][1] = 1.0;
+          new_rot_obs[obs_id][2] = 0.0;
+          new_rot_obs[obs_id][3] = 4.45059;
+        
+          new_loc_obs[obs_id][0] = -0.25 + obs_id*dist_between_obs;
+          new_loc_obs[obs_id][1] = -1.25566e-13;
+          new_loc_obs[obs_id][2] = -1.23;
+        }
+        
+        for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
+          wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(obss[obs_id],"translation"),
+                                         new_loc_obs[obs_id]);
+          wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(obss[obs_id],"rotation"), 
+                                         new_rot_obs[obs_id]);
+        }
+    }
+    
+    // Set the goal 
+    new_loc_goal[0] = 0.351711;
+    new_loc_goal[1] = 0.0;
+    new_loc_goal[2] = -2.21704;
+    goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+    wb_supervisor_field_set_sf_vec3f(goal_field, new_loc_goal);
+
+    // Set the robots
+    double new_loc2[FORMATION_SIZE][3] = { {-0.26479, -3.19812e-05, 0.439438}, 
+                {-0.158156, -2.35412e-06, 0.436885}, 
+                {-0.0499819, -3.19812e-05, 0.438491}, 
+                {0.0586924, -3.19812e-05, 0.436266} };
+    double new_rot2[FORMATION_SIZE][4] = { {-0.995072, 0.0946832, -0.0294367, 7.27241e-05}, 
+                {-0.747912, 0.655124, -0.106958, -0.00746706}, 
+                {-0.999563, 0, -0.0295695, 7.27241e-05},
+                {-0.995072, 0.0946832, -0.0294367, 7.27241e-05} };
+    for (i=0; i<FORMATION_SIZE; i++) {
+        wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[i],"translation"),
+                                     new_loc2[i]);
+        wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[i],"rotation"), 
+                                     new_rot2[i]);
+        robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
+        robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
+    }
+    
+    simulation_duration = 0;
+}
+
+
 void reset_to_initial_values(void) {
     int obs_id, i;
     
     // Set up the obstacles
     for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
-      //sprintf(obs,"obs%d",obs_id);
-      //obss[obs_id]          = wb_supervisor_node_get_from_def(obs);
       wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(obss[obs_id],"translation"),
                                      initial_loc_obs[obs_id]);
       wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(obss[obs_id],"rotation"), 
@@ -167,16 +225,11 @@ void reset_to_initial_values(void) {
     }
     
     // Set up the goal behind the wall of obstacles
-    //goal_id = wb_supervisor_node_get_from_def("goal-node");
 
     wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(goal_id,"translation"), initial_loc_goal);
-    //goal_field = wb_supervisor_node_get_field(goal_id,"translation");
 
     // Randomly set up robots on the other side of the wall of obstacles
     for (i=0; i<FORMATION_SIZE; i++) {
-        //sprintf(rob,"rob%d",i);
-        //robs[i]          = wb_supervisor_node_get_from_def(rob);
-        //initial_pos(i);
         robs_trans[i]    = initial_robs_trans[i];
         robs_rotation[i] = initial_robs_rotation[i];
     }
