@@ -30,37 +30,20 @@ void computeDirection(){
     float dir_avoid_obstacles[2] = {0, 0};
     float dir_noise[2]           = {0, 0};
 
-    // each motorschema's weight
-    w_goal            = 1;
-    w_keep_formation  = 5;
-    w_avoid_robot     = 1;
-    w_avoid_obstacles = 5;
-    w_noise           = 2;
-
-    // thresholds
-    avoid_obst_min_threshold     =  60;
-    avoid_obst_max_threshold     = 200;
-    move_to_goal_min_threshold   =   0.1;
-    move_to_goal_max_threshold   =   0.5;
-    avoid_robot_min_threshold    =   0.05;
-    avoid_robot_max_threshold    =   0.1;
-    keep_formation_min_threshold =   0.03;
-    keep_formation_max_threshold =   0.1;
-
-
-    // noise parameters
-    noise_gen_frequency = 10;
-    fading              = true;
-
 
     // compute the direction vectors
     get_move_to_goal_vector(dir_goal);
-    if(norm(dir_goal,2) < stop_criterion_distance_to_goal) return;
     get_keep_formation_vector(dir_keep_formation, dir_goal);
     get_stat_obst_avoidance_vector(dir_avoid_obstacles);
     get_avoid_robot_vector(dir_avoid_robot);
     get_noise_vector(dir_noise);
 
+
+    // are we there already?
+    if(norm(dir_goal,2) < stop_criterion_distance_to_goal) {
+        printf("Robot%d says \"WOOHOOOOO... Goal reached.\"", robot_id);
+        return;
+    }
 
     int d;
     //for each dimension d...
@@ -74,7 +57,8 @@ void computeDirection(){
         speed[robot_id][d] += w_keep_formation  * dir_keep_formation[d];
         speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
-    }
+		speed[robot_id][d] += w_noise           * dir_noise[d]; // we need to set noise weight
+     }
 }
 
 
@@ -92,12 +76,13 @@ int main(){
     char *inbuffer;                 // Buffer for the receiver node
 
     msl = 0; msr = 0;
+	int useless_variable;       //TODO: @Stef, WTF is this? :'D
 	
 
 
-    // In this initialization, the common goal is communicated to the robot
-    reset();        // Resetting the robot
-    initial_pos();  // Initializing the robot's position
+    reset();           // Resetting the robot
+    initial_pos();     // Initializing the robot's position
+    initial_weights(); //Initializing the robot's weights
 	
 	
     // Forever
@@ -107,7 +92,7 @@ int main(){
         int count = 0;
         while (wb_receiver_get_queue_length(receiver) > 0 && count < FORMATION_SIZE) {
         inbuffer = (char*) wb_receiver_get_data(receiver);
-        sscanf(inbuffer,"%d#%f#%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta);
+		sscanf(inbuffer,"%d#%d#%f#%f#%f",&rob_nb,&useless_variable,&rob_x,&rob_z,&rob_theta);
 			
         // check that received message comes from a member of the flock
         if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE && (int) rob_nb%FORMATION_SIZE == (int) robot_id%FORMATION_SIZE ) {
@@ -143,8 +128,7 @@ int main(){
         }
         wb_receiver_next_packet(receiver);
     }
-    
-    
+
 	
     // compute current position according to motor speeds (msl, msr)
     //update_self_motion(msl,msr);

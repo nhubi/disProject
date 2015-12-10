@@ -21,7 +21,7 @@
 ###
 ### ---- C Sources ----
 ### if your program uses several C source files:
-### C_SOURCES = my_plugin.c my_clever_algo.c my_graphics.c
+C_SOURCES = formation_super.c simulation.c pso_ocba.c fitness.c
 ###
 ### ---- C++ Sources ----
 ### if your program uses several C++ source files:
@@ -44,7 +44,6 @@
 ###
 ###-----------------------------------------------------------------------------
 
-C_SOURCES = pso_ocba.c simulation.c formation_super.c
 
 ### Do not modify: this includes Webots global Makefile.include
 space :=

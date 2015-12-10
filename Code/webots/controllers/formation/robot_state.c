@@ -73,6 +73,7 @@ void reset(void) {
 	
 	for(i=0; i<FORMATION_SIZE; i++) {
 		initialized[i] = 0;                 // Set initialization to 0 (= not yet initialized)
+		initialized_weights[i]=0;			// Set initialization of weights to 0(= not yet initialized)
 	}
 	
 	printf("Reset: robot %d\n",robot_id);
@@ -84,11 +85,11 @@ void reset(void) {
 
 /*
  * Initialize robot's position
- * (Stefano) The robot receive infomation on his ID, position and the goal
+ * The robot receive infomation on his ID, position and the goal
  */
 void initial_pos(void){
 	char *inbuffer;
-	int rob_nb;
+	int rob_nb,initial_pos_flag;
 	float rob_x, rob_z, rob_theta; // Robot position and orientation
 	
 	
@@ -100,11 +101,12 @@ void initial_pos(void){
         }
 		
 		inbuffer = (char*) wb_receiver_get_data(receiver);
-		sscanf(inbuffer,"%d#%f#%f#%f##%f#%f#%d",&rob_nb,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1],&formation_type);
+		sscanf(inbuffer,"%d#%d#%f#%f#%f##%f#%f#%d",&rob_nb,&initial_pos_flag,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1],&formation_type);
+		printf("Initial pos %d\n",formation_type);
 		// Only info about self will be taken into account at first.
 		
 		//robot_nb %= FORMATION_SIZE;
-		if (rob_nb == robot_id)
+		if (rob_nb == robot_id && initial_pos_flag==0)
 		{
 			// Initialize self position
 			loc[rob_nb][0] = rob_x;     // x-position
@@ -120,8 +122,95 @@ void initial_pos(void){
 }
 
 
+
+
+
 /*
- * Computes the unit center of all the robots from their actual 
+ * Initialize robot's weights
+ */
+void initial_weights(void){
+	char *inbuffer;
+	int rob_nb,initial_pos_flag; // if initial_pos_flag==1 the supervisor is sending weights
+	
+	while (initialized_weights[robot_id] == 0) {
+		
+		// wait for message
+		while (wb_receiver_get_queue_length(receiver) == 0)	{
+			wb_robot_step(TIME_STEP);
+		}
+		
+		// temporal variable
+		// motorschema weights
+		float w_goal_temp;
+		float w_keep_formation_temp;
+		float w_avoid_robot_temp;
+		float w_avoid_obstacles_temp;
+		float w_noise_temp;
+		
+		// thresholds
+		float avoid_robot_min_threshold_temp;
+		float avoid_robot_max_threshold_temp;
+		float avoid_obst_min_threshold_temp;
+		float avoid_obst_max_threshold_temp;
+		float keep_formation_min_threshold_temp;
+		float keep_formation_max_threshold_temp;
+		float move_to_goal_min_threshold_temp;
+		float move_to_goal_max_threshold_temp;
+		
+		// noise
+		int noise_gen_frequency_temp;  // defines, after how many steps a new random vector should be generated
+		int fading_temp;              // true, if nice transition is wished from one random vector to the next
+
+		
+		
+		inbuffer = (char*) wb_receiver_get_data(receiver);
+		sscanf(inbuffer,"%d#%d#%f#%f#%f#%f#%f#%d#%d#%f#%f#%f#%f#%f#%f#%f#%f",&rob_nb,&initial_pos_flag,
+			   &w_goal_temp,&w_keep_formation_temp,&w_avoid_robot_temp,&w_avoid_obstacles_temp,&w_noise_temp,
+			   &noise_gen_frequency_temp,&fading_temp,
+			   &avoid_obst_min_threshold_temp,&avoid_obst_max_threshold_temp,
+			   &move_to_goal_min_threshold_temp,&move_to_goal_max_threshold_temp,
+			   &avoid_robot_min_threshold_temp,&avoid_robot_max_threshold_temp,
+			   &keep_formation_min_threshold_temp,&keep_formation_max_threshold_temp);
+
+		// Only info about self will be taken into account at first.
+		
+		if (rob_nb == robot_id && initial_pos_flag==1)
+		{
+			// Initialize robot's weights
+			// motorschema weights
+			w_goal=w_goal_temp;
+			w_keep_formation=w_keep_formation_temp;
+			w_avoid_robot=w_avoid_robot_temp;
+			w_avoid_obstacles=w_avoid_obstacles_temp;
+			w_noise=w_noise_temp;
+			
+			// thresholds
+			avoid_robot_min_threshold    = avoid_robot_min_threshold_temp;
+			avoid_robot_max_threshold    = avoid_robot_max_threshold_temp;
+			avoid_obst_min_threshold     = avoid_obst_min_threshold_temp;
+			avoid_obst_max_threshold     = avoid_obst_max_threshold_temp;
+			keep_formation_min_threshold = keep_formation_min_threshold_temp;
+			keep_formation_max_threshold = keep_formation_max_threshold_temp;
+			move_to_goal_min_threshold   = move_to_goal_min_threshold_temp;
+			move_to_goal_max_threshold   = move_to_goal_max_threshold_temp;
+			
+			// noise
+			noise_gen_frequency=noise_gen_frequency_temp;
+			fading=fading_temp;
+			
+			initialized_weights[rob_nb] = 1;    // initialized = true
+			
+		}
+		wb_receiver_next_packet(receiver);
+	}
+}
+
+
+
+
+
+/*
+ * Computes the unit center of all the robots from their actual
  * positions
  * (Ondine) Positions of the other robots will then have to be determined 
  * with local communication
@@ -135,6 +224,10 @@ void compute_unit_center(void) {
 		unit_center[j] /= FORMATION_SIZE;
 	}
 }
+
+
+
+
 
 /*
  * Updates robot position with wheel speeds
@@ -165,6 +258,8 @@ void update_self_motion(int msl, int msr) {
 
 
 
+
+
 /*
  * Computes wheel speed given a certain X,Z speed
  */
@@ -192,6 +287,3 @@ void compute_wheel_speeds(int *msl, int *msr)
 	limit(msl,MAX_SPEED);
 	limit(msr,MAX_SPEED);
 }
-
-
-

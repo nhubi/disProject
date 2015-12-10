@@ -12,6 +12,7 @@
 #include <time.h>
 
 #include "simulation.h"
+#include "fitness.h"
 
 
 
@@ -34,7 +35,7 @@ void reset(void) {
     wb_robot_init();
     emitter = wb_robot_get_device("emitter");
     if (emitter==0) printf("missing emitter\n");
-
+	
     char rob[5] = "rob0";
     int i;
     for (i=0;i<FORMATION_SIZE;i++) {
@@ -43,8 +44,21 @@ void reset(void) {
         robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }
+	
     goal_id = wb_supervisor_node_get_from_def("goal-node");
     goal_field = wb_supervisor_node_get_field(goal_id,"translation");
+
+    
+    //obstacle initialisation    	
+    char obs[5]="obs0";
+    for (i=0;i<NUMBER_OF_OBSTACLES;i++) {
+        sprintf(obs,"obs%d",i);
+        obstacles[i]= wb_supervisor_node_get_from_def(obs);
+        obstacles_trans[i]=wb_supervisor_node_get_field(obstacles[i],"translation");
+        
+        obstacle_loc[i][0] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[0];       // X
+        obstacle_loc[i][1] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[2];       // Z
+    }
     
     simulation_duration = 0;
 }
@@ -52,12 +66,10 @@ void reset(void) {
 
 
 
-
 /*
  * Send to each robot its initial position the goal's position and the formation type. 
  */
-void send_init_poses(void)
-{
+void send_init_poses(void){
     char buffer[255];	// Buffer for sending data
     int i;
      
@@ -67,6 +79,11 @@ void send_init_poses(void)
         loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
         loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
         loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
+		
+        // Initialise prev_loc
+        prev_loc[i][0]=loc[i][0];
+        prev_loc[i][1]=loc[i][1];
+        prev_loc[i][2]=loc[i][2];
 
         migrx = wb_supervisor_field_get_sf_vec3f(goal_field)[0];    // X
         offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1];   // Y
@@ -90,20 +107,99 @@ void send_init_poses(void)
 
 
 
+void send_weights(void){
+    char buffer[255];	// Buffer for sending data
+    int i;
+     
+    for (i=0;i<FORMATION_SIZE;i++) {
+	
+        // Send it out
+        sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f#",i,1,
+        w_goal,w_keep_formation,w_avoid_robot,w_avoid_obstacles,w_noise,
+        noise_gen_frequency,fading,
+        avoid_obst_min_threshold,avoid_obst_max_threshold,move_to_goal_min_threshold,move_to_goal_max_threshold,
+        avoid_robot_min_threshold,avoid_robot_max_threshold,keep_formation_min_threshold,keep_formation_max_threshold);
+
+        wb_emitter_send(emitter,buffer,strlen(buffer));
+
+        // Run one step
+        wb_robot_step(TIME_STEP);
+    }
+}
+
+
+
+
+
 void send_current_poses(void){
     char buffer[255]; // buffer for sending data
     int i;
 
     for (i = 0; i < FORMATION_SIZE; i++) {
+        // Set prev_loc
+        prev_loc[i][0]=loc[i][0];
+        prev_loc[i][1]=loc[i][1];
+        prev_loc[i][2]=loc[i][2];
+
         // Get data
         loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[0];       // X
         loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_trans[i])[2];       // Z
         loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 
         // Sending positions to the robots
-        sprintf(buffer,"%1d#%f#%f#%f#%f#%f#%1d",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
+        //sprintf(buffer,"%1d#%f#%f#%f#%f#%f#%1d",i+offset,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
+        sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#",i+offset,0,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
         wb_emitter_send(emitter,buffer,strlen(buffer));				
     }
+}
+
+
+
+
+
+/*
+ * updates the fitness value of each robot.
+ */
+void update_fitness(void){
+    int i;
+    for(i = 0; i < FORMATION_SIZE; i++){
+        update_fitness_computation_for_robot(loc,prev_loc,speed,i,TIME_STEP*5/1000.0,formation_type);
+    }
+}
+
+
+
+
+
+/*
+ * Returns true if formation is close enough from goal node. 
+ * TODO: should we also verify that the formation is still ok?
+ * TODO: what about max timestep per simulation? (Ondine has implemented something somewhere i think)
+ */
+int simulation_has_ended(void) {
+	float centre_x=0;
+	float centre_y=0;
+	float distance_to_goal=0;
+	
+	
+	// compute the formation center
+	int i;
+	for (i=0; i<FORMATION_SIZE; i++) {
+		centre_x+=loc[i][0];
+		centre_y+=loc[i][1];
+	}   
+	centre_x/=FORMATION_SIZE;
+	centre_y/=FORMATION_SIZE;
+	
+	distance_to_goal+=(centre_x-migrx)*(centre_x-migrx);
+	distance_to_goal+=(centre_y-migrz)*(centre_y-migrz);
+	distance_to_goal=sqrt(distance_to_goal);
+		
+	if (distance_to_goal<0.2) {
+		return 1;
+	}
+	
+	return 0;
 }
 
 

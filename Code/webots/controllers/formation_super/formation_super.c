@@ -5,13 +5,15 @@
 #include <time.h>
 
 #include "simulation.h"
+#include "fitness.h"
 #include "pso_ocba.h"
+
+
 
 
 
 //Formation types
 #define DEFAULT_FORMATION "line"    // Line formation as default
-
 
 
 
@@ -42,9 +44,43 @@ int main(int argc, char *args[]) {
     printf("Supervisor resetted.\n");
     send_init_poses(); //this function is here as an example for communication using the supervisor
     printf("Init poses sent.\n Chosen formation: %s.\n", formation);
+    
+    
+    // each motorschema's weight
+    w_goal            = 1;
+    w_keep_formation  = 5;
+    w_avoid_robot     = 1;
+    w_avoid_obstacles = 5;
+    w_noise           = 0.5;
+
+    // thresholds
+    avoid_obst_min_threshold     =  60;
+    avoid_obst_max_threshold     = 200;
+    move_to_goal_min_threshold   =   0.1;
+    move_to_goal_max_threshold   =   0.5;
+    avoid_robot_min_threshold    =   0.05;
+    avoid_robot_max_threshold    =   0.1;
+    keep_formation_min_threshold =   0.03;
+    keep_formation_max_threshold =   0.1;
+
+
+    // noise parameters
+    noise_gen_frequency = 10;
+    fading              = 1;
+    
+    // sending weights
+    send_weights();
+    printf("Weights sent\n");
+
+    // setting up the fitness computation TODO: put it in PSO somewhere?
+    reset_fitness_computation(FORMATION_SIZE,migrx,migrz,obstacle_loc);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                                //
+// DUMMY PARAMETERS FOR TESTING                                                                   //
+//                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // TESTING PSO HERE
@@ -75,7 +111,7 @@ int main(int argc, char *args[]) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    
+
     // infinite loop
     for(;;) {
         wb_robot_step(TIME_STEP);
@@ -84,11 +120,16 @@ int main(int argc, char *args[]) {
         if (simulation_duration % 10 == 0) {
             send_current_poses();
 
-            //////////////////////////////////////////////////
-          	// Here we should then add the fitness function //
-            //////////////////////////////////////////////////
-          	
+            update_fitness();
+
+            if (simulation_has_ended()) {
+                break;
+            }
         }
         simulation_duration += TIME_STEP;
     }
+    
+    float fitness=compute_fitness(FORMATION_SIZE);
+    printf("fitness = %f\n",fitness);
+    return 0;
 }
