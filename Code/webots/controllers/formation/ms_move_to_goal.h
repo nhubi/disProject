@@ -21,7 +21,7 @@
 
 // definitions
 
-#define GOAL_REACHED_DISTANCE 0.001
+#define GOAL_REACHED_DISTANCE 0.1
 
 
 

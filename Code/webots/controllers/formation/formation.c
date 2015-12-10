@@ -14,6 +14,11 @@
 #include "ms_noise.h"
 
 
+// Variables
+bool goal_reached = false;
+
+
+
 /*
  * Combines the vectors from the 4 motorschemas and computes the corresponding wheel speed vector.
  * This vector can then be translated in actual wheel speeds.
@@ -27,8 +32,6 @@ void computeDirection(){
     float dir_avoid_obstacles[2] = {0, 0};
     float dir_noise[2]           = {0, 0};
 
-    bool goal_reached = false;
-
 
     // compute the direction vectors
     get_move_to_goal_vector(dir_goal, &goal_reached);
@@ -36,13 +39,6 @@ void computeDirection(){
     get_stat_obst_avoidance_vector(dir_avoid_obstacles);
     get_avoid_robot_vector(dir_avoid_robot);
     get_noise_vector(dir_noise);
-
-
-    // are we there already?
-    if(goal_reached) {
-        printf("Robot%d with goal_dir = (%f,%f) says \"WOOHOOOOO... Goal reached.\"\n", robot_id, dir_goal[0], dir_goal[1]);
-        return;
-    }
 
     int d;
     //for each dimension d...
@@ -58,6 +54,14 @@ void computeDirection(){
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
 		speed[robot_id][d] += w_noise           * dir_noise[d]; 
      }
+
+
+    // are we there already?
+    if(goal_reached) {
+        speed[robot_id][0] = 0;
+        speed[robot_id][1] = 0;
+        printf("Robot%d says \"WOOHOOOOO... Goal reached.\"\n", robot_id);
+    }
 }
 
 
@@ -75,13 +79,13 @@ int main(){
     char *inbuffer;                 // Buffer for the receiver node
 
     msl = 0; msr = 0;
-	int useless_variable;       //TODO: @Stef, WTF is this? :'D
+	int useless_variable;
 	
 
 
     reset();           // Resetting the robot
     initial_pos();     // Initializing the robot's position
-    initial_weights(); //Initializing the robot's weights
+    initial_weights(); // Initializing the robot's weights
 	
 	
     // Forever
@@ -91,7 +95,7 @@ int main(){
         int count = 0;
         while (wb_receiver_get_queue_length(receiver) > 0 && count < FORMATION_SIZE) {
             inbuffer = (char*) wb_receiver_get_data(receiver);
-		    sscanf(inbuffer,"%d#%d#%f#%f#%f",&rob_nb,&useless_variable,&rob_x,&rob_z,&rob_theta);
+            sscanf(inbuffer,"%d#%d#%f#%f#%f",&rob_nb,&useless_variable,&rob_x,&rob_z,&rob_theta);
 			
             // check that received message comes from a member of the flock
             if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE && (int) rob_nb%FORMATION_SIZE == (int) robot_id%FORMATION_SIZE ) {

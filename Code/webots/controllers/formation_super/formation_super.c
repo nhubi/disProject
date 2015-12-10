@@ -45,7 +45,7 @@ int main(int argc, char *args[]) {
     w_keep_formation  = 5;
     w_avoid_robot     = 1;
     w_avoid_obstacles = 5;
-    w_noise           = 2;
+    w_noise           = 3;
 
     // thresholds
     avoid_obst_min_threshold     =  60;
@@ -90,13 +90,13 @@ int main(int argc, char *args[]) {
     parameter_ranges[4][1] = -0.7;
 
     float optimal_params[DIMENSIONALITY];
-    pso_ocba(optimal_params);
+    /*pso_ocba(optimal_params);
 
     printf("The optimal parameters are: \n");
     for(d = 0; d < DIMENSIONALITY; d++){
         printf("    Dimension %d: %1.4f\n", d, optimal_params[d]);
     }
-    printf("\n\n");
+    printf("\n\n");*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,6 +125,7 @@ int main(int argc, char *args[]) {
             update_fitness();
 
             if (simulation_has_ended()) {
+                printf("\n\n\n\n______________________________________JUDIHUI!______________________________________\n\n");
                 break;
             }
         }

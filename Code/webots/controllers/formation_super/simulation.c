@@ -168,8 +168,10 @@ void send_current_poses(void){
         loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 
         // Sending positions to the robots
-        sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#",i+offset,0,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
-        wb_emitter_send(emitter,buffer,strlen(buffer));				
+        //sprintf(buffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#",i+offset,0,loc[i][0],loc[i][1],loc[i][2], migrx, migrz, formation_type);
+        
+        sprintf(buffer,"%1d#%1d#%f#%f#%f#",i+offset,0,loc[i][0],loc[i][1],loc[i][2]);
+        wb_emitter_send(emitter,buffer,strlen(buffer));
     }
 }
 
@@ -215,7 +217,7 @@ int simulation_has_ended(void) {
 	distance_to_goal+=(centre_y-migrz)*(centre_y-migrz);
 	distance_to_goal=sqrt(distance_to_goal);
 		
-	if (distance_to_goal<0.2) {
+	if (distance_to_goal<0.1) {
 		return 1;
 	}
 	

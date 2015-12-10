@@ -37,7 +37,7 @@ void get_noise_vector(float* direction) {
             prev_z_rand = z_rand;
         }
 
-        srand(time(NULL));
+        srand(time(NULL)*robot_id);
         
         // generate random x and z in [-1, -1]
 	    x_rand = rand()/(float)RAND_MAX * 2 - 1;
