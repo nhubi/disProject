@@ -107,7 +107,7 @@ int main(){
         int count = 0;
         while (wb_receiver_get_queue_length(receiver) > 0 && count < FORMATION_SIZE) {
         inbuffer = (char*) wb_receiver_get_data(receiver);
-        sscanf(inbuffer,"%d#%f#%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta);
+        sscanf(inbuffer,"%d#%f#%f#%f##%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1]);
 			
         // check that received message comes from a member of the flock
         if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE && (int) rob_nb%FORMATION_SIZE == (int) robot_id%FORMATION_SIZE ) {

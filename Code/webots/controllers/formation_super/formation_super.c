@@ -12,8 +12,8 @@
 //Formation types
 #define DEFAULT_FORMATION "line"    // Line formation as default
 
-#define NB_PSO_RUNS           10    // Number of runs for PSO
-
+#define NB_PSO_WALL_RUNS           1    // Number of runs for PSO
+#define MAX_IT_PSO         5000    // Number of iteration per PSO run
 
 
 
@@ -44,7 +44,7 @@ int main(int argc, char *args[]) {
     initialize();
     reset();
     int sim; 
-    for(sim = 0; sim < NB_PSO_RUNS; sim++) {
+    for(sim = 0; sim < NB_PSO_WALL_RUNS; sim++) {
         printf("Beginning of PSO simulation n°%d\n", sim+1);
         reset_barrier_world();
         printf("Supervisor reset.\n");
@@ -54,7 +54,7 @@ int main(int argc, char *args[]) {
 
         // pso loop
         int t;
-        for(t = 0; t < 2000; t++) {   //should run for about 4min of real time
+        for(t = 0; t < MAX_IT_PSO; t++) {   //should run for about 4min of real time
             wb_robot_step(TIME_STEP);
     
             // every 10 TIME_STEP (640ms)
@@ -72,7 +72,7 @@ int main(int argc, char *args[]) {
     
     
     // Real simulation with optimized parameters:
-    
+    initialize();
     // reset and communication part
     printf("Beginning of the real simulation\n");
     reset_to_initial_values();
