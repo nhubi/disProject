@@ -21,7 +21,7 @@
 ###
 ### ---- C Sources ----
 ### if your program uses several C source files:
-C_SOURCES = formation_super.c simulation.c pso_ocba.c fitness.c
+C_SOURCES = simulation.c formation_super.c pso_ocba.c fitness.c
 ###
 ### ---- C++ Sources ----
 ### if your program uses several C++ source files:

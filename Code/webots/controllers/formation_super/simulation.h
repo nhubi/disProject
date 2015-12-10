@@ -24,22 +24,29 @@
 #define TIME_STEP           64	    // [ms] Length of time step
 #define ARENA_SIZE           0.94   // TODO: is this value correct? copied from pso_obs_sup.c, lab08
 #define ROB_DIST             0.035  // Distance between robots in formation
-#define NUMBER_OF_OBSTACLES  6      // Number of obstacles 
+#define NB_OBSTACLES         6      // Number of obstacles 
 
 
 
 // declarations
 
 // devices
-WbNodeRef robs[FORMATION_SIZE];             // Robots nodes
-WbFieldRef robs_trans[FORMATION_SIZE];      // Robots translation fields
-WbFieldRef robs_rotation[FORMATION_SIZE];   // Robots rotation fields
+WbNodeRef  robs[FORMATION_SIZE];                    // Robots nodes
+WbFieldRef robs_trans[FORMATION_SIZE];              // Robots translation fields
+WbFieldRef robs_rotation[FORMATION_SIZE];           // Robots rotation fields
+WbFieldRef initial_robs_trans[FORMATION_SIZE];
+WbFieldRef initial_robs_rotation[FORMATION_SIZE];
+
+WbNodeRef obss[NB_OBSTACLES];               // Obstacles nodes
+WbFieldRef initial_obs_trans[NB_OBSTACLES];
+WbFieldRef initial_obs_rotation[NB_OBSTACLES];
+
 WbDeviceTag emitter;                        // Single emitter
 
 // obstacles
-WbNodeRef  obstacles[NUMBER_OF_OBSTACLES];          // Obstacles nodes
-WbFieldRef obstacles_trans[NUMBER_OF_OBSTACLES];    // Obstacles translation fields
-float obstacle_loc[NUMBER_OF_OBSTACLES][2];         // obstacle locations (X,Y coordinates)
+WbNodeRef  obstacles[NB_OBSTACLES];          // Obstacles nodes
+WbFieldRef obstacles_trans[NB_OBSTACLES];    // Obstacles translation fields
+float obstacle_loc[NB_OBSTACLES][2];         // obstacle locations (X,Y coordinates)
 
 // Variables for goal:
 int offset;             // Offset of robots number
@@ -47,6 +54,7 @@ float migrx,migrz;      // Migration vector
 float orient_migr;      // Migration orientation
 WbNodeRef goal_id;      // Goal node
 WbFieldRef goal_field;  // Goal translation field
+WbFieldRef initial_goal_field;
 
 float loc[FORMATION_SIZE][3];       // Each robot's locations: X,Y and Theta
 float prev_loc[FORMATION_SIZE][3];  // Previous location of everybody
@@ -78,16 +86,22 @@ float keep_formation_max_threshold; // > max threshold: ballistic zone, full cor
 
 
 // methods
-
+void initialize(void);
 void reset(void);
+void reset_barrier_world(void);
+void reset_world2(void);
+void reset_random_world(void);
+void reset_to_initial_values(void);
 void send_init_poses(void);
 void init_rand_01(void);
 float rand_01(void);
-void random_pos(int robot_id);
+void random_pos(int robot_id, float x_min, float z_min);
 void send_current_poses(void);
 void update_fitness(void);
 void send_weights(void);
 int simulation_has_ended(void);
-
+void send_real_run_init_poses(void);
+void send_current_poses(void);
+void random_pos_obs(int obs_id, float x_min, float z_min);
 
 #endif
