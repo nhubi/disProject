@@ -30,6 +30,7 @@
 
 #include "pso_ocba.h"
 #include "simulation.h"
+#include "fitness.h"
 
 
 // private methods
@@ -54,7 +55,6 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
     int d;  // dimension pointer
     int n;  // neighbour pointer
     int remaining_budget;
-
 
     init_particles();
 
@@ -81,7 +81,6 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
                 }
             }
         }
-
 
         // update personal best
         for(p = 0; p < POPULATION_SIZE; p++) {
@@ -223,19 +222,59 @@ void evaluate_position(float position[DIMENSIONALITY], float* mean, float* var, 
  *       Later, we will start the simulation here and execute the fitness function.
  */
 float evaluate_parameters(float* params){
-    int d;                  // dimension pointer
     float performance = 0;  // return value
 
-    for(d = 0; d < DIMENSIONALITY; d++){
-        performance += pow(params[d], 2);
-        performance += (rand_01() - 0.5);  // add some random noise
-    }
-    //printf("[PSO] _ _ _ Evaluating (%1.4f,%1.4f) --> %1.4f\n", params[0], params[1], performance);
-    
-    // make sure that performance >= 0. (It could only be negative because of noise)
-    if(performance < 0)
-        performance = 0;
+    printf("[PSO] Simulation with random positions\n");
+    reset_random_world();
+    printf("[PSO] Supervisor reset.\n");
+    send_init_poses();
+    printf("[PSO] Init poses sent.\n");
 
+
+    
+    // each motorschema's weight
+    w_goal            = params[0];
+    w_keep_formation  = params[1];
+    w_avoid_robot     = params[2];
+    w_avoid_obstacles = params[3];
+    w_noise           = params[4];
+
+    // thresholds
+    avoid_obst_min_threshold     = params[5];
+    avoid_obst_max_threshold     = params[5] + params[6];
+    move_to_goal_min_threshold   = params[7];
+    move_to_goal_max_threshold   = params[7] + params[8];
+    avoid_robot_min_threshold    = params[9];
+    avoid_robot_max_threshold    = params[9] + params[10];
+    keep_formation_min_threshold = params[11];
+    keep_formation_max_threshold = params[11] + params[12];
+
+    // noise parameters
+    noise_gen_frequency = params[13];
+    fading              = round(params[14]); // = 0 or 1
+
+    // sending weights
+    send_weights();
+
+    // pso loop (nb iterations is limited)
+    int t;
+    for(t = 0; t*64/1000 < MAX_EVAL_DURATION; t++) {
+        wb_robot_step(TIME_STEP);
+
+        // every 10 TIME_STEP (640ms)
+        if (simulation_duration % 10 == 0) {
+            send_current_poses();
+
+            update_fitness();
+        }
+        simulation_duration += TIME_STEP;
+        if (simulation_has_ended()){
+            printf("Goal reached.\n");
+            break;
+        }
+    }
+    performance = compute_fitness(FORMATION_SIZE);
+    printf("fitness = %f\n\n\n\n\n",performance);
     return performance;
 }
 

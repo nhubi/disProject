@@ -19,21 +19,21 @@
 // definitions
 
 // PSO general parameters
-#define DIMENSIONALITY        5
-#define POPULATION_SIZE      20     // nb particles
-#define NB_NEIGHBOURS         5     // size of neighbourhoods
-#define EVALUATION_SPAN      30     // max time (in seconds) of evaluation run
-#define PERSONAL_WEIGHT       2     // PSO function parameter
-#define NEIGHBOURHOOD_WEIGHT  2     // PSO function parameter
-#define INERTIA               0.8   // PSO function parameter
-#define V_MAX                 3     // max velocity of particles
-#define NORMALIZED_BORDER    10
+#define DIMENSIONALITY        15     // nb parameters to optimize
+#define POPULATION_SIZE       30     // nb particles
+#define NB_NEIGHBOURS          5     // size of neighbourhoods
+#define MAX_EVAL_DURATION    300     // max time (in seconds) of evaluation run
+#define PERSONAL_WEIGHT        2     // PSO function parameter
+#define NEIGHBOURHOOD_WEIGHT   2     // PSO function parameter
+#define INERTIA                0.6   // PSO function parameter
+#define V_MAX                  2     // max velocity of particles
+#define NORMALIZED_BORDER     10     // particle dimensions are normalized to [0, NORMALIZED_BORDER]
 
 // PSO OCBA specific parameters
-#define NB_ITERATIONS 10
+#define NB_ITERATIONS    10
 #define ITERATION_BUDGED 80     // ca. 2 * nb_parameter * POPULATION_SIZE
-#define N_ZERO 2                // nb initial evaluations
-#define DELTA 4                 // nb samples for 'remaining-budged evaluations'
+#define N_ZERO            2     // nb initial evaluations
+#define DELTA             4     // nb samples for 'remaining-budged evaluations'
 
 
 

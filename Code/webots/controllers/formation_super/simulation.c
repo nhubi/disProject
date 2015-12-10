@@ -257,8 +257,6 @@ void reset_random_world(void) {
       random_pos_obs(obs_id, -2.0, -3.5);
     }
     
-    printf("OK\n");
-    
     // Set up the goal behind the wall of obstacles
     new_loc_goal[0] = 0.2;
     new_loc_goal[1] = 0.0;
@@ -392,6 +390,22 @@ void send_weights(void){
         // Run one step
         wb_robot_step(TIME_STEP);
     }
+printf("Parameters: w_goal............. = %f\n", w_goal);
+printf("___________ w_keep_formation... = %f\n", w_keep_formation);
+printf("___________ w_avoid_robo....... = %f\n", w_avoid_robot);
+printf("___________ w_avoid_obstacles.. = %f\n", w_avoid_obstacles);
+printf("___________ w_noise............ = %f\n", w_noise);
+printf("___________ noise_gen_frequency = %d\n", noise_gen_frequency);
+printf("___________ fading............. = %d\n", fading);
+printf("___________ avoid_obst_min_threshold.... = %f\n", avoid_obst_min_threshold);
+printf("___________ avoid_obst_max_threshold.... = %f\n", avoid_obst_max_threshold);
+printf("___________ move_to_goal_min_threshold.. = %f\n", move_to_goal_min_threshold);
+printf("___________ move_to_goal_max_threshold.. = %f\n", move_to_goal_max_threshold);
+printf("___________ avoid_robot_min_threshold... = %f\n", avoid_robot_min_threshold);
+printf("___________ avoid_robot_max_threshold... = %f\n", avoid_robot_max_threshold);
+printf("___________ keep_formation_min_threshold = %f\n", keep_formation_min_threshold);
+printf("___________ keep_formation_max_threshold = %f\n", keep_formation_max_threshold);
+
 }
 
 

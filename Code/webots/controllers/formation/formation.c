@@ -132,10 +132,11 @@ int main(){
             wb_receiver_next_packet(receiver);
             
             time_steps_since_start++;
-
+/*
             if(time_steps_since_start*64/1000 - (float)time_steps_since_start*64/1000 == 0 && time_steps_since_start*64/1000 % 10 == 0){
                 printf("[%ds] Robot%d is still running.\n", time_steps_since_start*64/1000, robot_id);
             }
+*/
         }
 
 	

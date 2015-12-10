@@ -13,8 +13,7 @@
 
 
 //Formation types
-#define DEFAULT_FORMATION "line"     // Line formation as default
-
+#define DEFAULT_FORMATION "line"        // Line formation as default
 #define NB_PSO_WALL_RUNS           15   // Number of runs for PSO with a wall of obstacles
 #define NB_PSO_WORLD2_RUNS         7    // Number of runs for PSO with a difficult configuration
 #define NB_PSO_RANDOM_RUNS         20   // Number of runs for PSO with a random positionning
@@ -26,6 +25,7 @@
  * Main function.
  */
 int main(int argc, char *args[]) {
+printf("hello world\n");
     float fitness;
 
     // The type of formation is decided by the user through the world
@@ -81,32 +81,59 @@ int main(int argc, char *args[]) {
 
 
     int d;
+    // each motorschema's weight
+    parameter_ranges[0][0] =  0;
+    parameter_ranges[0][1] = 10;
+    parameter_ranges[1][0] =  0;
+    parameter_ranges[1][1] = 10;
+    parameter_ranges[2][0] =  0;
+    parameter_ranges[2][1] = 10;
+    parameter_ranges[3][0] =  0;
+    parameter_ranges[3][1] = 10;
+    parameter_ranges[4][0] =  0;
+    parameter_ranges[4][1] = 10;
 
-    parameter_ranges[0][0] = -1;
-    parameter_ranges[0][1] =  1;
-    parameter_ranges[1][0] = -1;
-    parameter_ranges[1][1] =  4;
-    parameter_ranges[2][0] = -1;
-    parameter_ranges[2][1] =  4;
-    parameter_ranges[3][0] =  3;
-    parameter_ranges[3][1] =  9.2;
-    parameter_ranges[4][0] = -0.8;
-    parameter_ranges[4][1] = -0.7;
+    // thresholds
+    parameter_ranges[ 5][0] =  30;      // obstacle avoidance min
+    parameter_ranges[ 5][1] = 200;
+    parameter_ranges[ 6][0] =   0;      // obstacle avoidance min + range
+    parameter_ranges[ 6][1] = 400;
+    parameter_ranges[ 7][0] =   0.001;  // move_to_goal min
+    parameter_ranges[ 7][1] =   0.5;
+    parameter_ranges[ 8][0] =   0.001;  // move_to_goal min + range
+    parameter_ranges[ 8][1] =   1;
+    parameter_ranges[ 9][0] =   0.001;  // avoid_robot min
+    parameter_ranges[ 9][1] =   0.5;
+    parameter_ranges[10][0] =   0.001;  // avoid_robot min + range
+    parameter_ranges[10][1] =   1;
+    parameter_ranges[11][0] =   0.001;  // keep_formation min
+    parameter_ranges[11][1] =   1;
+    parameter_ranges[12][0] =   0.001;  // keep_formation min + range
+    parameter_ranges[12][1] =   1;
+    parameter_ranges[13][0] =   1;      // noise_gen frequency
+    parameter_ranges[13][1] =  20;
+    parameter_ranges[14][0] =   0;      // fade or not
+    parameter_ranges[14][1] =   1;
+
+
+
 
     float optimal_params[DIMENSIONALITY];
-    /*pso_ocba(optimal_params);
+    initialize();
+    reset();
+    pso_ocba(optimal_params);
 
     printf("The optimal parameters are: \n");
     for(d = 0; d < DIMENSIONALITY; d++){
         printf("    Dimension %d: %1.4f\n", d, optimal_params[d]);
     }
-    printf("\n\n");*/
+    printf("\n\n");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    
+/*    
     // reset and communication part
     initialize();
     reset();
@@ -215,7 +242,7 @@ int main(int argc, char *args[]) {
         }
         fitness = compute_fitness(FORMATION_SIZE);
         printf("fitness = %f\n",fitness);
-    }
+    }*/
     
     // Real simulation with optimized parameters:
     initialize();
