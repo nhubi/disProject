@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "ms_noise.h"
 
@@ -35,6 +36,8 @@ void get_noise_vector(float* direction) {
             prev_x_rand = x_rand;
             prev_z_rand = z_rand;
         }
+
+        srand(time(NULL)*robot_id);
         
         // generate random x and z in [-1, -1]
 	    x_rand = rand()/(float)RAND_MAX * 2 - 1;

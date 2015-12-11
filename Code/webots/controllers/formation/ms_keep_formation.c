@@ -65,8 +65,9 @@ void get_keep_formation_vector(float* direction, float* dir_goal){
         direction[0] *= factor;
         direction[1] *= factor;
     }
-/*if(robot_id == 0)
-        printf("keep formation: (%1.4f, %1.4f); norm = %2.3f --> %2.3f\n", direction[0], direction[1], dir_norm, norm(direction, 2)); */
+
+    //if(robot_id == 0)
+        //printf("keep formation: (%1.4f, %1.4f); norm = %2.3f --> %2.3f\n", direction[0], direction[1], dir_norm, norm(direction, 2));
 }
 
 
@@ -135,6 +136,7 @@ void get_relative_formation_coordinates(float* coordinates){
         }
     } 
     else {
+		printf("%d\n",formation_type);
         printf("Error: wrong formation type when getting robots formation local coordinates.\n"); 
         // this error message should never be printed
     }

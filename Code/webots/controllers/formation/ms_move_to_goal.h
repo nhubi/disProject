@@ -21,20 +21,19 @@
 
 // definitions
 
-//#define WHATEVER
+#define GOAL_REACHED_DISTANCE 0.1
 
 
 
 // declarations
 
-float move_to_goal_min_threshold;
-float move_to_goal_max_threshold;
+
 
 
 
 // methods
 
-void get_move_to_goal_vector(float * direction);
+void get_move_to_goal_vector(float* direction, bool* goalReached);
 
 
 

@@ -21,7 +21,7 @@
 ###
 ### ---- C Sources ----
 ### if your program uses several C source files:
-### C_SOURCES = my_plugin.c my_clever_algo.c my_graphics.c
+C_SOURCES = simulation.c formation_super.c pso_ocba.c fitness.c
 ###
 ### ---- C++ Sources ----
 ### if your program uses several C++ source files:
@@ -43,6 +43,7 @@
 ### QT = core gui widgets network
 ###
 ###-----------------------------------------------------------------------------
+
 
 ### Do not modify: this includes Webots global Makefile.include
 space :=

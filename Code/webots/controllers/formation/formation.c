@@ -14,7 +14,9 @@
 #include "ms_noise.h"
 
 
-const float stop_criterion_distance_to_goal = 10E-20;
+// Variables
+bool goal_reached = false;
+
 
 
 /*
@@ -30,37 +32,13 @@ void computeDirection(){
     float dir_avoid_obstacles[2] = {0, 0};
     float dir_noise[2]           = {0, 0};
 
-    // each motorschema's weight
-    w_goal            = 1;
-    w_keep_formation  = 5;
-    w_avoid_robot     = 1;
-    w_avoid_obstacles = 5;
-    w_noise           = 2;
-
-    // thresholds
-    avoid_obst_min_threshold     =  60;
-    avoid_obst_max_threshold     = 200;
-    move_to_goal_min_threshold   =   0.1;
-    move_to_goal_max_threshold   =   0.5;
-    avoid_robot_min_threshold    =   0.05;
-    avoid_robot_max_threshold    =   0.1;
-    keep_formation_min_threshold =   0.03;
-    keep_formation_max_threshold =   0.1;
-
-
-    // noise parameters
-    noise_gen_frequency = 10;
-    fading              = true;
-
 
     // compute the direction vectors
-    get_move_to_goal_vector(dir_goal);
-    if(norm(dir_goal,2) < stop_criterion_distance_to_goal) return;
+    get_move_to_goal_vector(dir_goal, &goal_reached);
     get_keep_formation_vector(dir_keep_formation, dir_goal);
     get_stat_obst_avoidance_vector(dir_avoid_obstacles);
     get_avoid_robot_vector(dir_avoid_robot);
     get_noise_vector(dir_noise);
-
 
     int d;
     //for each dimension d...
@@ -74,9 +52,17 @@ void computeDirection(){
         speed[robot_id][d] += w_keep_formation  * dir_keep_formation[d];
         speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
+		speed[robot_id][d] += w_noise           * dir_noise[d]; 
+     }
+
+
+    // are we there already?
+    if(goal_reached) {
+        speed[robot_id][0] = 0;
+        speed[robot_id][1] = 0;
+        printf("Robot%d says \"WOOHOOOOO... Goal reached.\"\n", robot_id);
     }
 }
-
 
 
 
@@ -92,12 +78,13 @@ int main(){
     char *inbuffer;                 // Buffer for the receiver node
 
     msl = 0; msr = 0;
+	int useless_variable;
 	
 
 
-    // In this initialization, the common goal is communicated to the robot
-    reset();        // Resetting the robot
-    initial_pos();  // Initializing the robot's position
+    reset();           // Resetting the robot
+    initial_pos();     // Initializing the robot's position
+    initial_weights(); // Initializing the robot's weights
 	
 	
     // Forever
@@ -106,66 +93,73 @@ int main(){
         // Get information from other robots
         int count = 0;
         while (wb_receiver_get_queue_length(receiver) > 0 && count < FORMATION_SIZE) {
-        inbuffer = (char*) wb_receiver_get_data(receiver);
-        sscanf(inbuffer,"%d#%f#%f#%f",&rob_nb,&rob_x,&rob_z,&rob_theta);
+            inbuffer = (char*) wb_receiver_get_data(receiver);
+            sscanf(inbuffer,"%d#%d#%f#%f#%f",&rob_nb,&useless_variable,&rob_x,&rob_z,&rob_theta);
+
 			
-        // check that received message comes from a member of the flock
-        if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE && (int) rob_nb%FORMATION_SIZE == (int) robot_id%FORMATION_SIZE ) {
-            rob_nb %= FORMATION_SIZE;
+            // check that received message comes from a member of the flock
+            if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE && (int) rob_nb%FORMATION_SIZE == (int) robot_id%FORMATION_SIZE ) {
+                rob_nb %= FORMATION_SIZE;
 
-            // If robot is not initialised, initialise it. 
-            if (initialized[rob_nb] == 0) {
-                loc[rob_nb][0] = rob_x;
-                loc[rob_nb][1] = rob_z;
-                loc[rob_nb][2] = rob_theta;
-                prev_loc[rob_nb][0] = loc[rob_nb][0];
-                prev_loc[rob_nb][1] = loc[rob_nb][1];
-                initialized[rob_nb] = 1;
+                // If robot is not initialised, initialise it. 
+                if (initialized[rob_nb] == 0) {
+                    loc[rob_nb][0] = rob_x;
+                    loc[rob_nb][1] = rob_z;
+                    loc[rob_nb][2] = rob_theta;
+                    prev_loc[rob_nb][0] = loc[rob_nb][0];
+                    prev_loc[rob_nb][1] = loc[rob_nb][1];
+                    initialized[rob_nb] = 1;
 
-            // Otherwise, update its position.
-            } else {
+                // Otherwise, update its position.
+                } else {
 
-                // Remember previous position
-                prev_loc[rob_nb][0] = loc[rob_nb][0];
-                prev_loc[rob_nb][1] = loc[rob_nb][1];
+                    // Remember previous position
+                    prev_loc[rob_nb][0] = loc[rob_nb][0];
+                    prev_loc[rob_nb][1] = loc[rob_nb][1];
 
-                // save current position
-                loc[rob_nb][0] = rob_x;
-                loc[rob_nb][1] = rob_z;
-                loc[rob_nb][2] = rob_theta;
+                    // save current position
+                    loc[rob_nb][0] = rob_x;
+                    loc[rob_nb][1] = rob_z;
+                    loc[rob_nb][2] = rob_theta;
+                }
+
+
+                // Calculate speed
+                speed[rob_nb][0] = (1/TIME_STEP/1000)*(loc[rob_nb][0]-loc[rob_nb][0]);
+                speed[rob_nb][1] = (1/TIME_STEP/1000)*(loc[rob_nb][1]-prev_loc[rob_nb][1]);
+                count++;
             }
-
-
-            // Calculate speed
-            speed[rob_nb][0] = (1/TIME_STEP/1000)*(loc[rob_nb][0]-loc[rob_nb][0]);
-            speed[rob_nb][1] = (1/TIME_STEP/1000)*(loc[rob_nb][1]-prev_loc[rob_nb][1]);
-            count++;
+            wb_receiver_next_packet(receiver);
+            
+            time_steps_since_start++;
+/*
+            if(time_steps_since_start*64/1000 - (float)time_steps_since_start*64/1000 == 0 && time_steps_since_start*64/1000 % 10 == 0){
+                printf("[%ds] Robot%d is still running.\n", time_steps_since_start*64/1000, robot_id);
+            }
+*/
         }
-        wb_receiver_next_packet(receiver);
-    }
-    
-    
+
 	
-    // compute current position according to motor speeds (msl, msr)
-    //update_self_motion(msl,msr);
+        // compute current position according to motor speeds (msl, msr)
+        //update_self_motion(msl,msr);
 		
-    // Send a ping to the other robots, receive their ping and use it for computing their position
-    send_ping();
-    process_received_ping_messages(robot_id);
-    compute_other_robots_localisation(robot_id);
+        // Send a ping to the other robots, receive their ping and use it for computing their position
+        send_ping();
+        process_received_ping_messages(robot_id);
+        compute_other_robots_localisation(robot_id);
 
-    // Compute the unit center of the flock
-    compute_unit_center();
-    
-    // Get direction vectors from each motorscheme and combine them in speed table
-    computeDirection();
+        // Compute the unit center of the flock
+        compute_unit_center();
+        
+        // Get direction vectors from each motorscheme and combine them in speed table
+        computeDirection();
 
-    // Compute wheel speeds from speed vectors and forward them to differential motors
-    compute_wheel_speeds(&msl, &msr);
-    wb_differential_wheels_set_speed(msl,msr);
+        // Compute wheel speeds from speed vectors and forward them to differential motors
+        compute_wheel_speeds(&msl, &msr);
+        wb_differential_wheels_set_speed(msl,msr);
 
 
-    // Continue one step
-    wb_robot_step(TIME_STEP);
+        // Continue one step
+        wb_robot_step(TIME_STEP);
     }
 }

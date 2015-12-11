@@ -17,6 +17,8 @@
 
 
 
+
+
 // Robot specs
 
 #define AXLE_LENGTH         0.052   // Distance between wheels of robot (meters)
@@ -50,6 +52,7 @@ char* robot_name;
 
 // != 0 if initial positions have been received
 int initialized[FORMATION_SIZE];
+int initialized_weights[FORMATION_SIZE];
 
 
 // Locations
@@ -93,15 +96,32 @@ float w_avoid_robot;
 float w_avoid_obstacles;
 float w_noise;
 
+// thresholds
+float avoid_robot_min_threshold;
+float avoid_robot_max_threshold;
+float avoid_obst_min_threshold;
+float avoid_obst_max_threshold;
+float keep_formation_min_threshold; // < min threshold: dead zone, no correction of direction
+float keep_formation_max_threshold; // > max threshold: ballistic zone, full correction of direction
+float move_to_goal_min_threshold;
+float move_to_goal_max_threshold;
+
+// noise
+int noise_gen_frequency;  // defines, after how many steps a new random vector should be generated
+int fading;               // true, if nice transition is wished from one random vector to the next
+
+// time steps since reset
+int time_steps_since_start;
+
 
 
 // Methods
 
 void reset(void);
 void initial_pos(void);
+void initial_weights(void);
 void compute_unit_center(void);
 void update_self_motion(int msl, int msr);
 void compute_wheel_speeds(int *msl, int *msr);
-
 
 #endif
