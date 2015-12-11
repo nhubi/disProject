@@ -22,7 +22,7 @@
 
 #define FORMATION_SIZE       4	    // Number of robots in formation
 #define TIME_STEP           64	    // [ms] Length of time step
-#define ARENA_SIZE           0.94   // TODO: is this value correct? copied from pso_obs_sup.c, lab08
+#define ARENA_SIZE           2.0    // TODO: is this value correct? copied from pso_obs_sup.c, lab08
 #define ROB_DIST             0.035  // Distance between robots in formation
 #define NB_OBSTACLES         6      // Number of obstacles 
 

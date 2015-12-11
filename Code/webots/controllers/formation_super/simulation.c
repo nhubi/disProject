@@ -564,7 +564,7 @@ void random_pos_rob(int robot_id, float x_min, float z_min) {
         new_loc[robot_id][0] = x_min + ARENA_SIZE*rand_01();
         new_loc[robot_id][2] = z_min + ARENA_SIZE*rand_01();
     } while (!valid_locs(robot_id));
-    
+
     wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[robot_id],"translation"),
                                     new_loc[robot_id]);
     wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[robot_id],"rotation"), 

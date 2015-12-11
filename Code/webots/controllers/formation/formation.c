@@ -78,7 +78,7 @@ int main(){
     char *inbuffer;                 // Buffer for the receiver node
 
     msl = 0; msr = 0;
-	int useless_variable;
+    int useless_variable;
 	
 
 
@@ -96,10 +96,10 @@ int main(){
             inbuffer = (char*) wb_receiver_get_data(receiver);
             sscanf(inbuffer,"%d#%d#%f#%f#%f",&rob_nb,&useless_variable,&rob_x,&rob_z,&rob_theta);
 
-			
             // check that received message comes from a member of the flock
-            if ((int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE && (int) rob_nb%FORMATION_SIZE == (int) robot_id%FORMATION_SIZE ) {
+            if (useless_variable == 0 && (int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE && (int) rob_nb%FORMATION_SIZE == (int) robot_id%FORMATION_SIZE ) {
                 rob_nb %= FORMATION_SIZE;
+//printf("INFOS: %d, %d, %f, %f\n", rob_nb, useless_variable, rob_x, rob_z);
 
                 // If robot is not initialised, initialise it. 
                 if (initialized[rob_nb] == 0) {
