@@ -221,8 +221,6 @@ void initial_weights(void){
 /*
  * Computes the unit center of all the robots from their actual
  * positions
- * (Ondine) Positions of the other robots will then have to be determined 
- * with local communication
  */
 void compute_unit_center(void) {
 	int i,j;	

@@ -39,11 +39,10 @@ double initial_loc_obs[NB_OBSTACLES][3];
 double initial_rot_obs[NB_OBSTACLES][4];
 double initial_loc_goal[3];
 
-// 1 if the random generator has been initialized
+// true if the random generator has been initialized
 bool seed_set = false;
 
-
-
+int last_run = 0;
 
 
 /* 
@@ -349,7 +348,7 @@ void send_init_poses(void){
         }
 	
         // Send it out
-        sprintf(buffer, "%1d#%1d#%f#%f#%f##%f#%f#%d#",
+        sprintf(buffer, "%1d#%1d#%f#%f#%f##%f#%f#%1d#%1d",
                         i,          // robot ID
                         0,          // 0 if we are sending poses, 1 if we are sending weights
                         loc[i][0],
@@ -357,6 +356,7 @@ void send_init_poses(void){
                         loc[i][2],
                         migrx,
                         migrz,
+                        last_run,
                         formation_type);
         wb_emitter_send(emitter,buffer,strlen(buffer));
 
@@ -369,6 +369,7 @@ void send_init_poses(void){
 
 void send_real_run_init_poses(void) {
     char buffer[255];	// Buffer for sending data
+    last_run = 1;
     int i;
 
     for (i = 0; i < FORMATION_SIZE; i++) {
@@ -393,7 +394,7 @@ void send_real_run_init_poses(void) {
         }
 	
         // Send it out
-        sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%d#",i,0,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
+        sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d#%1d",i,0,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,last_run,formation_type);
         wb_emitter_send(emitter,buffer,strlen(buffer));
 
         // Run one step
@@ -409,7 +410,7 @@ void send_weights(void){
     for (i=0;i<FORMATION_SIZE;i++) {
 	
         // Send it out
-        sprintf(buffer, "%1d#%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f#",
+        sprintf(buffer, "%1d#%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",
                         i,          // robot ID
                         1,          // 0 if we are sending poses, 1 if we are sending weights
                         w_goal,
@@ -475,7 +476,7 @@ void send_current_poses(void){
         loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 
         // Sending positions to the robots
-        sprintf(buffer,"%1d#%1d#%f#%f#%f#",i+offset,0,loc[i][0],loc[i][1],loc[i][2]);
+        sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",i+offset,0,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,last_run);
         wb_emitter_send(emitter,buffer,strlen(buffer));
     }
 }
@@ -500,12 +501,11 @@ void update_fitness(void){
 
 /*
  * Returns true if formation is close enough from goal node. 
- * TODO: should we also verify that the formation is still ok?
  * TODO: what about max timestep per simulation? (Ondine has implemented something somewhere i think)
  */
 int simulation_has_ended(void) {
 	float centre_x=0;
-	float centre_y=0;
+	float centre_z=0;
 	float distance_to_goal=0;
 	
 	
@@ -513,13 +513,13 @@ int simulation_has_ended(void) {
 	int i;
 	for (i=0; i<FORMATION_SIZE; i++) {
 		centre_x+=loc[i][0];
-		centre_y+=loc[i][1];
+		centre_z+=loc[i][1];
 	}   
 	centre_x/=FORMATION_SIZE;
-	centre_y/=FORMATION_SIZE;
+	centre_z/=FORMATION_SIZE;
 	
 	distance_to_goal+=(centre_x-migrx)*(centre_x-migrx);
-	distance_to_goal+=(centre_y-migrz)*(centre_y-migrz);
+	distance_to_goal+=(centre_z-migrz)*(centre_z-migrz);
 	distance_to_goal=sqrt(distance_to_goal);
 		
 	if (distance_to_goal<0.1) {

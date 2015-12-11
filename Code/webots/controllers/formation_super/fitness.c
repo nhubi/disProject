@@ -31,10 +31,10 @@ double compute_fitness(int FORMATION_SIZE) {
 	mean_formation_distance=mean_formation_distance/FORMATION_SIZE/number_of_time_step;
 	mean_obstacle_term=mean_obstacle_term/FORMATION_SIZE/number_of_time_step;
 
-	printf("%f\n",mean_v);
-	printf("%f\n",mean_delta_v);
-	printf("%f\n",mean_formation_distance);
-	printf("%f\n",mean_obstacle_term);
+	//printf("%f\n",mean_v);
+	//printf("%f\n",mean_delta_v);
+	//printf("%f\n",mean_formation_distance);
+	//printf("%f\n",mean_obstacle_term);
 
 
 	

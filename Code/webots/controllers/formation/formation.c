@@ -16,14 +16,14 @@
 
 // Variables
 bool goal_reached = false;
-
+bool end = false;
 
 
 /*
  * Combines the vectors from the 4 motorschemas and computes the corresponding wheel speed vector.
  * This vector can then be translated in actual wheel speeds.
  */
-void computeDirection(){
+void computeDirection(void){
 
     // direction vector for each motorschema
     float dir_goal[2]            = {0, 0};
@@ -34,11 +34,13 @@ void computeDirection(){
 
 
     // compute the direction vectors
-    get_move_to_goal_vector(dir_goal, &goal_reached);
-    get_keep_formation_vector(dir_keep_formation, dir_goal);
-    get_stat_obst_avoidance_vector(dir_avoid_obstacles);
-    get_avoid_robot_vector(dir_avoid_robot);
-    get_noise_vector(dir_noise);
+    if(end == false) {
+        get_move_to_goal_vector(dir_goal, &goal_reached);
+        get_keep_formation_vector(dir_keep_formation, dir_goal);
+        get_stat_obst_avoidance_vector(dir_avoid_obstacles);
+        get_avoid_robot_vector(dir_avoid_robot);
+        get_noise_vector(dir_noise);
+    }
 
     int d;
     //for each dimension d...
@@ -52,15 +54,15 @@ void computeDirection(){
         speed[robot_id][d] += w_keep_formation  * dir_keep_formation[d];
         speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
-		speed[robot_id][d] += w_noise           * dir_noise[d]; 
+        speed[robot_id][d] += w_noise           * dir_noise[d]; 
      }
 
 
     // are we there already?
     if(goal_reached) {
-        speed[robot_id][0] = 0;
-        speed[robot_id][1] = 0;
-        printf("Robot%d says \"WOOHOOOOO... Goal reached.\"\n", robot_id);
+        //speed[robot_id][0] = 0;
+        //speed[robot_id][1] = 0;
+        //printf("Robot%d says \"WOOHOOOOO... Goal reached.\"\n", robot_id);
     }
 }
 
@@ -74,33 +76,30 @@ int main(){
 
     int msl, msr;                   // Wheel speeds
     int rob_nb;                     // Robot number
+    int last_run = 0; int last = 0; // 0 if it is the last run, 1 if not
     float rob_x, rob_z, rob_theta;  // Robot position and orientation
     char *inbuffer;                 // Buffer for the receiver node
 
     msl = 0; msr = 0;
     int useless_variable;
-	
-
 
     reset();           // Resetting the robot
     initial_pos();     // Initializing the robot's position
     initial_weights(); // Initializing the robot's weights
-	
-	
+
     // Forever
     for(;;){
-
         // Get information from other robots
         int count = 0;
         while (wb_receiver_get_queue_length(receiver) > 0 && count < FORMATION_SIZE) {
             inbuffer = (char*) wb_receiver_get_data(receiver);
-            sscanf(inbuffer,"%d#%d#%f#%f#%f##%f#%f",&rob_nb,&useless_variable,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1]);
-
+            sscanf(inbuffer,"%d#%d#%f#%f#%f##%f#%f#%d",&rob_nb,&useless_variable,&rob_x,&rob_z,&rob_theta,&migr[0],&migr[1],&last);
+            
             // check that received message comes from a member of the flock
             if (useless_variable == 0 && (int) rob_nb/FORMATION_SIZE == (int) robot_id/FORMATION_SIZE && (int) rob_nb%FORMATION_SIZE == (int) robot_id%FORMATION_SIZE ) {
                 rob_nb %= FORMATION_SIZE;
-//printf("INFOS: %d, %d, %f, %f\n", rob_nb, useless_variable, rob_x, rob_z);
-
+                last_run = last; 
+                
                 // If robot is not initialised, initialise it. 
                 if (initialized[rob_nb] == 0) {
                     loc[rob_nb][0] = rob_x;
@@ -138,8 +137,7 @@ int main(){
             }
 */
         }
-
-	
+        
         // compute current position according to motor speeds (msl, msr)
         //update_self_motion(msl,msr);
 		
@@ -154,12 +152,22 @@ int main(){
         // Get direction vectors from each motorscheme and combine them in speed table
         computeDirection();
 
+        if(last_run == 1 && loc[robot_id][0] == migr[0] && loc[robot_id][1] == migr[1]) {
+             end = true;
+             wb_differential_wheels_set_speed(0,0);
+        }
+            
+
         // Compute wheel speeds from speed vectors and forward them to differential motors
-        compute_wheel_speeds(&msl, &msr);
-        wb_differential_wheels_set_speed(msl,msr);
-
-
+        else 
+        {
+            compute_wheel_speeds(&msl, &msr);
+            wb_differential_wheels_set_speed(msl,msr);
+        }
         // Continue one step
         wb_robot_step(TIME_STEP);
+
     }
+    
+    return 0;
 }

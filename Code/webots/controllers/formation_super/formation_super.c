@@ -49,7 +49,7 @@ int main(int argc, char *args[]) {
     w_keep_formation  = 5;
     w_avoid_robot     = 1;
     w_avoid_obstacles = 5;
-    w_noise           = 3;
+    w_noise           = 2;//3;
 
     // thresholds
     avoid_obst_min_threshold     =  60;
@@ -153,7 +153,7 @@ int main(int argc, char *args[]) {
 
         // sending weights
         send_weights();
-        printf("Weights sent.");
+        printf("Weights sent.\n");
         
         // pso loop
         int t;
@@ -169,6 +169,7 @@ int main(int argc, char *args[]) {
             simulation_duration += TIME_STEP;
             
             if (simulation_has_ended()){
+                printf("Goal reached\n");
                 break;
             }
         }
@@ -189,7 +190,7 @@ int main(int argc, char *args[]) {
 
         // sending weights
         send_weights();
-        printf("Weights sent.");
+        printf("Weights sent.\n");
     
         // pso loop
         int t;
@@ -205,6 +206,7 @@ int main(int argc, char *args[]) {
             simulation_duration += TIME_STEP;
             
             if (simulation_has_ended()){
+                printf("Goal reached\n");
                 break;
             }
         }
@@ -223,7 +225,8 @@ int main(int argc, char *args[]) {
 
         // sending weights
         send_weights();
-
+        printf("Weights sent.\n");
+        
         // pso loop
         int t;
         for(t = 0; t < MAX_IT_PSO; t++) {   //should run for about 4min of real time
@@ -237,6 +240,7 @@ int main(int argc, char *args[]) {
             }
             simulation_duration += TIME_STEP;
             if (simulation_has_ended()){
+                printf("Goal reached\n");
                 break;
             }
         }
@@ -260,22 +264,30 @@ int main(int argc, char *args[]) {
     // infinite loop
     for(;;) {
         wb_robot_step(TIME_STEP);
-        simulation_duration += TIME_STEP;
 
         // every 10 TIME_STEP (640ms)
         if (simulation_duration % 10 == 0) {
             send_current_poses();
 
             update_fitness();
-
-            if (simulation_has_ended()) {
-                printf("\n\n\n\n______________________________________JUDIHUI!______________________________________\n\n");
-                break;
+        }
+        simulation_duration += TIME_STEP;
+        if (simulation_has_ended()) {
+            char buffer[255]; // buffer for sending data
+            int robot_id;
+            for(robot_id = 0; robot_id < FORMATION_SIZE; robot_id++) {
+                sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",robot_id,0,migrx,migrz,loc[robot_id][2],migrx,migrz,1);
+                wb_emitter_send(emitter,buffer,strlen(buffer));
             }
+            printf("\n\n\n\n______________________________________JUDIHUI!______________________________________\n\n");
+            break;
         }
     }
     
     fitness = compute_fitness(FORMATION_SIZE);
     printf("fitness = %f\n",fitness);
+    
+    while (1) wb_robot_step(TIME_STEP); //wait forever
+    
     return 0;
 }
