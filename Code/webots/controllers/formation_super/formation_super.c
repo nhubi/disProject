@@ -69,18 +69,14 @@ int main(int argc, char *args[]) {
     // setting up the fitness computation TODO: put it in PSO somewhere?
     reset_fitness_computation(FORMATION_SIZE,migrx,migrz,obstacle_loc);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-// DUMMY PARAMETERS FOR TESTING                                                                   //
+//                                              PSO                                               //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // TESTING PSO HERE
 
-
-    int d;
     // each motorschema's weight
     parameter_ranges[0][0] =  0;
     parameter_ranges[0][1] = 10;
@@ -110,6 +106,8 @@ int main(int argc, char *args[]) {
     parameter_ranges[11][1] =   1;
     parameter_ranges[12][0] =   0.001;  // keep_formation min + range
     parameter_ranges[12][1] =   1;
+
+    // noise
     parameter_ranges[13][0] =   1;      // noise_gen frequency
     parameter_ranges[13][1] =  20;
     parameter_ranges[14][0] =   0;      // fade or not
@@ -123,10 +121,44 @@ int main(int argc, char *args[]) {
     reset();
     pso_ocba(optimal_params);
 
-    printf("The optimal parameters are: \n");
-    for(d = 0; d < DIMENSIONALITY; d++){
-        printf("    Dimension %d: %1.4f\n", d, optimal_params[d]);
-    }
+
+    // each motorschema's weight
+    w_goal            = optimal_params[0];
+    w_keep_formation  = optimal_params[1];
+    w_avoid_robot     = optimal_params[2];
+    w_avoid_obstacles = optimal_params[3];
+    w_noise           = optimal_params[4];
+
+    // thresholds
+    avoid_obst_min_threshold     = optimal_params[5];
+    avoid_obst_max_threshold     = optimal_params[5] + optimal_params[6];
+    move_to_goal_min_threshold   = optimal_params[7];
+    move_to_goal_max_threshold   = optimal_params[7] + optimal_params[8];
+    avoid_robot_min_threshold    = optimal_params[9];
+    avoid_robot_max_threshold    = optimal_params[9] + optimal_params[10];
+    keep_formation_min_threshold = optimal_params[11];
+    keep_formation_max_threshold = optimal_params[11] + optimal_params[12];
+
+    // noise parameters
+    noise_gen_frequency = optimal_params[13];
+    fading              = round(optimal_params[14]); // = 0 or 1
+
+    printf("\n\n\nThe optimal parameters are: \n");
+    printf("___________ w_goal...................... = %f\n", w_goal);
+    printf("___________ w_keep_formation............ = %f\n", w_keep_formation);
+    printf("___________ w_avoid_robo................ = %f\n", w_avoid_robot);
+    printf("___________ w_avoid_obstacles........... = %f\n", w_avoid_obstacles);
+    printf("___________ w_noise..................... = %f\n", w_noise);
+    printf("___________ noise_gen_frequency......... = %d\n", noise_gen_frequency);
+    printf("___________ fading...................... = %d\n", fading);
+    printf("___________ avoid_obst_min_threshold.... = %f\n", avoid_obst_min_threshold);
+    printf("___________ avoid_obst_max_threshold.... = %f\n", avoid_obst_max_threshold);
+    printf("___________ move_to_goal_min_threshold.. = %f\n", move_to_goal_min_threshold);
+    printf("___________ move_to_goal_max_threshold.. = %f\n", move_to_goal_max_threshold);
+    printf("___________ avoid_robot_min_threshold... = %f\n", avoid_robot_min_threshold);
+    printf("___________ avoid_robot_max_threshold... = %f\n", avoid_robot_max_threshold);
+    printf("___________ keep_formation_min_threshold = %f\n", keep_formation_min_threshold);
+    printf("___________ keep_formation_max_threshold = %f\n", keep_formation_max_threshold);
     printf("\n\n");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
