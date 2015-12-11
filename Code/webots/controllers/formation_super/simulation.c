@@ -39,6 +39,13 @@ double initial_loc_obs[NB_OBSTACLES][3];
 double initial_rot_obs[NB_OBSTACLES][4];
 double initial_loc_goal[3];
 
+// 1 if the random generator has been initialized
+bool seed_set = false;
+
+
+
+
+
 /* 
  * Initialization common to the running world AND the pso worlds;
  * it should be called only once at the beginning of the run. 
@@ -49,6 +56,9 @@ void initialize(void) {
   emitter = wb_robot_get_device("emitter");
   if (emitter == 0) printf("missing emmiter\n");
 }
+
+
+
 
 
 /*
@@ -142,7 +152,7 @@ void reset_barrier_world(void) {
 
     // Randomly set up robots on the other side of the wall of obstacles
     for (i=0; i<FORMATION_SIZE; i++) {
-        random_pos(i, -2.0, -1.5);
+        random_pos_rob(i, -2.0, -1.5);
         robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }
@@ -266,7 +276,7 @@ void reset_random_world(void) {
 
     // Randomly set up robots on the other side of the wall of obstacles
     for (i=0; i<FORMATION_SIZE; i++) {
-        random_pos(i, -2.0, -1.5);
+        random_pos_rob(i, -2.0, -1.5);
         robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }
@@ -524,26 +534,14 @@ int simulation_has_ended(void) {
 
 
 /*
- * initializes random generator
- */
-/*void init_rand_01(void) {
-    //srand(time(NULL));
-}*/
-
-
-
-
-
-/*
  * Generates random number in [0,1]
  */
 float rand_01(void) {
-   static int first = 0;
-   
-   if (first == 0)
+   // initialize the random generator if this was not done yet.
+   if (seed_set == false)
    {
       srand (time (NULL));
-      first = 1;
+      seed_set = true;
    }
     return ((float)rand())/((float)RAND_MAX);
 }
@@ -555,9 +553,7 @@ float rand_01(void) {
 /*
  * Randomly position the specified robot within a certain zone
  */
-void random_pos(int robot_id, float x_min, float z_min) {
-
-    //init_rand_01();
+void random_pos_rob(int robot_id, float x_min, float z_min) {
     
     new_rot[robot_id][0] = 0.0;
     new_rot[robot_id][1] = 1.0;
@@ -584,7 +580,6 @@ void random_pos(int robot_id, float x_min, float z_min) {
  */
 void random_pos_obs(int obs_id, float x_min, float z_min) {
     //printf("Setting random position for %d\n",robot_id);
-    //init_rand_01();
 
     new_rot_obs[obs_id][0] = 0.0;
     new_rot_obs[obs_id][1] = 1.0;
