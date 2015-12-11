@@ -52,7 +52,7 @@ void computeDirection(){
         speed[robot_id][d] += w_keep_formation  * dir_keep_formation[d];
         speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
-		speed[robot_id][d] += w_noise           * dir_noise[d]; 
+        speed[robot_id][d] += w_noise           * dir_noise[d]; 
      }
 
 

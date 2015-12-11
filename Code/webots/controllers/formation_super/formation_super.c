@@ -20,7 +20,6 @@
 #define MAX_IT_PSO                 5000 // Number of iteration per PSO run
 
 
-
 /*
  * Main function.
  */
@@ -144,6 +143,9 @@ int main(int argc, char *args[]) {
     for(sim = 0; sim < NB_PSO_WALL_RUNS; sim++) {
         printf("PSO simulation with a wall of obstacle n°%d\n", sim+1);
 
+        sprintf(label, "Iteration: %d",sim);
+        wb_supervisor_set_label(0,label,0.01,0.01,0.1,0xffffff,0);
+        
         reset_barrier_world();
         reset_fitness_computation(FORMATION_SIZE, migrx, migrz, obstacle_loc);
         printf("Supervisor reset.\n");
