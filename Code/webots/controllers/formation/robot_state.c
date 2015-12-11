@@ -46,7 +46,7 @@ void reset(void) {
 	receiver2 = wb_robot_get_device("receiver2");   // receiver2 and emitter2 for local 
 	emitter2  = wb_robot_get_device("emitter2");    // communication
 	wb_receiver_enable(receiver,64);
-    wb_receiver_enable(receiver2,64);
+         wb_receiver_enable(receiver2,64);
 
 	
 	if (emitter == 0) printf("missing emitter\n");
@@ -122,6 +122,10 @@ void initial_pos(void){
 			prev_loc[rob_nb][1] = loc[rob_nb][1];
 			initialized[rob_nb] = 1;                // initialized = true
 		}
+		
+//if(robot_id ==0)
+//printf("My positions: %f, %f\n", loc[0][0], loc[0][1]);
+		
 		wb_receiver_next_packet(receiver);
 	}
 }

@@ -357,6 +357,39 @@ void send_init_poses(void){
 
 
 
+void send_real_run_init_poses(void) {
+    char buffer[255];	// Buffer for sending data
+    int i;
+
+    for (i = 0; i < FORMATION_SIZE; i++) {
+
+        // Get robot's position
+        loc[i][0] = initial_loc[i][0]; // X
+        loc[i][1] = initial_loc[i][2]; // Z
+        loc[i][2] = initial_rot[i][3]; // THETA
+                
+        wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[i],"translation"),
+                                     initial_loc[i]);
+        wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[i],"rotation"), 
+                                     initial_rot[i]);
+                                     
+        migrx = initial_loc_goal[0];    // X
+        offset = initial_loc_goal[1];   // Y
+        migrz = initial_loc_goal[2];    // Z
+        
+        orient_migr = -atan2f(migrx,migrz);                         // angle of migration urge
+        if (orient_migr<0) {
+            orient_migr+=2*M_PI; // Keep value between 0 and 2PI
+        }
+	
+        // Send it out
+        sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%d#",i,0,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
+        wb_emitter_send(emitter,buffer,strlen(buffer));
+
+        // Run one step
+        wb_robot_step(TIME_STEP);
+    }
+}
 
 
 void send_weights(void){
@@ -409,39 +442,6 @@ printf("___________ keep_formation_max_threshold = %f\n", keep_formation_max_thr
 }
 
 
-void send_real_run_init_poses(void) {
-    char buffer[255];	// Buffer for sending data
-    int i;
-
-    for (i = 0; i < FORMATION_SIZE; i++) {
-
-        // Get robot's position
-        loc[i][0] = initial_loc[i][0]; // X
-        loc[i][1] = initial_loc[i][2]; // Z
-        loc[i][2] = initial_rot[i][3]; // THETA
-                
-        wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[i],"translation"),
-                                     initial_loc[i]);
-        wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[i],"rotation"), 
-                                     initial_rot[i]);
-                                     
-        migrx = initial_loc_goal[0];    // X
-        offset = initial_loc_goal[1];   // Y
-        migrz = initial_loc_goal[2];    // Z
-        
-        orient_migr = -atan2f(migrx,migrz);                         // angle of migration urge
-        if (orient_migr<0) {
-            orient_migr+=2*M_PI; // Keep value between 0 and 2PI
-        }
-	
-        // Send it out
-        sprintf(buffer,"%1d#%f#%f#%f##%f#%f#%1d",i,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,formation_type);
-        wb_emitter_send(emitter,buffer,strlen(buffer));
-
-        // Run one step
-        wb_robot_step(TIME_STEP);
-    }
-}
 
 
 
@@ -526,9 +526,9 @@ int simulation_has_ended(void) {
 /*
  * initializes random generator
  */
-void init_rand_01(void) {
-    srand(time(NULL));
-}
+/*void init_rand_01(void) {
+    //srand(time(NULL));
+}*/
 
 
 
@@ -538,6 +538,13 @@ void init_rand_01(void) {
  * Generates random number in [0,1]
  */
 float rand_01(void) {
+   static int first = 0;
+   
+   if (first == 0)
+   {
+      srand (time (NULL));
+      first = 1;
+   }
     return ((float)rand())/((float)RAND_MAX);
 }
 
@@ -550,6 +557,8 @@ float rand_01(void) {
  */
 void random_pos(int robot_id, float x_min, float z_min) {
 
+    //init_rand_01();
+    
     new_rot[robot_id][0] = 0.0;
     new_rot[robot_id][1] = 1.0;
     new_rot[robot_id][2] = 0.0;
@@ -575,6 +584,7 @@ void random_pos(int robot_id, float x_min, float z_min) {
  */
 void random_pos_obs(int obs_id, float x_min, float z_min) {
     //printf("Setting random position for %d\n",robot_id);
+    //init_rand_01();
 
     new_rot_obs[obs_id][0] = 0.0;
     new_rot_obs[obs_id][1] = 1.0;

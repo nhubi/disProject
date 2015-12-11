@@ -25,7 +25,7 @@
  * Main function.
  */
 int main(int argc, char *args[]) {
-printf("hello world\n");
+
     float fitness;
 
     // The type of formation is decided by the user through the world
