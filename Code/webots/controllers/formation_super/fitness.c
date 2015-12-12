@@ -164,6 +164,8 @@ void reset_fitness_computation(int FORMATION_SIZE,float migrx,float migrz,float 
 
 ///////////////////////////////////////////////////////////////
 // FROM HERE METHODS AND DEFINITIONS FROM ms_keep_formation  //
+// TODO: Keep them like that?                                //
+///////////////////////////////////////////////////////////////
 
 //definitions
 const float robot_dist = 1.0/12.0;

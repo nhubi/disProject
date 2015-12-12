@@ -101,7 +101,7 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
             for(n = 0; n < 2*NB_NEIGHBOURS; n++){
                 neighbour_id = neighbours[p][n];
 
-                // TODO: do we need to compare with the neighbours' current or best position?
+                // compare with the neighbours' best position?
                 if(n_best_val[p] < p_best_val[neighbour_id]){
                     n_best_val[p] = p_best_val[neighbour_id];
                     for(d = 0; d < DIMENSIONALITY; d++){
@@ -273,8 +273,8 @@ float evaluate_parameters(float* params){
             simulation_duration += TIME_STEP;
             
             end_run = simulation_has_ended();
-            if (end_run){
-                printf("[PSO] Goal reached\n");
+            if (end_run) {
+                printf("[PSO] Goal reached in formation\n");
                 break;
             }
         }
@@ -314,8 +314,8 @@ float evaluate_parameters(float* params){
             simulation_duration += TIME_STEP;
             
             end_run = simulation_has_ended();
-            if (end_run){
-                printf("[PSO] Goal reached\n");
+            if (end_run) {
+                printf("[PSO] Goal reached in formation\n");
                 break;
             }
         }
@@ -354,8 +354,8 @@ float evaluate_parameters(float* params){
             }
             simulation_duration += TIME_STEP;
             end_run = simulation_has_ended();
-            if (end_run){
-                printf("[PSO] Goal reached.\n");
+            if (end_run) {
+                printf("[PSO] Goal reached in formation\n");
                 break;
             }
         }

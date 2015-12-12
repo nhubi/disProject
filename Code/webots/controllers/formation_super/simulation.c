@@ -502,28 +502,31 @@ void update_fitness(void){
 
 /*
  * Returns true if formation is close enough from goal node. 
- * TODO: what about max timestep per simulation? (Ondine has implemented something somewhere i think)
  */
 int simulation_has_ended(void) {
 	float centre_x=0;
 	float centre_z=0;
 	float distance_to_goal=0;
-	
-	
+	float keep_formation_d = 0;
+
+
 	// compute the formation center
 	int i;
 	for (i=0; i<FORMATION_SIZE; i++) {
 		centre_x+=loc[i][0];
 		centre_z+=loc[i][1];
+                  keep_formation_d += keep_formation_distance[i];
+
 	}   
 	centre_x/=FORMATION_SIZE;
 	centre_z/=FORMATION_SIZE;
 	
 	distance_to_goal+=(centre_x-migrx)*(centre_x-migrx);
 	distance_to_goal+=(centre_z-migrz)*(centre_z-migrz);
-	distance_to_goal=sqrt(distance_to_goal);
-		
-	if (distance_to_goal<0.1) {
+  	distance_to_goal=sqrt(distance_to_goal);
+  	keep_formation_d /= FORMATION_SIZE;
+                	
+	if (distance_to_goal < 0.1 && keep_formation_d < 0.5) {
 		return 1;
 	}
 	

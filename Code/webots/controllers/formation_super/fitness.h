@@ -36,6 +36,7 @@ void reset_fitness_computation(int formation_size,float migrx,float migrz,float 
 
 
 // FROM HERE METHODS AND DECLARATIONS FROM ms_keep_formation
+// TODO: Keep them here?
 
 //Formation types
 #define LINE          0
