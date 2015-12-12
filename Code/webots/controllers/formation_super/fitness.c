@@ -15,7 +15,7 @@ double compute_fitness(int FORMATION_SIZE, int goal_reached) {
 	
 	double weight_v=1;
 	double weight_delta_v=1;
-	double weight_formation_distance=1;
+	double weight_formation_distance=10;
 	double weight_obstacle_term=1;
 	double weight_goal_reached=0.5;
 
@@ -48,10 +48,10 @@ double compute_fitness(int FORMATION_SIZE, int goal_reached) {
 
 
 	
-	return weight_v*mean_v*(1-sqrt(weight_delta_v*mean_delta_v))*
-          	(1/sqrt(weight_formation_distance*mean_formation_distance))*
-          	(weight_obstacle_term*mean_obstacle_term)+
-          	weight_goal_reached*goal_reached;
+	return weight_v*mean_v*(1-sqrt(weight_delta_v*mean_delta_v))
+          	*(1/(weight_formation_distance*mean_formation_distance))
+          	/(weight_obstacle_term*(mean_obstacle_term+0.05))+ // to avoid case with mean=0
+          	+weight_goal_reached*goal_reached;
 }
 
 /*
@@ -90,6 +90,9 @@ void update_obstacle_term(float loc[4][3],int robot_id) {
     float minimum_obstacle_distance=1000000;
     float distance_vector[2];
     float distance;
+    float distance_lower_threshold=0.15;
+    float distance_higher_threshold=0.3;
+    
     int i;
     for (i=0;i<6;i++) {
         distance_vector[0]=loc[robot_id][0]-fitness_obstacle_loc[i][0];
@@ -100,7 +103,20 @@ void update_obstacle_term(float loc[4][3],int robot_id) {
         }
     }
     
-    obstacle_term_sum[robot_id]+=minimum_obstacle_distance;
+    if (minimum_obstacle_distance>distance_higher_threshold) {
+        
+    } else if (minimum_obstacle_distance<distance_lower_threshold) {
+        obstacle_term_sum[robot_id]+=1;
+    } else {
+        obstacle_term_sum[robot_id]+=(distance_higher_threshold-minimum_obstacle_distance)
+              /(distance_higher_threshold-distance_lower_threshold);
+    }
+    
+    //if (robot_id==0) {
+    //    printf("distance %f\n",minimum_obstacle_distance);
+    //   printf("sum %f\n",obstacle_term_sum[robot_id]);
+    //}
+    return;
 }
 
 /*
@@ -159,6 +175,7 @@ void reset_fitness_computation(int FORMATION_SIZE,float migrx,float migrz,float 
         speed_sum[i][0]=0;
         speed_sum[i][1]=0;
         keep_formation_distance[i]=0;
+        obstacle_term_sum[i]=0;
     }
     
     // Goal

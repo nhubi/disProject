@@ -228,6 +228,9 @@ float evaluate_parameters(float* params){
     w_avoid_obstacles = params[3];
     w_noise           = params[4];
 
+
+
+
     // thresholds
     avoid_obst_min_threshold     = params[5];
     avoid_obst_max_threshold     = params[5] + params[6];

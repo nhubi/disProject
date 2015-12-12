@@ -244,6 +244,17 @@ void reset_world2(void) {
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }
     
+    //obstacle initialisation    	
+    char obs[5]="obs0";
+    for (i=0;i<NB_OBSTACLES;i++) {
+        sprintf(obs,"obs%d",i);
+        obstacles[i]= wb_supervisor_node_get_from_def(obs);
+        obstacles_trans[i]=wb_supervisor_node_get_field(obstacles[i],"translation");
+        
+        obstacle_loc[i][0] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[0];  // X
+        obstacle_loc[i][1] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[2];  // Z
+    }
+    
     simulation_duration = 0;
 }
 
@@ -281,6 +292,17 @@ void reset_random_world(void) {
     }
     
     simulation_duration = 0;
+    
+    //obstacle initialisation    	
+    char obs[5]="obs0";
+    for (i=0;i<NB_OBSTACLES;i++) {
+        sprintf(obs,"obs%d",i);
+        obstacles[i]= wb_supervisor_node_get_from_def(obs);
+        obstacles_trans[i]=wb_supervisor_node_get_field(obstacles[i],"translation");
+        
+        obstacle_loc[i][0] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[0];  // X
+        obstacle_loc[i][1] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[2];  // Z
+    }
 
 }
 

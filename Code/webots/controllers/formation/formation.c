@@ -86,6 +86,13 @@ int main(){
     reset();           // Resetting the robot
     initial_pos();     // Initializing the robot's position
     initial_weights(); // Initializing the robot's weights
+    
+    printf("\n\nEvaluating with weights:\n");
+    printf("goal: %f\n",w_goal);
+    printf("keep formation: %f\n",w_keep_formation);
+    printf("avoid robots: %f\n",w_avoid_robot);
+    printf("avoid obstacles: %f\n",w_avoid_obstacles);
+    printf("noise: %f\n",w_noise);
 
     // Forever
     for(;;){
