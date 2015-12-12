@@ -169,7 +169,7 @@
 
 % *** MATH PACKAGES ***
 %
-%\usepackage[cmex10]{amsmath}
+\usepackage[cmex10]{amsmath}
 % A popular package from the American Mathematical Society that provides
 % many useful and powerful commands for dealing with mathematics. If using
 % it, be sure to load this package with the cmex10 option to ensure that
@@ -192,7 +192,7 @@
 
 % *** SPECIALIZED LIST PACKAGES ***
 %
-%\usepackage{algorithmic}
+\usepackage{algorithmic}
 % algorithmic.sty was written by Peter Williams and Rogerio Brito.
 % This package provides an algorithmic environment fo describing algorithms.
 % You can use the algorithmic environment in-text or within a figure
@@ -214,7 +214,7 @@
 
 % *** ALIGNMENT PACKAGES ***
 %
-%\usepackage{array}
+\usepackage{array}
 % Frank Mittelbach's and David Carlisle's array.sty patches and improves
 % the standard LaTeX2e array and tabular environments to provide better
 % appearance and additional user controls. As the default LaTeX2e table
@@ -588,12 +588,42 @@ conclusions.
 \label{sec:2}
 We considered 5 basic motor schemas:
 \begin{itemize}
-\item Move to goal
-\item Keep formation
-\item Avoid other robots
-\item Avoid obstacles
-\item Random walk
+\item \textit{Move to goal}
+\item \textit{Keep formation}
+\item \textit{Avoid other robots}
+\item \textit{Avoid obstacles}
+\item \textit{Random walk}
 \end{itemize}
+Each of the schemas provide a speed vector normalised (with norm from
+0 to 1). Then all these contribution are summed with appropriate weights, thus obtaining the
+speed vector. 
+Excluding the fifth schema, for the others we used the concept of the
+\textit{Sphere of Influence} as proposed in
+\cite{IEEEhowto:arkin_motor_schemas}. The idea is that the cause of a
+behaviour influence the robot only if his value is lower (or higher,
+it depends on the behaviour) than a value S (the radius of the sphere
+of influence). We can extend this concept considering 2 thresholds R
+and S, the reaction will be maximum (or minimum) if the value is below
+R and minimum (or maximum) if it's higher than S. Between R and S we
+adopt a linear behaviour, but more complex equations can be
+considered.
+
+To compute all the necessary information the robots can communicate
+with a supervisor, that send them their position (only of their
+selves, not of the other robots) and the position of the goal. They
+moreover can communicate with the robots not too far to exchange their
+relative position and they have infrared (\textbf{check if true})
+sensors to detect obstacles.
+
+\subsection{Move to goal}  
+The simplest motor schema is the \textit{move to goal} one. Knowing
+their position and the position of the goal from the supervisor this
+schema generates a speed vector of norm:
+
+\begin{equation}
+\begin{cases} 0, & \mbox{if }  d<R \\ \frac{d-R}{S-R}, & \mbox{if }
+  R<d<S \\ 1 & \mbox{if } d>S\end{cases}
+\end{equation}
 
 
 % You must have at least 2 lines in the paragraph with the drop letter
