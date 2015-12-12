@@ -10,6 +10,11 @@ double compute_fitness(int FORMATION_SIZE) {
 	double mean_formation_distance=0;
 	double mean_obstacle_term=0;
 	
+	double weight_v=1;
+	double weight_delta_v=1;
+	double weight_formation_distance=1;
+	double weight_obstacle_term=1;
+	
 	int i;
 	for (i=0; i<FORMATION_SIZE; i++) {
 		mean_v+=speed_sum[i][0];
@@ -38,7 +43,9 @@ double compute_fitness(int FORMATION_SIZE) {
 
 
 	
-	return mean_v*(1-sqrt(mean_delta_v));
+	return weight_v*mean_v*(1-sqrt(weight_delta_v*mean_delta_v))*
+          	(1-sqrt(weight_formation_distance*mean_formation_distance))
+          	(1-weight_obstacle_term*mean_obstacle_term);
 }
 
 /*
