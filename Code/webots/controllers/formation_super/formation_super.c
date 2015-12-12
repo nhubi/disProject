@@ -10,14 +10,8 @@
 
 
 
-
-
 //Formation types
 #define DEFAULT_FORMATION "line"        // Line formation as default
-#define NB_PSO_WALL_RUNS           2   // Number of runs for PSO with a wall of obstacles
-#define NB_PSO_WORLD2_RUNS         2    // Number of runs for PSO with a difficult configuration
-#define NB_PSO_RANDOM_RUNS         5   // Number of runs for PSO with a random positionning
-#define MAX_IT_PSO                 5000 // Number of iteration per PSO run
 
 
 
@@ -42,37 +36,11 @@ int main(int argc, char *args[]) {
           formation = "wedge";
     else if(formation_type == 3)
           formation = "diamond";
+    printf("Chosen formation: %s.\n", formation);
     
     
-    // each motorschema's weight
-    w_goal            = 1;
-    w_keep_formation  = 5;
-    w_avoid_robot     = 1;
-    w_avoid_obstacles = 5;
-    w_noise           = 2;//3;
-
-    // thresholds
-    avoid_obst_min_threshold     =  60;
-    avoid_obst_max_threshold     = 200;
-    move_to_goal_min_threshold   =   0.1;
-    move_to_goal_max_threshold   =   0.5;
-    avoid_robot_min_threshold    =   0.05;
-    avoid_robot_max_threshold    =   0.1;
-    keep_formation_min_threshold =   0.03;
-    keep_formation_max_threshold =   0.1;
-
-
-    // noise parameters
-    noise_gen_frequency = 10;
-    fading              = 1;
-
-    // setting up the fitness computation TODO: put it in PSO somewhere?
-    reset_fitness_computation(FORMATION_SIZE,migrx,migrz,obstacle_loc);
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                                                                //
 //                                              PSO                                               //
-//                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -158,126 +126,12 @@ int main(int argc, char *args[]) {
      printf("___________ keep_formation_min_threshold = %f\n", keep_formation_min_threshold);
      printf("___________ keep_formation_max_threshold = %f\n", keep_formation_max_threshold);
      printf("\n\n");
-
+    
+    
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                         REAL RUN                                               //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-    
-    // reset and communication part
-    initialize();
-    reset();
-    printf("Beginning of PSO simulation\n");
 
-    //PSO runs with a world with a wall of obstacles
-    int sim; 
-    for(sim = 0; sim < NB_PSO_WALL_RUNS; sim++) {
-        printf("PSO simulation with a wall of obstacle n°%d\n", sim+1);
-
-        reset_barrier_world();
-        reset_fitness_computation(FORMATION_SIZE, migrx, migrz, obstacle_loc);
-        printf("Supervisor reset.\n");
-
-        send_init_poses();
-        printf("Init poses sent.\n Chosen formation: %s.\n", formation);
-
-        // sending weights
-        send_weights();
-        printf("Weights sent.\n");
-        
-        // pso loop
-        int t;
-        for(t = 0; t < MAX_IT_PSO; t++) {   //should run for about 4min of real time
-            wb_robot_step(TIME_STEP);
-    
-            // every 10 TIME_STEP (640ms)
-            if (simulation_duration % 10 == 0) {
-                send_current_poses();
-
-                update_fitness();
-            }
-            simulation_duration += TIME_STEP;
-            
-            if (simulation_has_ended()){
-                printf("Goal reached\n");
-                break;
-            }
-        }
-        fitness = compute_fitness(FORMATION_SIZE);
-        printf("fitness = %f\n",fitness);
-    }
-    
-    //PSO runs with a world with a difficult configuration
-    for(sim = 0; sim < NB_PSO_WORLD2_RUNS; sim++) {
-        printf("PSO simulation with a difficult configuration n°%d\n", sim+1);
-
-        reset_world2();
-        reset_fitness_computation(FORMATION_SIZE, migrx, migrz, obstacle_loc);
-        printf("Supervisor reset.\n");
-
-        send_init_poses();
-        printf("Init poses sent.\n Chosen formation: %s.\n", formation);
-
-        // sending weights
-        send_weights();
-        printf("Weights sent.\n");
-    
-        // pso loop
-        int t;
-        for(t = 0; t < MAX_IT_PSO; t++) {   //should run for about 4min of real time
-            wb_robot_step(TIME_STEP);
-    
-            // every 10 TIME_STEP (640ms)
-            if (simulation_duration % 10 == 0) {
-                send_current_poses();
-
-                update_fitness();
-            }
-            simulation_duration += TIME_STEP;
-            
-            if (simulation_has_ended()){
-                printf("Goal reached\n");
-                break;
-            }
-        }
-        fitness = compute_fitness(FORMATION_SIZE);
-        printf("fitness = %f\n",fitness);
-    }
-    
-    //PSO runs with a random world
-    for(sim = 0; sim < NB_PSO_RANDOM_RUNS; sim++) {
-        printf("PSO simulation with random positions n°%d\n", sim+1);
-        reset_random_world();
-        printf("Supervisor reset.\n");
-        send_init_poses();
-        printf("Init poses sent.\n Chosen formation: %s.\n", formation);
-    
-
-        // sending weights
-        send_weights();
-        printf("Weights sent.\n");
-        
-        // pso loop
-        int t;
-        for(t = 0; t < MAX_IT_PSO; t++) {   //should run for about 4min of real time
-            wb_robot_step(TIME_STEP);
-    
-            // every 10 TIME_STEP (640ms)
-            if (simulation_duration % 10 == 0) {
-                send_current_poses();
-    
-                update_fitness();
-            }
-            simulation_duration += TIME_STEP;
-            if (simulation_has_ended()){
-                printf("Goal reached\n");
-                break;
-            }
-        }
-        fitness = compute_fitness(FORMATION_SIZE);
-        printf("fitness = %f\n",fitness);
-    }*/
-    
     // Real simulation with optimized parameters:
     initialize();
     // reset and communication part

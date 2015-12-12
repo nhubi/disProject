@@ -141,9 +141,6 @@ void init_particles(void){
     int p;  // particle pointer
     int d;  // dimension pointer
     int n;  // neighbour pointer
-
-    // init the random generator
-    //init_rand_01();
     
     for(p = 0; p < POPULATION_SIZE; p++){
         perf_samples[p] = 0;
@@ -218,19 +215,11 @@ void evaluate_position(float position[DIMENSIONALITY], float* mean, float* var, 
 
 /*
  * Runs simulation and computes performance. The performance value should not be negative.
- * TODO: currently, this is just a dummy function.
- *       Later, we will start the simulation here and execute the fitness function.
  */
 float evaluate_parameters(float* params){
     float performance = 0;  // return value
-
-    printf("[PSO] Simulation with random positions\n");
-    reset_random_world();
-    printf("[PSO] Supervisor reset.\n");
-    send_init_poses();
-    printf("[PSO] Init poses sent.\n");
-
-
+    float single_perf = 0;  // performance of one single pso run
+    bool end_run = false;   // true if time is not out and a single simulation ends
     
     // each motorschema's weight
     w_goal            = params[0];
@@ -253,28 +242,134 @@ float evaluate_parameters(float* params){
     noise_gen_frequency = params[13];
     fading              = round(params[14]); // = 0 or 1
 
-    // sending weights
-    send_weights();
+    //PSO runs with a world with a wall of obstacles
+    //int sim; 
+    //for(sim = 0; sim < NB_PSO_WALL_RUNS; sim++) {
+    if(PSO_WALL)
+    {
+        printf("[PSO] Simulation with a wall of obstacle\n");
+        reset_barrier_world();
+        reset_fitness_computation(FORMATION_SIZE, migrx, migrz, obstacle_loc);
+        printf("[PSO] Supervisor reset.\n");
 
-    // pso loop (nb iterations is limited)
-    int t;
-    for(t = 0; t*64/1000 < MAX_EVAL_DURATION; t++) {
-        wb_robot_step(TIME_STEP);
+        send_init_poses();
+        printf("[PSO] Init poses sent.\n");
 
-        // every 10 TIME_STEP (640ms)
-        if (simulation_duration % 10 == 0) {
-            send_current_poses();
+        // sending weights
+        send_weights();
+        printf("Weights sent.\n");
+        
+        // pso loop (nb iterations is limited)
+        int t;
+        for(t = 0; t*64/1000 < MAX_EVAL_DURATION; t++) {
+            wb_robot_step(TIME_STEP);
+    
+            // every 10 TIME_STEP (640ms)
+            if (simulation_duration % 10 == 0) {
+                send_current_poses();
 
-            update_fitness();
+                update_fitness();
+            }
+            simulation_duration += TIME_STEP;
+            
+            end_run = simulation_has_ended();
+            if (end_run){
+                printf("[PSO] Goal reached\n");
+                break;
+            }
         }
-        simulation_duration += TIME_STEP;
-        if (simulation_has_ended()){
-            printf("Goal reached.\n");
-            break;
-        }
+        if(!end_run)
+            printf("Goal NOT reached.\n");
+        single_perf = compute_fitness(FORMATION_SIZE);
+        printf("Single fitness: %f\n", single_perf); 
+        performance += single_perf;
     }
-    performance = compute_fitness(FORMATION_SIZE);
-    printf("fitness = %f\n\n\n\n\n",performance);
+    
+    //PSO runs with a world with a difficult configuration
+    //for(sim = 0; sim < NB_PSO_WORLD2_RUNS; sim++) {
+    if(PSO_HARD) {
+        printf("[PSO] Simulation with a difficult configuration\n"); 
+        reset_world2();
+        reset_fitness_computation(FORMATION_SIZE, migrx, migrz, obstacle_loc);
+        printf("[PSO] Supervisor reset.\n");
+
+        send_init_poses();
+        printf("[PSO] Init poses sent.\n");
+
+        // sending weights
+        send_weights();
+        printf("Weights sent.\n");
+    
+        // pso loop (nb iterations is limited)
+        int t;
+        for(t = 0; t*64/1000 < MAX_EVAL_DURATION; t++) {
+            wb_robot_step(TIME_STEP);
+    
+            // every 10 TIME_STEP (640ms)
+            if (simulation_duration % 10 == 0) {
+                send_current_poses();
+
+                update_fitness();
+            }
+            simulation_duration += TIME_STEP;
+            
+            end_run = simulation_has_ended();
+            if (end_run){
+                printf("[PSO] Goal reached\n");
+                break;
+            }
+        }
+        if(!end_run)
+            printf("Goal NOT reached.\n");
+        single_perf = compute_fitness(FORMATION_SIZE);
+        printf("Single fitness: %f\n", single_perf); 
+        performance += single_perf;
+    }
+    
+    //PSO runs with a random world
+    //for(sim = 0; sim < NB_PSO_RANDOM_RUNS; sim++) {
+    if(PSO_RANDOM) {
+        printf("[PSO] Simulation with random positions\n");
+        reset_random_world();
+        reset_fitness_computation(FORMATION_SIZE, migrx, migrz, obstacle_loc);
+        printf("[PSO] Supervisor reset.\n");
+        
+        send_init_poses();
+        printf("[PSO] Init poses sent.\n");
+    
+        // sending weights
+        send_weights();
+        printf("Weights sent.\n");
+    
+        // pso loop (nb iterations is limited)
+        int t;
+        for(t = 0; t*64/1000 < MAX_EVAL_DURATION; t++) {
+            wb_robot_step(TIME_STEP);
+    
+            // every 10 TIME_STEP (640ms)
+            if (simulation_duration % 10 == 0) {
+                send_current_poses();
+    
+                update_fitness();
+            }
+            simulation_duration += TIME_STEP;
+            end_run = simulation_has_ended();
+            if (end_run){
+                printf("[PSO] Goal reached.\n");
+                break;
+            }
+        }
+        if(!end_run)
+            printf("Goal NOT reached.\n");
+        single_perf = compute_fitness(FORMATION_SIZE);
+        printf("Single fitness: %f\n", single_perf); 
+        performance += single_perf;
+    }
+    
+    if(PSO_WALL || PSO_HARD || PSO_RANDOM)
+        performance /= (PSO_WALL + PSO_HARD + PSO_RANDOM);
+    
+    printf("Fitness = %f\n\n\n\n\n",performance);
     return performance;
 }
 

@@ -434,6 +434,7 @@ void send_weights(void){
         // Run one step
         wb_robot_step(TIME_STEP);
     }
+/*
 printf("Parameters: w_goal............. = %f\n", w_goal);
 printf("___________ w_keep_formation... = %f\n", w_keep_formation);
 printf("___________ w_avoid_robo....... = %f\n", w_avoid_robot);
@@ -449,7 +450,7 @@ printf("___________ avoid_robot_min_threshold... = %f\n", avoid_robot_min_thresh
 printf("___________ avoid_robot_max_threshold... = %f\n", avoid_robot_max_threshold);
 printf("___________ keep_formation_min_threshold = %f\n", keep_formation_min_threshold);
 printf("___________ keep_formation_max_threshold = %f\n", keep_formation_max_threshold);
-
+*/
 }
 
 
