@@ -360,7 +360,7 @@ float evaluate_parameters(float* params){
             }
         }
         if(!end_run)
-            printf("Goal NOT reached.\n");
+            printf("Goal NOT reached in formation.\n");
         single_perf = compute_fitness(FORMATION_SIZE);
         printf("Single fitness: %f\n", single_perf); 
         performance += single_perf;
