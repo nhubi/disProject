@@ -143,7 +143,7 @@ void init_particles(void){
     int n;  // neighbour pointer
 
     // init the random generator
-    init_rand_01();
+    //init_rand_01();
     
     for(p = 0; p < POPULATION_SIZE; p++){
         perf_samples[p] = 0;

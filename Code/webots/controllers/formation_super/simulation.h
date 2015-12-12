@@ -22,9 +22,9 @@
 
 #define FORMATION_SIZE       4	    // Number of robots in formation
 #define TIME_STEP           64	    // [ms] Length of time step
-#define ARENA_SIZE           0.94   // TODO: is this value correct? copied from pso_obs_sup.c, lab08
-#define ROB_DIST             0.035  // Distance between robots in formation
-#define NB_OBSTACLES         6      // Number of obstacles 
+#define ARENA_SIZE           2.0       // Size of the arenas used to assign random positions to robots and obstacles
+#define ROB_DIST             0.035     // Distance between robots in formation
+#define NB_OBSTACLES         6         // Number of obstacles 
 
 
 
@@ -87,21 +87,20 @@ float keep_formation_max_threshold; // > max threshold: ballistic zone, full cor
 
 // methods
 void initialize(void);
+float rand_01(void);
+void random_pos_rob(int robot_id, float x_min, float z_min);
+void random_pos_obs(int obs_id, float x_min, float z_min);
 void reset(void);
 void reset_barrier_world(void);
 void reset_world2(void);
 void reset_random_world(void);
 void reset_to_initial_values(void);
-void send_init_poses(void);
-void init_rand_01(void);
-float rand_01(void);
-void random_pos(int robot_id, float x_min, float z_min);
 void send_current_poses(void);
-void update_fitness(void);
+void send_current_poses(void);
+void send_init_poses(void);
+void send_real_run_init_poses(void);
 void send_weights(void);
 int simulation_has_ended(void);
-void send_real_run_init_poses(void);
-void send_current_poses(void);
-void random_pos_obs(int obs_id, float x_min, float z_min);
+void update_fitness(void);
 
 #endif
