@@ -385,6 +385,21 @@
 % to submit to, of course. )
 
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%      PACKAGES INTRODUCED BY US      %%%%%%%%%
+
+%for the copyright
+\usepackage{textcomp}
+
+
+
+
+
+
+
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
 
@@ -393,7 +408,7 @@
 %
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{Bare Demo of IEEEtran.cls for Journals}
+\title{Optimized navigation behavior of multiple robots based on motor-schema}
 %
 %
 % author names and IEEE memberships
@@ -405,9 +420,9 @@
 % was not built to handle multiple paragraphs
 %
 
-\author{Michael~Shell,~\IEEEmembership{Member,~IEEE,}
-        John~Doe,~\IEEEmembership{Fellow,~OSA,}
-        and~Jane~Doe,~\IEEEmembership{Life~Fellow,~IEEE}}% <-this % stops a space
+\author{Ondine~Chanon,~\IEEEmembership{CSE},
+        Nicolas~Hubacher,~\IEEEmembership{IN},
+        and~Stefano~Savar\`e,~\IEEEmembership{CSE}}% <-this % stops a space
 %\thanks{M. Shell is with the Department
 %of Electrical and Computer Engineering, Georgia Institute of Technology, Atlanta,
 %GA, 30332 USA e-mail: (see http://www.michaelshell.org/contact.html).}% <-this % stops a space
@@ -435,7 +450,7 @@
 
 
 % The paper headers
-\markboth{TCP/IP Research Assignment, December 2011}%
+\markboth{Distributed Intelligent System Course Project, December 2015}%
 {Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Journals}
 % The only time the second header will appear is for the odd numbered pages
 % after the title page when using the twoside option.
@@ -497,9 +512,19 @@
 % creates the second title. It will be ignored for other modes.
 \IEEEpeerreviewmaketitle
 
+\section*{Abstract}
+Motor shemas are one of the main tecniques that allow the navigation
+of mobile robots in complex worlds full of obstacles. However
+as the number of schemas and the complexity increase it may be very
+difficult and time epensive to tune correctly all the paramethers that
+rule the simulation. The introduction of some machine learning
+tecnique (in our case Particle Swarm Optimisation) becomes indeed
+necessary. 
+\textbf{TODO: Add a paragraph with the results.}
 
 
 \section{Introduction}
+\label {sec:1}
 % The very first letter is a 2 line initial drop letter followed
 % by the rest of the first word in caps.
 % 
@@ -515,16 +540,54 @@
 % 
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
-\IEEEPARstart{T}{his} demo file is intended to serve as a ``starter file''
-for IEEE journal papers produced under \LaTeX\ using
-IEEEtran.cls version 1.7 and later.
+\IEEEPARstart{T}{he} first aim of the project is to implement a controller
+for mobile robots based on motor shemas and test it in simulations
+using the software
+Webots\textregistered. \cite{IEEEhowto:arkin_motor_schemas} and 
+\cite{IEEEhowto:balch_behaviour_based} provide a
+good explanation of the purpose of introducing a motor-schema based
+controller  over traditional - and usually infexible -
+programming. One of the main problems in the controller implementation
+is, given multiple and different objectives, merging them all together
+to obtain an optimised and possibly beautiful looking walk. 
+Motor schemas provide an elegant way to do that: at each instant the
+robots compute a different speed vector for each goal and then they
+merge them all together with appropriate weights. 
+The robots in our case should move in an environment full of obstacles while
+keeping a precise formation, avoiding other robots and moving towards
+a goal. We show in section \ref{sec:2} how we implemented sudh behaviour.
+
+Tuning correctly the motor-schemas paramethers leads to the second part of our project:
+we want to study the influence of Particle Swarm Optimisation (PSO), a
+machine learning tecnique, on the simulation. Indeed a manual setting 
+is difficult even with few paramether and becomes impossible as their
+number increases. PSO (\cite{IEEEhowto:martinoli_pso},
+\cite{IEEEhowto:martinoli_pso_noise},
+\cite{IEEEhowto:martinoli_pso_noise_2}) is a recent and promising
+tecnique that, in short, consists in modeling the set of potential
+problem solutions as a swarm of particles moving about in a virtual
+search space. Each particle, after being evaluated, moves keeping into
+account their and their neighborhood best position acquired so far. Ideally
+they should converge to global optimal position. PSO can model an
+Artificial Neural Network controller by having the parameter set be
+the weights, and, with appropriate extensions, it suits perfectly also the
+robot swarm problem, keeping into account the noise generated. 
+A key part of PSO is the choice of a good fitness function to evaluate
+simulations. Traditionally the reference fitness function is the one
+of Floreano and Mondada (\cite{IEEEhowto:fitness_floreano_mondada}). Based on
+this we have developed our version that we show in the section
+\ref{sec:3}, alongside our PSO implementation.
+
+In the section \ref{sec:4} we present the result of our
+simulations and in the final section \ref{sec:5} we delinate our
+conclusions. 
+\textbf{TODO: maybe add something on the setting of our simulations}
+
+
+
 % You must have at least 2 lines in the paragraph with the drop letter
 % (should never be an issue)
-I wish you the best of success.
 
-\hfill mds
- 
-\hfill January 11, 2007
 
 \subsection{Subsection Heading Here}
 Subsection text here.
@@ -619,8 +682,17 @@ Subsubsection text here.
 % stfloats package.
 
 
+\section{Motor-shemas}
+\label{sec:2}
+
+\section{PSO}
+\label{sec:3}
+
+\section{Results}
+\label{sec:4}
 
 \section{Conclusion}
+\label{sec:5}
 The conclusion goes here.
 
 
@@ -691,9 +763,38 @@ Appendix two text goes here.
 % (used to reserve space for the reference number labels box)
 \begin{thebibliography}{1}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+\bibitem{IEEEhowto:arkin_motor_schemas}
+Arkin, Ronald~C.\emph{Motor schema based navigation for a mobile
+  robot: An approach to programming by behavior.} 
+Robotics and Automation. Proceedings. 1987 IEEE International Conference on. Vol. 4. IEEE, 1987.
+
+\bibitem{IEEEhowto:balch_behaviour_based}
+Balch, Tucker, and Ronald C. Arkin. \emph{Behavior-based formation
+  control for multirobot teams.}
+ Robotics and Automation, IEEE Transactions on 14.6 (1998): 926-939.
+
+\bibitem{IEEEhowto:martinoli_pso}
+Pugh, Jim, Yizhen Zhang, and Alcherio Martinoli. \emph{Particle swarm
+  optimization for unsupervised robotic learning.}
+ Swarm Intelligence Symposium. No. SWIS-CONF-2005-004. 2005.
+
+\bibitem{IEEEhowto:martinoli_pso_noise}
+Di Mario, Ezequiel, Inaki Navarro, and Alcherio
+Martinoli. \emph{Analysis of fitness noise in particle swarm
+  optimization: From robotic learning to benchmark functions.}
+ Evolutionary Computation (CEC), 2014 IEEE Congress on. IEEE, 2014.
+
+\bibitem{IEEEhowto:martinoli_pso_noise_2}
+Di Mario, Ezequiel Leonardo, Inaki Navarro Oiza, and Alcherio
+Martinoli. 
+\emph{A Distributed Noise-Resistant Particle Swarm Optimization
+  Algorithm for High-Dimensional Multi-Robot Learning.}
+ IEEE International Conference on Robotics and Automation. No. EPFL-CONF-206842. 2015.
+
+\bibitem{IEEEhowto:fitness_floreano_mondada}
+Floreano, D . \& Mondada, F. \emph{Evolution of Homing Navigation in a Real
+Mobile Robot} Systems, Man and Cybernetics, Part B, IEEE Transactions
+on, Vol.26 , Iss.3 , Jun 1996 , pages:396-407
 
 \end{thebibliography}
 
