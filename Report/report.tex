@@ -450,7 +450,7 @@
 
 
 % The paper headers
-\markboth{Distributed Intelligent System Course Project, December 2015}%
+\markboth{Distributed Intelligent System, Course Project, December 2015}%
 {Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Journals}
 % The only time the second header will appear is for the odd numbered pages
 % after the title page when using the twoside option.
@@ -513,13 +513,12 @@
 \IEEEpeerreviewmaketitle
 
 \section*{Abstract}
-Motor shemas are one of the main tecniques that allow the navigation
-of mobile robots in complex worlds full of obstacles. However
-as the number of schemas and the complexity increase it may be very
-difficult and time epensive to tune correctly all the paramethers that
+Motor schemas are among the main techniques that allow the navigation
+of mobile robots in complex worlds full of obstacles. However,
+as the number of schemas and the complexity increase, it may be very
+difficult and time expensive to tune correctly all the parameters that
 rule the simulation. The introduction of some machine learning
-tecnique (in our case Particle Swarm Optimisation) becomes indeed
-necessary. 
+techniques (in our case Particle Swarm Optimisation) thus become necessary. 
 \textbf{TODO: Add a paragraph with the results.}
 
 
@@ -541,46 +540,44 @@ necessary.
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
 \IEEEPARstart{T}{he} first aim of the project is to implement a controller
-for mobile robots (e-puck in our case) based on motor shemas and test it in simulations
+for mobile robots (e-puck in our case) based on motor schemas, and test it in simulations
 using the software
 Webots\textregistered. \cite{IEEEhowto:arkin_motor_schemas} and 
 \cite{IEEEhowto:balch_behaviour_based} provide a
-good explanation of the purpose of introducing a motor-schema based
-controller  over traditional - and usually infexible -
-programming. One of the main problems in the controller implementation
-is, given multiple and different objectives, merging them all together
-to obtain an optimised and possibly beautiful looking walk. 
-Motor schemas provide an elegant way to do that: at each instant the
-robots compute a different speed vector for each goal and then they
+good explanation of the purpose of motor-schema based
+controller  over traditional - and usually inflexible -
+programming. One of the main problems encountered while implementing the controller
+is to achieve multiple different objectives at the same time,
+to obtain an optimised and good looking walk of the robots. 
+Motor schemas provide an elegant way to do so: at each instant, the
+robots compute a different speed vector for each goal and then
 merge them all together with appropriate weights. 
 The robots in our case should move in an environment full of obstacles while
 keeping a precise formation, avoiding other robots and moving towards
-a goal. We show in section \ref{sec:2} how we implemented sudh behaviour.
+a goal. We will show in section \ref{sec:2} how we implemented such behaviours.
 
-Tuning correctly the motor-schemas paramethers leads to the second part of our project:
-we want to study the influence of Particle Swarm Optimisation (PSO), a
-machine learning tecnique, on the simulation. Indeed a manual setting 
-is difficult even with few paramether and becomes impossible as their
+Tuning correctly the motor-schemas parameters leads to the second part of our project:
+we studied the influence on the simulation of Particle Swarm Optimisation (PSO), a
+powerful machine learning technique. Indeed, a manual setting 
+is difficult even with few parameters and it becomes almost impossible as their
 number increases. PSO (\cite{IEEEhowto:martinoli_pso},
 \cite{IEEEhowto:martinoli_pso_noise},
 \cite{IEEEhowto:martinoli_pso_noise_2}) is a recent and promising
-tecnique that, in short, consists in modeling the set of potential
-problem solutions as a swarm of particles moving about in a virtual
-search space. Each particle, after being evaluated, moves keeping into
-account their and their neighborhood best position acquired so far. Ideally
-they should converge to global optimal position. PSO can model an
-Artificial Neural Network controller by having the parameter set be
-the weights, and, with appropriate extensions, it suits perfectly also the
-robot swarm problem, keeping into account the noise generated. 
+technique that, in short, consists in modeling the set of potential
+problem solutions as a swarm of particles moving around in a virtual multidimensional
+search space. Each particle, after being evaluated, moves keeping in memory their neighborhood's and their own best positions acquired so far. Ideally
+they should converge to a global optimal position. PSO can model an
+Artificial Neural Network controller: the parameters set contains
+the weights and, with appropriate extensions and taking into account the noise generation, this method suits perfectly the 
+robot swarm problem. 
 A key part of PSO is the choice of a good fitness function to evaluate
 simulations. Traditionally the reference fitness function is the one
 of Floreano and Mondada (\cite{IEEEhowto:fitness_floreano_mondada}). Based on
-this we have developed our version that we show in the section
-\ref{sec:3}, alongside our PSO implementation.
+this we have developed our own version that will be shown in section
+\ref{sec:3}, along with the PSO implementation of the project. 
 
-In the section \ref{sec:4} we present the result of our
-simulations and in the final section \ref{sec:5} we delinate our
-conclusions. 
+In section \ref{sec:4}, we will present the results of our
+simulations and the final section \ref{sec:5} will be reserved to our conclusions. 
 \textbf{TODO: maybe add something on the setting of our simulations}
 
 
@@ -594,107 +591,101 @@ We considered 5 basic motor schemas:
 \item \textit{Avoid obstacles}
 \item \textit{Random walk}
 \end{itemize}
-Each of the schemas provide a speed vector normalised (with norm from
-0 to 1). Then all these contribution are summed with appropriate weights, thus obtaining the
-speed vector. 
-Excluding the fifth schema, for the others we used the concept of the
+Each schema provides a normalized speed vector (with norm between
+0 and 1). All these contribution are then summed with appropriate weights, obtaining the
+global speed vector which will determine the wheel speeds of the robots. 
+Excluding the fifth schema, all the other ones use the concept of the
 \textit{Sphere of Influence} as proposed in
 \cite{IEEEhowto:arkin_motor_schemas}. The idea is that the cause of a
-behaviour influence the robot only if his value is lower (or higher,
-it depends on the behaviour) than a value S (the radius of the sphere
-of influence). We can extend this concept considering 2 thresholds R
-and S, the reaction will be maximum (or minimum) if the value is below
-R and minimum (or maximum) if it's higher than S. Between R and S we
-adopt a linear behaviour, but more complex equations can be
+behaviour influences the robot only if its value is lower (or higher,
+depending on the behaviour) than a certain value S (the radius of the sphere
+of influence). We can extend this concept considering two thresholds R
+and S: the reaction will be maximum (or minimum) if the value is below
+R and minimum (or maximum) if it is higher than S. Between R and S we
+adopt a linear behaviour, even if more complex equations can be
 considered.
 
-To compute all the necessary information the robots can communicate
-with a supervisor, that send them their position (only of their
-selves, not of the other robots) and the position of the goal. They
-moreover can communicate with the robots not too far to exchange their
-relative position and they have infrared (\textbf{check if true})
+To compute all the necessary information, the robots can communicate
+with a supervisor that sends them their own position (not the ones of the other robots) and the goal position. They
+can also communicate with the other robots which are not too far away in order to exchange their
+relative position. They moreoever use their infrared (\textbf{check if true})
 sensors to detect obstacles.
 
 \subsection{Move to goal}  
 The simplest motor schema is the \textit{move to goal} one. Knowing
-their position and the position of the goal from the supervisor this
-schema generates a speed vector of norm:
+their position and the position of the goal from the supervisor, this
+schema generates a speed vector pointing towards the goal and of norm:
 
 \begin{equation}
 \begin{cases} 0, & \mbox{if }  d<R \\ \frac{d-R}{S-R}, & \mbox{if }
   R<d<S \\ 1 & \mbox{if } d>S\end{cases}
 \end{equation}
-where $d$ is the distance between the robot and the goal.
+where $d$ is the distance between the robot and the goal.(\textbf{not really: it is between the unit center and the goal})
 
 \subsection{Keep formation}
 The \textit{keep formation} schema is conceptually similar to the move
-to goal with the difference that the goal is a specific point into the
-space that have to be computed at each time step. To compute this
-point we used the robot local communications to compute the centre of
-the formation. Then knowing the position of the goal and the centre of
-the formation, with some trigonometric calculations, 
-it's possible to compute the distance and bearing from the expected
-position (see figure \ref{img:keep_formation}). 
+to goal schema, with the difference that the goal is now a specific point into the
+space that have to be computed at each time step and which corresponds to the position in which the robot should be in order to stay in formation. To compute this
+point we used the robot local communications to compute the unit center of
+the formation. Then, knowing the position of the goal and the unit center of
+the formation, thanks to some trigonometric calculations, 
+it is possible to compute the vector from the actual position to the expected
+one (see figure \ref{img:keep_formation}). 
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=3.5in]{Images/keep_formation.jpg}
-\caption{Compute expected position in keep formation motor schema}
+\caption{Computation of the expected position in the keep formation motor schema}
 \label{img:keep_formation}
 \end{figure}
 
 \subsection{Avoid other robots}
-To detect the other robots there are 2 main
-ways: using the built-in sensors or the local communications. We
+To detect the other robots, there are two main
+ways: using either the built-in sensors or local communications. We
 decided to use the second ones since we found them a lot more precise and less
-noisier. Once implemented the local communications and got the
-positions of the other robots, the implementation is quite
-straightforward. For each robot is generated a speed vector of
+noisy. Once implemented local communications, robots easily receive the
+positions of the other robots, and the implementation of the scheme is quite
+straightforward. For each robot a speed vector is generated. It has the following
 norm:
 \begin{equation}
 \begin{cases} 1, & \mbox{if }  d<R \\ \frac{S-d}{S-R}, & \mbox{if }
   R<d<S \\ 0 & \mbox{if } d>S\end{cases}
 \end{equation}
-where $d$ is the distance between the 2 robots. Then all the vectors
-generated are summed. Note that the formula is the opposite as the
-move to goal scheme since in this case we want to avoid something
-instead of moving towards.
+where $d$ is the distance between two robots. Then all the generated vectors
+are summed. Note that the formula is the opposite af the one in the
+move to goal scheme, since in this case we want to avoid an object
+instead of moving towards it.
 
 \subsection{Avoid obstacles}
 This is probably the most complicate motor schema. The e-puck sensors
-are very noisy and we need to keep this into account. 
-There are 8 sensor on an e-puck and we know the bearing (\textbf{check
-bearing}) of each of them. Now $R$ and $S$ are sensor values: if the
-read sensor value is below $R$ we suppose a green light situation, is
-it's over $S$ we generate a norm 1 vector in the opposite
-direction. In the middle we found that a linear function doesn't
-provide the correct behaviour, we decide to give a ``premium'' to
+are very noisy and we need to take this into account. 
+There are eight sensor on an e-puck and we know the position and thus the orientation of each of them. Now $R$ and $S$ are sensor values: if the
+received sensor value is below $R$, we assume that no obstacle is near; if
+it is over $S$, we generate a norm $1$ vector in the opposite
+direction. In between, we found out that a linear function does not
+provide any correct behaviour. We thus decided to give a ``premium'' (\textbf{to explain better}) to
 sensor values greater than a specified threshold.
 The final speed vector is computed as the sum of the vectors relative
 to each sensor.
 
 \subsection{Random walk}
-The precedent 4 motor schemas are teorically sufficient to achieve
-the goals of our project, but the presence of noise often makes tricky
-their evaluation. The obstacle avoidance part, that relies exclusively
-on the built-in sensors, often gives bad results causing the robots to
-get stuck behind obstacles. One possible solution to improve the
-performances is to add a random component to the speed of the
+The four previous motor schemas are theoretically sufficient to achieve
+the goals of our project, but the presence of noise often create tricky evaluation. Moreover, some difficult obstacle configurations are hard to get over only with those schemas. One possible solution to improve the
+performance is to add a random component to the speed of the
 robots. This, in absence of obstacles is usually a bad idea, since it
-will cause a less fluid walk, but in our situation it becomes
+causes a less fluid walk, but in our situation it becomes
 necessary to achieve the goal. 
-There are many ways of adding noise, our implementation is based on 2
+There are many ways of adding noise, our implementation is based on two
 components:
 \begin{itemize}
-\item \textit{Noise generation frequency:} tells after how many time
-  steps the noise vector should be recomputed. An higher number would
-  help the robot to escape after being stucked behind an obstacle,
-  while a lower value would influence less the walk towards the goal.
-\item \textit{Fading:} At each recomputation the vector is
-  computed as a linear combination (with random coefficient) between a
-  new completely random vector and the one previously computed. This
-  would help to provide a more natural walk without abrupt
-  \textbf{???} changes of direction.
+\item \textit{Noise generation frequency:} this tells after how many time
+  steps the noise vector should be recomputed. A higher number would
+  help a robot escape more eaily after getting stucked behind an obstacle,
+  while a lower value would keep a smoother walk towards the goal.
+\item \textit{Fading:} At each recomputation, the vector is
+  computed as a linear combination with random coefficient of a
+  completely new random vector and the one previously computed. This
+  helps provide a more natural walk without sudden changes of direction.
 \end{itemize}
 
 % You must have at least 2 lines in the paragraph with the drop letter
