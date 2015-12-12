@@ -151,7 +151,7 @@ void reset_barrier_world(void) {
 
     // Randomly set up robots on the other side of the wall of obstacles
     for (i=0; i<FORMATION_SIZE; i++) {
-        random_pos_rob(i, -1.0, -0.75); //-2.0,-1.5
+        random_pos_rob(i, -1.0, -0.75);
         robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }

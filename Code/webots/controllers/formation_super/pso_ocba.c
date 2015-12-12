@@ -172,7 +172,7 @@ void init_particles(void){
 
 /*
  * Evaluates a particle's position. Out of a certain amount of samples, the mean and the variance
- * are calculated and saved in mean and var.
+ * are calculated and saved in mean and var. 
  * Attributes: 
  *  - position:   the position to be evaluated
  *  - mean:       the position's current mean performance
