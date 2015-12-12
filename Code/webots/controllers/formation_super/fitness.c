@@ -4,7 +4,10 @@
 
 #include "fitness.h"
 
-double compute_fitness(int FORMATION_SIZE) {
+/* 
+ * Pass to the function 1 if goal is reached, 0 if it's not reached
+*/
+double compute_fitness(int FORMATION_SIZE, int goal_reached) {
 	double mean_v=0;
 	double mean_delta_v=0;
 	double mean_formation_distance=0;
@@ -14,6 +17,8 @@ double compute_fitness(int FORMATION_SIZE) {
 	double weight_delta_v=1;
 	double weight_formation_distance=1;
 	double weight_obstacle_term=1;
+	double weight_goal_reached=0.5;
+
 	
 	int i;
 	for (i=0; i<FORMATION_SIZE; i++) {
@@ -44,8 +49,9 @@ double compute_fitness(int FORMATION_SIZE) {
 
 	
 	return weight_v*mean_v*(1-sqrt(weight_delta_v*mean_delta_v))*
-          	(1-sqrt(weight_formation_distance*mean_formation_distance))
-          	(1-weight_obstacle_term*mean_obstacle_term);
+          	(1-sqrt(weight_formation_distance*mean_formation_distance))*
+          	(1-weight_obstacle_term*mean_obstacle_term)+
+          	weight_goal_reached*goal_reached;
 }
 
 /*

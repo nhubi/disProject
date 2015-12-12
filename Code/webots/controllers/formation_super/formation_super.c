@@ -144,7 +144,8 @@ int main(int argc, char *args[]) {
     // sending weights
     send_weights();
     printf("Weights sent\n");
-
+    
+    bool is_goal_reached=false;
     // infinite loop
     for(;;) {
         wb_robot_step(TIME_STEP);
@@ -157,6 +158,7 @@ int main(int argc, char *args[]) {
         }
         simulation_duration += TIME_STEP;
         if (simulation_has_ended()) {
+            is_goal_reached=true;
             char buffer[255]; // buffer for sending data
             int robot_id;
             for(robot_id = 0; robot_id < FORMATION_SIZE; robot_id++) {
@@ -168,7 +170,11 @@ int main(int argc, char *args[]) {
         }
     }
     
-    fitness = compute_fitness(FORMATION_SIZE);
+    if (is_goal_reached){
+        fitness = compute_fitness(FORMATION_SIZE,1);
+    } else {
+        fitness = compute_fitness(FORMATION_SIZE,1);
+    }
     printf("fitness = %f\n",fitness);
     
     while (1) wb_robot_step(TIME_STEP); //wait forever

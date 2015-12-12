@@ -280,7 +280,12 @@ float evaluate_parameters(float* params){
         }
         if(!end_run)
             printf("Goal NOT reached.\n");
-        single_perf = compute_fitness(FORMATION_SIZE);
+        
+        if (end_run) {
+            single_perf = compute_fitness(FORMATION_SIZE,1);
+        } else {
+            single_perf = compute_fitness(FORMATION_SIZE,0);
+        }
         printf("Single fitness: %f\n", single_perf); 
         performance += single_perf;
     }
@@ -321,7 +326,12 @@ float evaluate_parameters(float* params){
         }
         if(!end_run)
             printf("Goal NOT reached.\n");
-        single_perf = compute_fitness(FORMATION_SIZE);
+        
+        if (end_run) {
+            single_perf = compute_fitness(FORMATION_SIZE,1);
+        } else {
+            single_perf = compute_fitness(FORMATION_SIZE,0);
+        }
         printf("Single fitness: %f\n", single_perf); 
         performance += single_perf;
     }
@@ -361,7 +371,12 @@ float evaluate_parameters(float* params){
         }
         if(!end_run)
             printf("Goal NOT reached.\n");
-        single_perf = compute_fitness(FORMATION_SIZE);
+        
+        if (end_run) {
+            single_perf = compute_fitness(FORMATION_SIZE,1);
+        } else {
+            single_perf = compute_fitness(FORMATION_SIZE,0);
+        }
         printf("Single fitness: %f\n", single_perf); 
         performance += single_perf;
     }
