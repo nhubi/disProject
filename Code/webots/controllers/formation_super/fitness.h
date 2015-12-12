@@ -20,7 +20,7 @@ float obstacle_term_sum[4]; // Sum of the maximum values of the sensors
 int number_of_time_step;         // necessary to compute the mean
 
 
-double compute_fitness(int formation_size);
+double compute_fitness(int formation_size, int goal_reached);
 
 void compute_speed(float loc[4][3],float prev_loc[4][3],float speed[4][3],int robot_id,float time_step);
 

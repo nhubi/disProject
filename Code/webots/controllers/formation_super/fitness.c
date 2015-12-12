@@ -41,16 +41,16 @@ double compute_fitness(int FORMATION_SIZE, int goal_reached) {
 	mean_formation_distance=mean_formation_distance/FORMATION_SIZE/number_of_time_step;
 	mean_obstacle_term=mean_obstacle_term/FORMATION_SIZE/number_of_time_step;
 
-	//printf("%f\n",mean_v);
-	//printf("%f\n",mean_delta_v);
-	//printf("%f\n",mean_formation_distance);
-	//printf("%f\n",mean_obstacle_term);
+	printf("%f\n",mean_v);
+	printf("%f\n",mean_delta_v);
+	printf("%f\n",mean_formation_distance);
+	printf("%f\n",mean_obstacle_term);
 
 
 	
 	return weight_v*mean_v*(1-sqrt(weight_delta_v*mean_delta_v))*
-          	(1-sqrt(weight_formation_distance*mean_formation_distance))*
-          	(1-weight_obstacle_term*mean_obstacle_term)+
+          	(1/sqrt(weight_formation_distance*mean_formation_distance))*
+          	(weight_obstacle_term*mean_obstacle_term)+
           	weight_goal_reached*goal_reached;
 }
 
