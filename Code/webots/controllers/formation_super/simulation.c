@@ -548,7 +548,8 @@ int simulation_has_ended(void) {
   	distance_to_goal=sqrt(distance_to_goal);
   	keep_formation_d /= FORMATION_SIZE;
                 	
-	if (distance_to_goal < 0.1 && keep_formation_d < 0.5) {
+	//if (distance_to_goal < 0.1 && keep_formation_d < 0.5) { // with keep_formation control
+	if (distance_to_goal < 0.1) { // without keep_formation control
 		return 1;
 	}
 	
