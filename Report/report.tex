@@ -126,7 +126,7 @@
 % *** GRAPHICS RELATED PACKAGES ***
 %
 \ifCLASSINFOpdf
-  % \usepackage[pdftex]{graphicx}
+\usepackage[pdftex]{graphicx}
   % declare the path(s) where your graphic files are
   % \graphicspath{{../pdf/}{../jpeg/}}
   % and their extensions so you won't have to specify these with
@@ -136,7 +136,7 @@
   % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
   % will default to the driver specified in the system graphics.cfg if no
   % driver is specified.
-  % \usepackage[dvips]{graphicx}
+\usepackage[dvips]{graphicx}
   % declare the path(s) where your graphic files are
   % \graphicspath{{../eps/}}
   % and their extensions so you won't have to specify these with
@@ -541,7 +541,7 @@ necessary.
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
 \IEEEPARstart{T}{he} first aim of the project is to implement a controller
-for mobile robots based on motor shemas and test it in simulations
+for mobile robots (e-puck in our case) based on motor shemas and test it in simulations
 using the software
 Webots\textregistered. \cite{IEEEhowto:arkin_motor_schemas} and 
 \cite{IEEEhowto:balch_behaviour_based} provide a
@@ -624,7 +624,78 @@ schema generates a speed vector of norm:
 \begin{cases} 0, & \mbox{if }  d<R \\ \frac{d-R}{S-R}, & \mbox{if }
   R<d<S \\ 1 & \mbox{if } d>S\end{cases}
 \end{equation}
+where $d$ is the distance between the robot and the goal.
 
+\subsection{Keep formation}
+The \textit{keep formation} schema is conceptually similar to the move
+to goal with the difference that the goal is a specific point into the
+space that have to be computed at each time step. To compute this
+point we used the robot local communications to compute the centre of
+the formation. Then knowing the position of the goal and the centre of
+the formation, with some trigonometric calculations, 
+it's possible to compute the distance and bearing from the expected
+position (see figure \ref{img:keep_formation}). 
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=3.5in]{Images/keep_formation.jpg}
+\caption{Compute expected position in keep formation motor schema}
+\label{img:keep_formation}
+\end{figure}
+
+\subsection{Avoid other robots}
+To detect the other robots there are 2 main
+ways: using the built-in sensors or the local communications. We
+decided to use the second ones since we found them a lot more precise and less
+noisier. Once implemented the local communications and got the
+positions of the other robots, the implementation is quite
+straightforward. For each robot is generated a speed vector of
+norm:
+\begin{equation}
+\begin{cases} 1, & \mbox{if }  d<R \\ \frac{S-d}{S-R}, & \mbox{if }
+  R<d<S \\ 0 & \mbox{if } d>S\end{cases}
+\end{equation}
+where $d$ is the distance between the 2 robots. Then all the vectors
+generated are summed. Note that the formula is the opposite as the
+move to goal scheme since in this case we want to avoid something
+instead of moving towards.
+
+\subsection{Avoid obstacles}
+This is probably the most complicate motor schema. The e-puck sensors
+are very noisy and we need to keep this into account. 
+There are 8 sensor on an e-puck and we know the bearing (\textbf{check
+bearing}) of each of them. Now $R$ and $S$ are sensor values: if the
+read sensor value is below $R$ we suppose a green light situation, is
+it's over $S$ we generate a norm 1 vector in the opposite
+direction. In the middle we found that a linear function doesn't
+provide the correct behaviour, we decide to give a ``premium'' to
+sensor values greater than a specified threshold.
+The final speed vector is computed as the sum of the vectors relative
+to each sensor.
+
+\subsection{Random walk}
+The precedent 4 motor schemas are teorically sufficient to achieve
+the goals of our project, but the presence of noise often makes tricky
+their evaluation. The obstacle avoidance part, that relies exclusively
+on the built-in sensors, often gives bad results causing the robots to
+get stuck behind obstacles. One possible solution to improve the
+performances is to add a random component to the speed of the
+robots. This, in absence of obstacles is usually a bad idea, since it
+will cause a less fluid walk, but in our situation it becomes
+necessary to achieve the goal. 
+There are many ways of adding noise, our implementation is based on 2
+components:
+\begin{itemize}
+\item \textit{Noise generation frequency:} tells after how many time
+  steps the noise vector should be recomputed. An higher number would
+  help the robot to escape after being stucked behind an obstacle,
+  while a lower value would influence less the walk towards the goal.
+\item \textit{Fading:} At each recomputation the vector is
+  computed as a linear combination (with random coefficient) between a
+  new completely random vector and the one previously computed. This
+  would help to provide a more natural walk without abrupt
+  \textbf{???} changes of direction.
+\end{itemize}
 
 % You must have at least 2 lines in the paragraph with the drop letter
 % (should never be an issue)
