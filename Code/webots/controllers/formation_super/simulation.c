@@ -151,7 +151,7 @@ void reset_barrier_world(void) {
 
     // Randomly set up robots on the other side of the wall of obstacles
     for (i=0; i<FORMATION_SIZE; i++) {
-        random_pos_rob(i, -2.0, -1.5);
+        random_pos_rob(i, -1.0, -0.75); //-2.0,-1.5
         robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }
@@ -263,19 +263,19 @@ void reset_random_world(void) {
     
     // Set up the obstacles
     for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
-      random_pos_obs(obs_id, -2.0, -3.5);
+      random_pos_obs(obs_id, -1.0, -1.75);
     }
     
     // Set up the goal behind the wall of obstacles
-    new_loc_goal[0] = 0.2;
+    new_loc_goal[0] = 0.1;
     new_loc_goal[1] = 0.0;
-    new_loc_goal[2] = -4.0;
+    new_loc_goal[2] = -2.0;
     goal_field = wb_supervisor_node_get_field(goal_id,"translation");
     wb_supervisor_field_set_sf_vec3f(goal_field, new_loc_goal);
 
     // Randomly set up robots on the other side of the wall of obstacles
     for (i=0; i<FORMATION_SIZE; i++) {
-        random_pos_rob(i, -2.0, -1.5);
+        random_pos_rob(i, -1.0, 0.25);
         robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }

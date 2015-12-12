@@ -14,9 +14,9 @@
 
 //Formation types
 #define DEFAULT_FORMATION "line"        // Line formation as default
-#define NB_PSO_WALL_RUNS           1   // Number of runs for PSO with a wall of obstacles
-#define NB_PSO_WORLD2_RUNS         1    // Number of runs for PSO with a difficult configuration
-#define NB_PSO_RANDOM_RUNS         1   // Number of runs for PSO with a random positionning
+#define NB_PSO_WALL_RUNS           2   // Number of runs for PSO with a wall of obstacles
+#define NB_PSO_WORLD2_RUNS         2    // Number of runs for PSO with a difficult configuration
+#define NB_PSO_RANDOM_RUNS         5   // Number of runs for PSO with a random positionning
 #define MAX_IT_PSO                 5000 // Number of iteration per PSO run
 
 
@@ -279,7 +279,7 @@ int main(int argc, char *args[]) {
                 sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",robot_id,0,migrx,migrz,loc[robot_id][2],migrx,migrz,1);
                 wb_emitter_send(emitter,buffer,strlen(buffer));
             }
-            printf("\n\n\n\n______________________________________JUDIHUI!______________________________________\n\n");
+            printf("\n\n\n\n______________________________________GOAL REACHED!______________________________________\n\n");
             break;
         }
     }
