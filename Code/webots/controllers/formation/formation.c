@@ -137,9 +137,6 @@ int main(){
             }
 */
         }
-        
-        // compute current position according to motor speeds (msl, msr)
-        //update_self_motion(msl,msr);
 		
         // Send a ping to the other robots, receive their ping and use it for computing their position
         send_ping();
@@ -155,12 +152,8 @@ int main(){
         if(last_run == 1 && loc[robot_id][0] == migr[0] && loc[robot_id][1] == migr[1]) {
              end = true;
              wb_differential_wheels_set_speed(0,0);
-        }
-            
-
-        // Compute wheel speeds from speed vectors and forward them to differential motors
-        else 
-        {
+        } else {
+            // Compute wheel speeds from speed vectors and forward them to differential motors
             compute_wheel_speeds(&msl, &msr);
             wb_differential_wheels_set_speed(msl,msr);
         }

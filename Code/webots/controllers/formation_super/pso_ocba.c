@@ -369,12 +369,11 @@ float evaluate_parameters(float* params){
                 break;
             }
         }
-        if(!end_run)
-            printf("Goal NOT reached.\n");
         
         if (end_run) {
             single_perf = compute_fitness(FORMATION_SIZE,1);
         } else {
+            printf("Goal NOT reached in formation.\n");
             single_perf = compute_fitness(FORMATION_SIZE,0);
         }
         printf("Single fitness: %f\n", single_perf); 
