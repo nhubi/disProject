@@ -88,49 +88,51 @@ int main(int argc, char *args[]) {
     
     pso_ocba(optimal_params);
 
-     // each motorschema's weight
-     w_goal            = optimal_params[0];
-     w_keep_formation  = optimal_params[1];
-     w_avoid_robot     = optimal_params[2];
-     w_avoid_obstacles = optimal_params[3];
-     w_noise           = optimal_params[4];
- 
-     // thresholds
-     avoid_obst_min_threshold     = optimal_params[5];
-     avoid_obst_max_threshold     = optimal_params[5] + optimal_params[6];
-     move_to_goal_min_threshold   = optimal_params[7];
-     move_to_goal_max_threshold   = optimal_params[7] + optimal_params[8];
-     avoid_robot_min_threshold    = optimal_params[9];
-     avoid_robot_max_threshold    = optimal_params[9] + optimal_params[10];
-     keep_formation_min_threshold = optimal_params[11];
-     keep_formation_max_threshold = optimal_params[11] + optimal_params[12];
- 
-     // noise parameters
-     noise_gen_frequency = optimal_params[13];
-     fading              = round(optimal_params[14]); // = 0 or 1
- 
-     printf("\n\n\nThe optimal parameters are: \n");
-     printf("___________ w_goal...................... = %f\n", w_goal);
-     printf("___________ w_keep_formation............ = %f\n", w_keep_formation);
-     printf("___________ w_avoid_robo................ = %f\n", w_avoid_robot);
-     printf("___________ w_avoid_obstacles........... = %f\n", w_avoid_obstacles);
-     printf("___________ w_noise..................... = %f\n", w_noise);
-     printf("___________ noise_gen_frequency......... = %d\n", noise_gen_frequency);
-     printf("___________ fading...................... = %d\n", fading);
-     printf("___________ avoid_obst_min_threshold.... = %f\n", avoid_obst_min_threshold);
-     printf("___________ avoid_obst_max_threshold.... = %f\n", avoid_obst_max_threshold);
-     printf("___________ move_to_goal_min_threshold.. = %f\n", move_to_goal_min_threshold);
-     printf("___________ move_to_goal_max_threshold.. = %f\n", move_to_goal_max_threshold);
-     printf("___________ avoid_robot_min_threshold... = %f\n", avoid_robot_min_threshold);
-     printf("___________ avoid_robot_max_threshold... = %f\n", avoid_robot_max_threshold);
-     printf("___________ keep_formation_min_threshold = %f\n", keep_formation_min_threshold);
-     printf("___________ keep_formation_max_threshold = %f\n", keep_formation_max_threshold);
-     printf("\n\n");
+    // each motorschema's weight
+    w_goal            = optimal_params[0];
+    w_keep_formation  = optimal_params[1];
+    w_avoid_robot     = optimal_params[2];
+    w_avoid_obstacles = optimal_params[3];
+    w_noise           = optimal_params[4];
+
+    // thresholds
+    avoid_obst_min_threshold     = optimal_params[5];
+    avoid_obst_max_threshold     = optimal_params[5] + optimal_params[6];
+    move_to_goal_min_threshold   = optimal_params[7];
+    move_to_goal_max_threshold   = optimal_params[7] + optimal_params[8];
+    avoid_robot_min_threshold    = optimal_params[9];
+    avoid_robot_max_threshold    = optimal_params[9] + optimal_params[10];
+    keep_formation_min_threshold = optimal_params[11];
+    keep_formation_max_threshold = optimal_params[11] + optimal_params[12];
+
+    // noise parameters
+    noise_gen_frequency = optimal_params[13];
+    fading              = round(optimal_params[14]); // = 0 or 1
+
+    printf("\n\n\nThe optimal parameters are: \n");
+    printf("___________ w_goal...................... = %f\n", w_goal);
+    printf("___________ w_keep_formation............ = %f\n", w_keep_formation);
+    printf("___________ w_avoid_robo................ = %f\n", w_avoid_robot);
+    printf("___________ w_avoid_obstacles........... = %f\n", w_avoid_obstacles);
+    printf("___________ w_noise..................... = %f\n", w_noise);
+    printf("___________ noise_gen_frequency......... = %d\n", noise_gen_frequency);
+    printf("___________ fading...................... = %d\n", fading);
+    printf("___________ avoid_obst_min_threshold.... = %f\n", avoid_obst_min_threshold);
+    printf("___________ avoid_obst_max_threshold.... = %f\n", avoid_obst_max_threshold);
+    printf("___________ move_to_goal_min_threshold.. = %f\n", move_to_goal_min_threshold);
+    printf("___________ move_to_goal_max_threshold.. = %f\n", move_to_goal_max_threshold);
+    printf("___________ avoid_robot_min_threshold... = %f\n", avoid_robot_min_threshold);
+    printf("___________ avoid_robot_max_threshold... = %f\n", avoid_robot_max_threshold);
+    printf("___________ keep_formation_min_threshold = %f\n", keep_formation_min_threshold);
+    printf("___________ keep_formation_max_threshold = %f\n", keep_formation_max_threshold);
+    printf("\n\n");
     
     
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                         REAL RUN                                               //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
     // Real simulation with optimized parameters:
     initialize();
@@ -144,7 +146,8 @@ int main(int argc, char *args[]) {
     // sending weights
     send_weights();
     printf("Weights sent\n");
-
+    
+    bool is_goal_reached=false;
     // infinite loop
     for(;;) {
         wb_robot_step(TIME_STEP);
@@ -157,18 +160,25 @@ int main(int argc, char *args[]) {
         }
         simulation_duration += TIME_STEP;
         if (simulation_has_ended()) {
-            char buffer[255]; // buffer for sending data
-            int robot_id;
-            for(robot_id = 0; robot_id < FORMATION_SIZE; robot_id++) {
-                sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",robot_id,0,migrx,migrz,loc[robot_id][2],migrx,migrz,1);
-                wb_emitter_send(emitter,buffer,strlen(buffer));
-            }
+            is_goal_reached=true;
             printf("\n\n\n\n______________________________________GOAL REACHED!______________________________________\n\n");
+
+            // stop the robots
+            w_goal            = 0;
+            w_keep_formation  = 0;
+            w_avoid_robot     = 0;
+            w_avoid_obstacles = 0;
+            w_noise           = 0;
+            send_weights();
             break;
         }
     }
     
-    fitness = compute_fitness(FORMATION_SIZE);
+    if (is_goal_reached){
+        fitness = compute_fitness(FORMATION_SIZE,1);
+    } else {
+        fitness = compute_fitness(FORMATION_SIZE,1);
+    }
     printf("fitness = %f\n",fitness);
     
     while (1) wb_robot_step(TIME_STEP); //wait forever

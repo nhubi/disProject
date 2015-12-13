@@ -18,7 +18,7 @@
 
 
 
-void get_move_to_goal_vector(float * direction, bool * goalReached) {
+void get_move_to_goal_vector(float * direction) {
 	int j;
 	for (j=0;j<2;j++) {
 		direction[j] = (migr[j]-unit_center[j]);
@@ -40,8 +40,6 @@ void get_move_to_goal_vector(float * direction, bool * goalReached) {
 	    float multiplier_factor=(direction_norm-move_to_goal_min_threshold)/(move_to_goal_max_threshold-move_to_goal_min_threshold);
 	    multiply_vector_by(direction,2,multiplier_factor);
         }
-
-        *goalReached = (direction_norm < GOAL_REACHED_DISTANCE);
     
 	
 	return;
