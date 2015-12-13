@@ -33,6 +33,7 @@ float sens_back_weight;
 // methods
 
 void get_stat_obst_avoidance_vector(float * direction);
+void get_stat_obst_avoidance_vector_supervisor(float * direction);
 
 
 #endif

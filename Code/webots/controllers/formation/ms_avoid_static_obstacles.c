@@ -113,3 +113,37 @@ void get_stat_obst_avoidance_vector(float* direction){
         }
     } else {dir_norm = 0;}
 }
+
+void get_stat_obst_avoidance_vector_supervisor(float * direction) {
+    direction[0]=0;
+    direction[1]=0;
+    float distance_vector[2];
+    float distance;
+    
+    int i;
+    for (i=0;i<6;i++) {
+        distance_vector[0]=loc[robot_id][0]-obstacle_loc[i][0];
+        distance_vector[1]=loc[robot_id][1]-obstacle_loc[i][1];
+        distance=norm(distance_vector,2);
+        normalize(distance_vector,distance_vector,2);
+        if (distance<avoid_obst_min_threshold_supervisor) {
+            
+        } else if (distance>avoid_obst_max_threshold_supervisor) {
+            distance_vector[0]=0;
+            distance_vector[1]=0;
+        } else {
+            float factor=(avoid_obst_max_threshold_supervisor-distance)/
+                    (avoid_obst_max_threshold_supervisor-avoid_obst_min_threshold_supervisor);
+            multiply_vector_by(distance_vector,2,factor);
+        }
+        direction[0]+=distance_vector[0];
+        direction[1]+=distance_vector[1];
+    }
+    
+
+}
+
+
+
+
+

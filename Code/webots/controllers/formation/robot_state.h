@@ -66,7 +66,6 @@ float relative_pos[FORMATION_SIZE][3];
 float unit_center[3];		    	        // X, Z, Theta of the unit center of all robots
 
 float obstacle_loc[6][2];
-float tryVariable;
 
 // Migration vector
 float migr[2];
@@ -104,6 +103,8 @@ float avoid_robot_min_threshold;
 float avoid_robot_max_threshold;
 float avoid_obst_min_threshold;
 float avoid_obst_max_threshold;
+float avoid_obst_min_threshold_supervisor;
+float avoid_obst_max_threshold_supervisor;
 float keep_formation_min_threshold; // < min threshold: dead zone, no correction of direction
 float keep_formation_max_threshold; // > max threshold: ballistic zone, full correction of direction
 float move_to_goal_min_threshold;

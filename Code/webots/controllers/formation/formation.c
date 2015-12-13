@@ -34,10 +34,15 @@ void computeDirection(void){
     // compute the direction vectors
     get_move_to_goal_vector(dir_goal);
     get_keep_formation_vector(dir_keep_formation, dir_goal);
-    get_stat_obst_avoidance_vector(dir_avoid_obstacles);
+    get_stat_obst_avoidance_vector_supervisor(dir_avoid_obstacles);
     get_avoid_robot_vector(dir_avoid_robot);
     get_noise_vector(dir_noise);
 
+    if (robot_id==0) {
+        //printf("\n%f\n",dir_keep_formation[0]);
+        //printf("%f\n",dir_keep_formation[1]);
+
+    }
     int d;
     //for each dimension d...
     for(d = 0; d < 2; d++){
@@ -74,6 +79,9 @@ int main(){
     msl = 0; msr = 0;
 
     reset(); // Reset the robot
+    
+    avoid_obst_min_threshold_supervisor=0.15;
+    avoid_obst_max_threshold_supervisor=0.4;
 
     // Forever
     for(;;){
@@ -143,7 +151,7 @@ int main(){
             printf("%f\n",obstacle_loc[5][1]);
             */
         if(initialized){
-            printf("%f\n",obstacle_loc[0][0]);
+            //printf("%f\n",obstacle_loc[0][0]);
             // Send a ping to the other robots, receive their ping and use it for computing their position
             send_ping();
             process_received_ping_messages(robot_id);
