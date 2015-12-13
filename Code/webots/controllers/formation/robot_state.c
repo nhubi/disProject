@@ -148,7 +148,7 @@ void init_params(char* inbuffer){
 	
 	
 	inbuffer = (char*) wb_receiver_get_data(receiver);
-	sscanf(inbuffer,"%1d##%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",
+	sscanf(inbuffer,"%1d##%1d#%f#%f#%f#%f#%f#%d#%d#%f#%f#%f#%f#%f#%f#%f#%f",
         &msg_type,
         &rob_nb,
         &w_goal_temp,

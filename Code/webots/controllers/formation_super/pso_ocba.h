@@ -22,7 +22,7 @@
 #define DIMENSIONALITY        15     // nb parameters to optimize
 #define POPULATION_SIZE       30     // nb particles
 #define NB_NEIGHBOURS          5     // size of neighbourhoods
-#define MAX_EVAL_DURATION    100     // max time (in seconds) of evaluation run
+#define MAX_EVAL_DURATION    180     // max time (in seconds) of evaluation run
 #define PERSONAL_WEIGHT        2     // PSO function parameter
 #define NEIGHBOURHOOD_WEIGHT   2     // PSO function parameter
 #define INERTIA                0.6   // PSO function parameter

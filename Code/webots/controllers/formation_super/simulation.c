@@ -475,7 +475,7 @@ void send_weights(void){
     for (i=0;i<FORMATION_SIZE;i++) {
 	
         // Send it out
-        sprintf(buffer, "%1d##%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",
+        sprintf(buffer, "%1d##%1d#%f#%f#%f#%f#%f#%d#%d#%f#%f#%f#%f#%f#%f#%f#%f",
                         MSG_INIT_PARAMS,
                         i,          // robot ID
                         w_goal,
