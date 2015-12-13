@@ -513,12 +513,13 @@
 \IEEEpeerreviewmaketitle
 
 \section*{Abstract}
-Motor schemas are among the main techniques that allow navigation
+\IEEEPARstart{M}{otor-schemas} are among the main techniques that allow navigation
 of mobile robots in complex worlds full of obstacles. However,
-as the number of schemas and the complexity increase, it may be very
-difficult and time expensive to tune correctly all the parameters that
-rule the simulation. The introduction of some machine learning
-techniques (in our case Particle Swarm Optimization) thus becomes necessary. 
+as the number of schemas increases, it becomes very
+difficult and time expensive to optimally tune the parameters specifying
+schemas. The introduction of machine learning techniques thus becomes necessary.
+
+In this project we have implemented a homogeneous, motor-schema based robot controller and tuned it applying solution-sharing Particle Swarm Optimization (\textit{PSO}) using a group fitness function. 
 \textbf{TODO: Add a paragraph with the results.}
 
 
@@ -730,7 +731,7 @@ components:
 \section{PSO}
 \label{sec:3}
 
-Each of the five above mentioned motor-schemas is specified through several parameters that 
+\IEEEPARstart{E}{ach} of the five above mentioned motor-schemas is specified through several parameters that 
 must be well set in order to develop an optimally behaving robot. In fact, the tuning of those 
 parameters is an NP-hard problem since the complexity of its computation increases 
 exponentially with the number of parameters.
@@ -771,22 +772,24 @@ $[0, 10]$ and before passing a particle's position to the fitness function, each
 transformed to the range of the respective controller parameter.
 
 \subsection{OCBA}
-Since the first \textit{PSO} version in 1995, much research has been done for improving the algorithms performance. One of the most recent extensions is called \textit{PSO OCBA} was proposed by Di Mario, Navarro and Martinoli in 2015 \cite{IEEEhowto:martinoli_pso_noise_2}. 
+Since the first \textit{PSO} version in 1995, much research has been done for improving the algorithm's performance. One of the most recent extensions is called \textit{PSO OCBA} and was proposed by Di Mario, Navarro and Martinoli in 2015 \cite{IEEEhowto:martinoli_pso_noise_2}. 
 
-The problem of the initial \textit{PSO} algorithm is that it does not deal with randomness. When it comes to determine controller parameters this is a big issue, since in this case the measured performances of several evaluations with same parameters usually have a big variance. This is because there are many sources of randomness, such as noisy sensor measurements or moving obstacles (other robots). The problem is, that a bad choice of parameters can result in a good measured performance and therefore we cannot be sure the best evaluated particle position is actually the optimal one.
+The problem of the initial \textit{PSO} algorithm is that it does not deal with randomness. When it comes to determine controller parameters this is a big issue since in this case the measured performances of several evaluations with same parameters usually have a big variance. This is because there are many sources of randomness, such as noisy sensor measurements or moving obstacles (other robots). The problem is, that therefore a bad choice of parameters can result in a good measured performance and converely. We can thus not be sure the particle position with the best evaluation is actually the optimal one.
 
-A way to face this problem is to evaluate the particle positions several times. It is especially important to re-evaluate the best solution, since we want to be certain that it actually is the best.
+A way to face this problem is to evaluate the particle positions several times. It is especially important to re-evaluate the best solution, since we want to be certain that it really is the best.
 
-With \textit{PSO OCBA} we can achieve exactly this objective. In every iteration, \textit{PSO OCBA} evaluates each new particle position $n_{zero}$ times and calculates mean and variance of the performance measure. Then it distributes the user defined \textit{iteration budget} (an amount of re-evaluations) among the most promising positions with the highest variance. In doing so, it is assured that the fitness value of the finally returned optimal parameter setting has a low variance and therefore a higher possibility to be correct. 
+With \textit{PSO OCBA} we can achieve exactly this objective. In every iteration, \textit{PSO OCBA} evaluates each new particle position $n_0$ times and calculates mean and variance of the performance measure. Then it distributes the user defined \textit{iteration budget} (an amount of re-evaluations) among the most promising positions with the highest variances. In doing so, it is assured that the fitness value of the finally returned optimal parameter setting has a low variance and therefore a higher possibility to be correct. 
 
-The elegant thing about \textit{PSO OCBA} is that it distributes the \textit{iteration budget} in a very intelligent way, meaning that non-promising positions will not be re-evaluated. Using \textit{PSO OCBA} allowed us thus to deploy the available computational power in an efficient way.
+The elegant thing about \textit{PSO OCBA} is that it distributes the \textit{iteration budget} in a very intelligent way, meaning that non-promising positions will not be re-evaluated. Using \textit{PSO OCBA} allowed us thus to deploy the available computational power in an efficient way and thus reduce the running time.
 
 \subsection{Fitness function}
-The choice of a good fitness function is fundamental in \textit{PSO}. One of the most famous fitness functions in this field is the Floreano-Mondada one \cite{IEEEhowto:fitness_floreano_mondada}:
+The choice of a good fitness function is fundamental in \textit{PSO}. One of the most famous fitness functions in this field is the one of Floreano-Mondada \cite{IEEEhowto:fitness_floreano_mondada}:
 \begin {equation}
 F=V(1-\sqrt{\Delta V})(1-i)
 \end{equation}
-where $V$ is the average wheel speed, $\Delta V$ the wheel speed difference, and $i$ is the value of the highest proximity sensor, everything normalized in the interval $[0,1]$. We took inspiration from this function, our final one being the following: 
+where $V$ is the average wheel speed, $\Delta V$ the difference of the left and right wheel speed and $i$ is the value of the highest proximity sensor, everything normalized in the interval $[0,1]$. 
+
+We took inspiration from this  and came up with the following group-fitness function: 
 \begin {equation}
 F=\alpha_vV(1-\sqrt{\alpha_{\Delta}\Delta V})\frac{1}{D_o+\alpha_o}\frac{1}{D_f}+\alpha_gG
 \end{equation}
@@ -798,7 +801,7 @@ where:
 \end{itemize} 
 All of these quantities are computed in the supervisor: some little adjustments are thus necessary: 
 \begin{itemize}
-\item[-] $D_o$ has been introduced instead of $i$, since $i$ is a value that is highly influenced by noise and which is not accessible from the supervisor. The performance computation is thus more precise;
+\item[-] $D_o$ has been introduced instead of $i$, since $i$ is a value that is highly influenced by noise. The performance computation is thus more precise;
 \item[-] $\Delta V$ is computed from $\Theta$, the angular speed of the robots.
 \end{itemize}
 Moreover, $\alpha_o$ is necessary since it may happen that $D_o$ is very low, almost tending to zero. No weight is explicitly set in front of $D_f$ since $\alpha_v$ already influences it.
