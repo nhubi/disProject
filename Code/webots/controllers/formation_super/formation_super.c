@@ -43,7 +43,7 @@ int main(int argc, char *args[]) {
 //                                              PSO                                               //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+    
     // each motorschema's weight
     parameter_ranges[0][0] =  0;
     parameter_ranges[0][1] = 10;
@@ -56,6 +56,8 @@ int main(int argc, char *args[]) {
     parameter_ranges[4][0] =  0;
     parameter_ranges[4][1] = 10;
 
+
+    /*
     // thresholds
     parameter_ranges[ 5][0] =  30;      // obstacle avoidance min
     parameter_ranges[ 5][1] = 200;
@@ -79,7 +81,7 @@ int main(int argc, char *args[]) {
     parameter_ranges[13][1] =  20;
     parameter_ranges[14][0] =   0;      // fade or not
     parameter_ranges[14][1] =   1;
-
+    */
 
 
     float optimal_params[DIMENSIONALITY];
@@ -95,6 +97,7 @@ int main(int argc, char *args[]) {
     w_avoid_obstacles = optimal_params[3];
     w_noise           = optimal_params[4];
 
+    /*
     // thresholds
     avoid_obst_min_threshold     = optimal_params[5];
     avoid_obst_max_threshold     = optimal_params[5] + optimal_params[6];
@@ -108,6 +111,7 @@ int main(int argc, char *args[]) {
     // noise parameters
     noise_gen_frequency = optimal_params[13];
     fading              = round(optimal_params[14]); // = 0 or 1
+    */
 
     printf("\n\n\nThe optimal parameters are: \n");
     printf("___________ w_goal...................... = %f\n", w_goal);

@@ -235,6 +235,21 @@ float evaluate_parameters(float* params){
     w_noise           = params[4];
 
     // thresholds
+    avoid_obst_min_threshold     = 60;
+    avoid_obst_max_threshold     = 200;
+    move_to_goal_min_threshold   = 0.1;
+    move_to_goal_max_threshold   = 0.5;
+    avoid_robot_min_threshold    = 0.05;
+    avoid_robot_max_threshold    = 0.1;
+    keep_formation_min_threshold = 0.1;
+    keep_formation_max_threshold = 0.2;
+
+    // noise parameters
+    noise_gen_frequency = 10;
+    fading              = 1; // = 0 or 1
+    
+    /*
+    // thresholds
     avoid_obst_min_threshold     = params[5];
     avoid_obst_max_threshold     = params[5] + params[6];
     move_to_goal_min_threshold   = params[7];
@@ -247,7 +262,8 @@ float evaluate_parameters(float* params){
     // noise parameters
     noise_gen_frequency = params[13];
     fading              = round(params[14]); // = 0 or 1
-
+    */
+    
     // show the tested parameters.
     printf("\n\n\nTesting the following configuration: \n");
     printf(" - w_goal...................... = %f\n", w_goal);
