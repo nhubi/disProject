@@ -132,6 +132,8 @@ int main(int argc, char *args[]) {
 //                                         REAL RUN                                               //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
     // Real simulation with optimized parameters:
     initialize();
     // reset and communication part
@@ -159,13 +161,15 @@ int main(int argc, char *args[]) {
         simulation_duration += TIME_STEP;
         if (simulation_has_ended()) {
             is_goal_reached=true;
-            char buffer[255]; // buffer for sending data
-            int robot_id;
-            for(robot_id = 0; robot_id < FORMATION_SIZE; robot_id++) {
-                sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",robot_id,0,migrx,migrz,loc[robot_id][2],migrx,migrz,1);
-                wb_emitter_send(emitter,buffer,strlen(buffer));
-            }
             printf("\n\n\n\n______________________________________GOAL REACHED!______________________________________\n\n");
+
+            // stop the robots
+            w_goal            = 0;
+            w_keep_formation  = 0;
+            w_avoid_robot     = 0;
+            w_avoid_obstacles = 0;
+            w_noise           = 0;
+            send_weights();
             break;
         }
     }

@@ -56,7 +56,16 @@ void computeDirection(void){
         speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
         speed[robot_id][d] += w_noise           * dir_noise[d]; 
-     }
+    }
+
+    // make sure that the resulting vector is not too long. Otherwise, it would permanently get 
+    // limited in compuete_wheel_speeds(). 
+    // To avoid any limiting, the max length of the vector should be around 1.5. However, choosing 4
+    // is still working pretty well (it occurs rarely that the vector's norm is so large).
+    for(d = 0; d < 2; d++){
+        speed[robot_id][d] /= (w_goal + w_keep_formation + w_avoid_robot + w_avoid_obstacles + w_noise);
+        speed[robot_id][d] *= 4;
+    }
 }
 
 
