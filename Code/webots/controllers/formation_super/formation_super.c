@@ -54,23 +54,23 @@ int main(int argc, char *args[]) {
     parameter_ranges[3][0] =  0;
     parameter_ranges[3][1] = 10;
     parameter_ranges[4][0] =  0;
-    parameter_ranges[4][1] = 10;
+    parameter_ranges[4][1] =  1;
 
     // thresholds
-    parameter_ranges[ 5][0] =  30;      // obstacle avoidance min
-    parameter_ranges[ 5][1] = 200;
-    parameter_ranges[ 6][0] =   0;      // obstacle avoidance min + range
-    parameter_ranges[ 6][1] = 400;
+    parameter_ranges[ 5][0] =   0.001;      // obstacle avoidance min
+    parameter_ranges[ 5][1] =   0.5;
+    parameter_ranges[ 6][0] =   0.001;      // obstacle avoidance min + range
+    parameter_ranges[ 6][1] =   1;
     parameter_ranges[ 7][0] =   0.001;  // move_to_goal min
     parameter_ranges[ 7][1] =   0.5;
     parameter_ranges[ 8][0] =   0.001;  // move_to_goal min + range
     parameter_ranges[ 8][1] =   1;
     parameter_ranges[ 9][0] =   0.001;  // avoid_robot min
-    parameter_ranges[ 9][1] =   0.5;
+    parameter_ranges[ 9][1] =   0.2;
     parameter_ranges[10][0] =   0.001;  // avoid_robot min + range
     parameter_ranges[10][1] =   1;
     parameter_ranges[11][0] =   0.001;  // keep_formation min
-    parameter_ranges[11][1] =   1;
+    parameter_ranges[11][1] =   0.3;
     parameter_ranges[12][0] =   0.001;  // keep_formation min + range
     parameter_ranges[12][1] =   1;
     

@@ -88,9 +88,6 @@ int main(){
     msl = 0; msr = 0;
 
     reset(); // Reset the robot
-    
-    avoid_obst_min_threshold_supervisor=0.15;
-    avoid_obst_max_threshold_supervisor=0.4;
 
     // Forever
     for(;;){
