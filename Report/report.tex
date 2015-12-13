@@ -553,30 +553,29 @@ robots compute a different speed vector for each objective and then
 sum them all with appropriate weights. 
 The robots in our case should move in an environment full of obstacles while
 keeping a precise formation, avoiding other robots and moving towards
-a goal. We will show in section \ref{sec:2} how we implemented such behaviours.
+a goal. We will show in section \ref{sec:2} how we implemented such behaviour.
 
-Tuning correctly the motor-schemas parameters leads to the second part of our project:
-we studied the influence on the simulation of Particle Swarm Optimization (PSO), a
-powerful machine learning technique. Indeed, it is difficult to manually set the parameters even with just a few ones, and it becomes almost impossible as their
-number increases. PSO (see \cite{IEEEhowto:martinoli_pso},
+Correctly tuning the motor-schema parameters leads to the second part of our project:
+we studied the influence of Particle Swarm Optimization (PSO), a
+powerful machine learning technique, on the simulation. Indeed, it is difficult to manually set the parameters even if there are just a few, and it becomes almost impossible as their number increases. PSO (see \cite{IEEEhowto:martinoli_pso},
 \cite{IEEEhowto:martinoli_pso_noise},
 \cite{IEEEhowto:martinoli_pso_noise_2}) is a recent and promising
-technique that, in short, consists in modeling the set of potential
+technique that, in short, consists in modelling the set of potential
 problem solutions as a swarm of particles moving around in a virtual multi-dimensional
-search space. Each particle, after being evaluated, moves keeping in memory their neighborhood's and their own best positions acquired so far. Ideally,
-they should converge to a global optimal position. PSO can model an
-Artificial Neural Network controller: the parameters set contains
-the weights and, with appropriate extensions and taking into account the noise, this method suits perfectly the 
-robot swarm problem. 
+search space. 
+% TODO: how much about PSO do we want to mention in the intro, how much later?
+Each particle, after being evaluated, moves keeping in memory its neighborhood's and its own best positions acquired so far. Ideally, the particles should converge to a global optimal position. PSO can model an 
+Artificial Neural Network controller: the parameter set contains
+the weights and, with appropriate extensions and taking into account the noise, this method suits perfectly the robot swarm problem. 
 A key part of PSO is the choice of a good fitness function to evaluate the performance of each
-simulation. A good reference fitness function is the one
+parameter set. A good reference fitness function is the one
 of Floreano and Mondada \cite{IEEEhowto:fitness_floreano_mondada}. Based on
-this, we have developed our own version that will be shown in section
-\ref{sec:3}, along with the PSO implementation. 
+this, we have developed our own fitness function that will be explained in section
+\ref{sec:3}. 
 
 In section \ref{sec:4}, we will present the results of our
 simulations and the final section \ref{sec:5} will be reserved to our conclusions. 
-\textbf{TODO: maybe add something on the setting of our simulations}
+\textbf{TODO: maybe add something on the setting of our simulations and future work}
 
 \section{Motor-schemas}
 \label{sec:2}
@@ -596,33 +595,37 @@ Excluding the fifth schema, all the other ones use the concept of
 \textit{Sphere of Influence} as proposed in
 \cite{IEEEhowto:arkin_motor_schemas}. The idea is that the cause of a
 behaviour influences the robot only if its value is lower (or higher,
-depending on the behaviour) than a certain value S (the radius of the sphere
-of influence). We can extend this concept considering two thresholds R
-and S: the reaction will be maximum (or minimum) if the value is below
-R and minimum (or maximum) if it is higher than S. Between R and S we usually adopt a linear behaviour, even if more complex equations can be
+depending on the behaviour) than a certain value $S$ (the radius of the sphere
+of influence). We can extend this concept considering two thresholds $R$
+and $S$: the reaction will be maximum (or minimum) if the value is below
+$R$ and minimum (or maximum) if it is higher than $S$. Between $R$ and $S$ we 
+usually adopt a linear behaviour, even if more complex equations can be
 considered.
 
 To compute all the necessary information, the robots can communicate
-with a supervisor that sends them their own position (not the ones of the other robots) and the goal position. They
-can also communicate with the other robots which are not too far away in order to exchange their
-relative position. They moreoever use their infrared (\textbf{TODO: check if true})
-sensors to detect obstacles.
+with a supervisor that sends them their own position (not the ones of 
+the other robots) and the goal position. They can also communicate with 
+the other robots which are not too far away in order to exchange their
+relative position. They moreover use their infra-red based distance sensors 
+to detect obstacles.
 
 \subsection{Move to goal}  
 The simplest motor schema is the \textit{move to goal} one. Knowing
-the positions of the robots and the position of the goal from the supervisor, this schema generates a speed vector with a direction from the unit center of the robots to the goal and of norm:
+the positions of the robots and the position of the goal (communicated by the supervisor), 
+this schema generates a speed vector $d_{goal}$ with a direction from the unit center of the flock to the goal and of norm $|d_{goal}|$. We have:
 \begin{equation}
-\begin{cases} 0, & \mbox{if }  d<R \\ \frac{d-R}{S-R}, & \mbox{if }
+\|d_{goal}| = \begin{cases} 0, & \mbox{if }  d<R \\ \frac{d-R}{S-R}, & \mbox{if }
   R<d<S \\ 1 & \mbox{if } d>S\end{cases}
 \end{equation}
 where $d$ is the distance between the unit center and the goal. The unit center is computed through local communication.
 
 \subsection{Keep formation}
 The \textit{keep formation} schema is conceptually similar to the move
-to goal schema, with the difference that the goal is now a specific point into the
-space that have to be computed at each time step and which corresponds to the position in which the robot should be in order to stay in formation. Knowing the position of the goal, the unit center of
-the formation, and the coordinates of each robot relatively to the unit center, it is possible to compute the vector from the actual position to the expected
-one (see figure \ref{img:keep_formation}). 
+to goal schema. The difference is that the goal does now correspond to the position in which 
+the robot should be in order to stay in formation and that it has to be computed at each 
+timestep. Knowing the position of the goal, the unit center of the formation, and the 
+coordinates of each robot relatively to the unit center, it is possible to compute the vector 
+from the actual position to the expected one (see figure \ref{img:keep_formation}). 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=3.5in]{Images/keep_formation.jpg}
@@ -631,7 +634,7 @@ one (see figure \ref{img:keep_formation}).
 \end{figure}
 
 \subsection{Avoid other robots}
-To detect the other robots, we can either use the built-in sensors, or local communication. We decided to use the second one since we found them a lot more precise and less noisy than sensor values. Once implemented local communications, the robots can easily receive the
+To detect the other robots, we can either use the built-in sensors, or local communication. We decided to use the second variant since we found it much more precise and less noisy than sensor values. Once implemented local communications, the robots can easily receive the
 positions of the other robots. For each robots, a speed vector is generated, pointing outward the other robot and having the following norm:
 \begin{equation}
 \begin{cases} 1, & \mbox{if }  d<R \\ \frac{S-d}{S-R}, & \mbox{if }
@@ -643,17 +646,21 @@ are summed. Note that the formula is the opposite to the one in the
 instead of moving towards it.
 
 \subsection{Avoid obstacles}
-The e-puck sensors are quite noisy and we need to take this into account when dealing with obstacle detection. There are eight sensors on an e-puck and we know the position and thus the orientation of each of them. Now, $R$ and $S$ are sensor values: if the received sensor value is below $R$, we assume that no obstacle is near; if it is over $S$, we generate a normalized vector in the opposite
-direction. In between, we found out that a linear function does not
-provide any correct behaviour. We thus decided to give a ``premium'' (\textbf{TODO: to explain better}) to
-sensor values greater than a specified threshold.
-The final speed vector is computed as the sum of the vectors relative
-to each sensor.
+There are eight infra-red distance sensors on an e-puck and we know the position and thus the orientation of each of them. Now, $R$ and $S$ are sensor values: if the received sensor value is below $R$, we assume that no obstacle is near; if it is over $S$, we generate a normalized vector in the opposite
+direction. 
+
+Since the sensor values are very noisy, we have decided to work with a moving average. Through 
+an empirical analysis we came to the conclusion that a perception window size of 2 is a good 
+choice. We thus use each sensor's current and last value for the computation of the average. 
+Furthermore, in order to increase the influence of high sensor values (representing a short 
+distance to a certain object), we double their weight for the computation of the average. 
+Thanks to this technique, the robots behave more smoothly.
+
+The final speed vector is computed as the sum of the vectors relative to each sensor.
 
 \subsection{Random walk}
 The four previous motor schemas are theoretically sufficient to achieve
-the goals of our project, but the presence of noise often create tricky evaluation. Moreover, some difficult obstacle configurations are hard to get over considering only with these previously presented schemas. One possible solution to improve the performance is to add a random component to the speed of the robots. This is usually a bad idea in absence of obstacles since it creates a smooth fluid walk, but in our situation, it becomes
-necessary to achieve the goal. 
+the goals of our project, but the presence of noise often creates a tricky evaluation. Moreover, some difficult obstacle configurations are hard to get over considering only with these previously presented schemas. One possible solution to improve the performance is to add a random component to the speed of the robots. This is usually a bad idea in absence of obstacles since it creates a smooth fluid walk, but in our situation, if a robot is stuck behind an obstacle this additional random component can possibly free the robot by leading it towards a random direction.
 There are many ways of adding noise, our implementation is based on two
 components:
 \begin{itemize}
