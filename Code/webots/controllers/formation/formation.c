@@ -106,7 +106,7 @@ int main(){
                     break;
 
                 case MSG_POSITION:
-                    sscanf(inbuffer, "%d##%1d#%f#%f#%f##%f#%f",
+                    sscanf(inbuffer, "%d#%1d#%f#%f#%f##%f#%f",
                         &msg_type,
                         &rob_nb,
                         &rob_x,

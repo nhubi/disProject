@@ -93,15 +93,15 @@ void reset(void) {
 void init_pos(char* inbuffer){
 	int rob_nb;
 	float rob_x, rob_z, rob_theta; // Robot position and orientation
-	sscanf(inbuffer,"%1d##%1d#%f#%f#%f##%f#%f#%1d",
-        &msg_type,
-        &rob_nb,
-        &rob_x,
-        &rob_z,
-        &rob_theta,
-        &migr[0],
-        &migr[1],
-        &formation_type);
+	sscanf(inbuffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",
+              &msg_type,
+              &rob_nb,
+              &rob_x,
+              &rob_z,
+              &rob_theta,
+              &migr[0],
+              &migr[1],
+              &formation_type);
 	
     if (rob_nb == robot_id) {
         loc[rob_nb][0] = rob_x;                 // x-position
@@ -148,24 +148,24 @@ void init_params(char* inbuffer){
 	
 	
 	inbuffer = (char*) wb_receiver_get_data(receiver);
-	sscanf(inbuffer,"%1d##%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",
-        &msg_type,
-        &rob_nb,
-        &w_goal_temp,
-        &w_keep_formation_temp,
-        &w_avoid_robot_temp,
-        &w_avoid_obstacles_temp,
-        &w_noise_temp,
-        &noise_gen_frequency_temp,
-        &fading_temp,
-        &avoid_obst_min_threshold_temp,
-        &avoid_obst_max_threshold_temp,
-        &move_to_goal_min_threshold_temp,
-        &move_to_goal_max_threshold_temp,
-        &avoid_robot_min_threshold_temp,
-        &avoid_robot_max_threshold_temp,
-        &keep_formation_min_threshold_temp,
-        &keep_formation_max_threshold_temp);
+	sscanf(inbuffer,"%1d#%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",
+              &msg_type,
+              &rob_nb,
+              &w_goal_temp,
+              &w_keep_formation_temp,
+              &w_avoid_robot_temp,
+              &w_avoid_obstacles_temp,
+              &w_noise_temp,
+              &noise_gen_frequency_temp,
+              &fading_temp,
+              &avoid_obst_min_threshold_temp,
+              &avoid_obst_max_threshold_temp,
+              &move_to_goal_min_threshold_temp,
+              &move_to_goal_max_threshold_temp,
+              &avoid_robot_min_threshold_temp,
+              &avoid_robot_max_threshold_temp,
+              &keep_formation_min_threshold_temp,
+              &keep_formation_max_threshold_temp);
 
 	// Only info about self will be taken into account at first.
 	

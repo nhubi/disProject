@@ -20,8 +20,8 @@
 
 // definitions
 
-#define FORMATION_SIZE       4	     // Number of robots in formation
-#define TIME_STEP           64	     // [ms] Length of time step
+#define FORMATION_SIZE       4	  // Number of robots in formation
+#define TIME_STEP           64	  // [ms] Length of time step
 #define ARENA_SIZE           2.0     // Size of the arenas used to assign positions to objects
 #define ROB_DIST             0.035   // Distance between robots in formation
 #define NB_OBSTACLES         6       // Number of obstacles 
@@ -30,7 +30,6 @@
 #define MSG_INIT_PARAMS   1
 #define MSG_POSITION_INIT 2
 #define MSG_POSITION      3
-
 
 
 // declarations

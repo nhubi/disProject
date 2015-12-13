@@ -36,11 +36,11 @@ double compute_fitness(int FORMATION_SIZE, int goal_reached) {
 	mean_obstacle_term=mean_obstacle_term/FORMATION_SIZE/number_of_time_step;
 
 
-            printf("\n[FITNESS] mean_v................... = %f\n", mean_v);
-            printf("[FITNESS] mean_delta_v............. = %f\n", mean_delta_v);
-            printf("[FITNESS] mean_formation_distance.. = %f\n", mean_formation_distance);
-            printf("[FITNESS] mean_obstacle_term....... = %f\n", mean_obstacle_term);
-            printf("[FITNESS] goal_reached............. = %d\n", goal_reached);
+         printf("\n[FITNESS] mean_v................... = %f\n", mean_v);
+         printf("[FITNESS] mean_delta_v............. = %f\n", mean_delta_v);
+         printf("[FITNESS] mean_formation_distance.. = %f\n", mean_formation_distance);
+         printf("[FITNESS] mean_obstacle_term....... = %f\n", mean_obstacle_term);
+         printf("[FITNESS] goal_reached............. = %d\n", goal_reached);
 
     
 	printf("[FITNESS] %1.3f^2 * (1 - sqrt(%1.1f * %1.3f)) * (1/(%1.1f * %1.3f)) * (%1.1f * (%1.3f + 0.05)) + * %1.1f * %d\n",

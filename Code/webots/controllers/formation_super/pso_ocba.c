@@ -241,8 +241,8 @@ float evaluate_parameters(float* params){
     // noise parameters
     noise_gen_frequency = params[13];
     fading              = round(params[14]); // = 0 or 1
-
-    // show the tested parameters.
+    
+     // show the tested parameters.
     printf("\n\n\nTesting the following configuration: \n");
     printf(" - w_goal...................... = %f\n", w_goal);
     printf(" - w_keep_formation............ = %f\n", w_keep_formation);
@@ -284,26 +284,25 @@ float evaluate_parameters(float* params){
             // every 10 TIME_STEP (640ms)
             if (simulation_duration % 10 == 0) {
                 send_current_poses();
-
+                
                 update_fitness();
             }
-
             simulation_duration += TIME_STEP;
             end_run = simulation_has_ended();
             if (end_run) {
                 printf("[PSO] Goal reached in formation\n");
                 break;
             }
-
+            
         }
-        
+                
         if (end_run) {
             single_perf = compute_fitness(FORMATION_SIZE,1);
         } else {
             single_perf = compute_fitness(FORMATION_SIZE,0);
         }
-
-        printf("[FITNESS] Single fitness = %f\n\n", single_perf); 
+        
+        printf("[FITNESS] Single fitness: %f\n\n", single_perf); 
         performance += single_perf;
     }
     
@@ -346,7 +345,7 @@ float evaluate_parameters(float* params){
         } else {
             single_perf = compute_fitness(FORMATION_SIZE,0);
         }
-
+        
         printf("[FITNESS] Single fitness: %f\n\n", single_perf); 
         performance += single_perf;
     }
@@ -387,9 +386,10 @@ float evaluate_parameters(float* params){
         if (end_run) {
             single_perf = compute_fitness(FORMATION_SIZE,1);
         } else {
+            printf("Goal NOT reached in formation.\n");
             single_perf = compute_fitness(FORMATION_SIZE,0);
         }
-
+        
         printf("[FITNESS] Single fitness: %f\n\n", single_perf); 
         performance += single_perf;
     }

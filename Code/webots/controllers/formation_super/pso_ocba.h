@@ -29,9 +29,9 @@
 #define V_MAX                  1     // max velocity of particles
 #define NORMALIZED_BORDER     10     // particle dimensions are normalized to [0, NORMALIZED_BORDER]
 
-#define PSO_WALL               0     // 1: run PSO with a wall of obstacles; 0 if not
-#define PSO_HARD               0     // 1: run PSO with a difficult obstacle; 0 if not
-#define PSO_RANDOM             1     // 1: run PSO with a random configuration; 0 if not
+#define PSO_WALL                 0   // 1: run PSO on a world with a wall of obstacles; 0 if not
+#define PSO_HARD                 0   // 1: run PSO on a world with a difficult obstacle avoidance configuration; 0 if not
+#define PSO_RANDOM               1   // 1: run PSO on a world with a random configuration; 0 if not
 
 
 

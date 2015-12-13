@@ -44,4 +44,3 @@ void get_move_to_goal_vector(float * direction) {
 	
 	return;
 }
-

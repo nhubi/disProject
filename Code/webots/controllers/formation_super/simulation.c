@@ -43,6 +43,7 @@ double initial_loc_goal[3];
 bool seed_set = false;
 
 
+
 /* 
  * Initialization common to the running world AND the pso worlds;
  * it should be called only once at the beginning of the run. 
@@ -129,7 +130,7 @@ void reset_barrier_world(void) {
       new_rot_obs[obs_id][1] = 1.0;
       new_rot_obs[obs_id][2] = 0.0;
       new_rot_obs[obs_id][3] = 4.45059;
-    
+
       new_loc_obs[obs_id][0] = -0.25 + obs_id*dist_between_obs;
       new_loc_obs[obs_id][1] = -1.25566e-13;
       new_loc_obs[obs_id][2] = -1.23;
@@ -199,14 +200,14 @@ void reset_world2(void) {
         new_rot_obs[2][0] = 0.0; new_rot_obs[2][1] = 1.0; new_rot_obs[2][2] = 0.0; new_rot_obs[2][3] = 4.45059; 
         new_loc_obs[2][0] = 0.0546256; new_loc_obs[2][1] = 0.0; new_loc_obs[2][2] = -0.0362992;
         for (obs_id=3; obs_id<NB_OBSTACLES; obs_id++) {
-            new_rot_obs[obs_id][0] = 0.0;
-            new_rot_obs[obs_id][1] = 1.0;
-            new_rot_obs[obs_id][2] = 0.0;
-            new_rot_obs[obs_id][3] = 4.45059;
-
-            new_loc_obs[obs_id][0] = -0.25 + obs_id*dist_between_obs;
-            new_loc_obs[obs_id][1] = -1.25566e-13;
-            new_loc_obs[obs_id][2] = -1.23;
+          new_rot_obs[obs_id][0] = 0.0;
+          new_rot_obs[obs_id][1] = 1.0;
+          new_rot_obs[obs_id][2] = 0.0;
+          new_rot_obs[obs_id][3] = 4.45059;
+        
+          new_loc_obs[obs_id][0] = -0.25 + obs_id*dist_between_obs;
+          new_loc_obs[obs_id][1] = -1.25566e-13;
+          new_loc_obs[obs_id][2] = -1.23;
         }
         
         for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
@@ -368,15 +369,15 @@ void send_init_poses(void){
         }
 	
         // Send it out
-        sprintf(buffer, "%1d##%1d#%f#%f#%f##%f#%f#%1d",
-            MSG_POSITION_INIT,
-            i,          // robot ID
-            loc[i][0],
-            loc[i][1],
-            loc[i][2],
-            migrx,
-            migrz,
-            formation_type);
+        sprintf(buffer, "%1d#%1d#%f#%f#%f##%f#%f#%1d",
+                        MSG_POSITION_INIT,
+                        i,          // robot ID
+                        loc[i][0],
+                        loc[i][1],
+                        loc[i][2],
+                        migrx,
+                        migrz,
+                        formation_type);
         wb_emitter_send(emitter,buffer,strlen(buffer));
 
         // Run one step
@@ -406,13 +407,13 @@ void send_real_run_init_poses(void) {
         offset = initial_loc_goal[1];   // Y
         migrz = initial_loc_goal[2];    // Z
         
-        orient_migr = -atan2f(migrx,migrz);   // angle of migration urge
+        orient_migr = -atan2f(migrx,migrz); // angle of migration urge
         if (orient_migr<0) {
-            orient_migr+=2*M_PI;              // Keep value between 0 and 2PI
+            orient_migr+=2*M_PI; // Keep value between 0 and 2PI
         }
 	
         // Send it out
-        sprintf(buffer,"%1d##%1d#%f#%f#%f##%f#%f#%1d",
+        sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",
             MSG_POSITION_INIT,
             i,
             loc[i][0],
@@ -452,7 +453,7 @@ void send_current_poses(void){
         loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 
         // Sending positions to the robots
-        sprintf(buffer,"%d##%1d#%f#%f#%f##%f#%f",
+        sprintf(buffer,"%d#%1d#%f#%f#%f##%f#%f",
             MSG_POSITION,
             i+offset,
             loc[i][0],
@@ -475,7 +476,7 @@ void send_weights(void){
     for (i=0;i<FORMATION_SIZE;i++) {
 	
         // Send it out
-        sprintf(buffer, "%1d##%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",
+        sprintf(buffer, "%1d#%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",
                         MSG_INIT_PARAMS,
                         i,          // robot ID
                         w_goal,
@@ -502,9 +503,6 @@ void send_weights(void){
 }
 
 
-
-
-
 /*
  * updates the fitness value of each robot.
  */
@@ -526,16 +524,12 @@ int simulation_has_ended(void) {
 	float centre_x=0;
 	float centre_z=0;
 	float distance_to_goal=0;
-	float keep_formation_d = 0;
-
 
 	// compute the formation center
 	int i;
 	for (i=0; i<FORMATION_SIZE; i++) {
 		centre_x+=loc[i][0];
 		centre_z+=loc[i][1];
-                  keep_formation_d += keep_formation_distance[i];
-
 	}   
 	centre_x/=FORMATION_SIZE;
 	centre_z/=FORMATION_SIZE;
@@ -543,10 +537,8 @@ int simulation_has_ended(void) {
 	distance_to_goal+=(centre_x-migrx)*(centre_x-migrx);
 	distance_to_goal+=(centre_z-migrz)*(centre_z-migrz);
   	distance_to_goal=sqrt(distance_to_goal);
-  	keep_formation_d /= FORMATION_SIZE;
                 	
-	//if (distance_to_goal < 0.1 && keep_formation_d < 0.5) { // with keep_formation control
-	if (distance_to_goal < 0.1) { // without keep_formation control
+	if (distance_to_goal < 0.1) { 
 		return 1;
 	}
 	
