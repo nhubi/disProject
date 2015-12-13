@@ -82,6 +82,9 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
             }
         }
 
+        
+        printf("Best values after iteration %d:\n", i);
+
         // update personal best
         for(p = 0; p < POPULATION_SIZE; p++) {
             if(p_best_val[p] < perf_mean[p]){
@@ -93,7 +96,10 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
                     p_best_pos[p][d] = positions[p][d];
                 }
             }
+            printf(" - Particle %d: (mean, var, #samps) = (%1.4f, %1.4f, %d)\n", 
+                p, p_best_val[p], p_best_var[p], p_best_samples[p]);
         }
+        printf("============================================================\n\n\n");
 
         // update neighbourhood best (needs to be done AFTER all p_bests are found)
         for(p = 0; p < POPULATION_SIZE; p++) {
@@ -600,6 +606,7 @@ void ocba(int * remaining_budget){
 
 
     // debug messages
+/*
     printf("\n==========================================================\n");
     printf("|| REMAINING BUDGET = %d\n", *remaining_budget);
     printf("==========================================================\n\n");
@@ -622,6 +629,7 @@ void ocba(int * remaining_budget){
         printf("\n\n");
     }
     printf("\n\n");
+*/
 }
 
 
