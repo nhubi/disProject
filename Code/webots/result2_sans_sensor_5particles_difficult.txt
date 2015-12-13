@@ -1,0 +1,119 @@
+[formation_super] Best values after iteration 9:
+[formation_super] - Particle 0: (mean, var, #samps) = (0.7275, 0.0000, 3)
+[formation_super] - Particle 1: (mean, var, #samps) = (0.7808, 0.0027, 2)
+[formation_super] - Particle 2: (mean, var, #samps) = (0.7562, 0.0000, 4)
+[formation_super] - Particle 3: (mean, var, #samps) = (0.7263, 0.0005, 2)
+[formation_super] - Particle 4: (mean, var, #samps) = (0.7611, 0.0000, 2)
+[formation_super] ============================================================
+[formation_super] 
+[formation_super] 
+[formation_super] [PSO] Best positions: 
+[formation_super] [PSO] - Candidate0: (5.188558, 6.501296) --> mean: 0.727502, var: 0.000034, #samples: 3
+[formation_super] [PSO] - Candidate1: (5.700723, 2.859432) --> mean: 0.780792, var: 0.002738, #samples: 2
+[formation_super] [PSO] - Candidate2: (5.191791, 2.893283) --> mean: 0.756196, var: 0.000000, #samples: 4
+[formation_super] [PSO] - Candidate3: (3.328606, 2.589365) --> mean: 0.726335, var: 0.000463, #samples: 2
+[formation_super] [PSO] - Candidate4: (4.680724, 3.041973) --> mean: 0.761096, var: 0.000001, #samples: 2
+[formation_super] 
+[formation_super] 
+[formation_super] SIMULATION ENDED
+[formation_super] 
+[formation_super] Iteration 0
+[formation_super] 0.021688 0.021688
+[formation_super] 0.675165 0.675165
+[formation_super] 0.689457 0.689457
+[formation_super] 0.083667 0.083667
+[formation_super] 0.004252 0.004252
+[formation_super] Iteration 1
+[formation_super] 0.009960 0.021688
+[formation_super] 0.645026 0.675165
+[formation_super] 0.645728 0.689457
+[formation_super] 0.038499 0.083667
+[formation_super] 0.263281 0.263281
+[formation_super] Iteration 2
+[formation_super] 0.005859 0.021688
+[formation_super] 0.648622 0.675165
+[formation_super] 0.675183 0.689457
+[formation_super] 0.483661 0.483661
+[formation_super] 0.176906 0.263281
+[formation_super] Iteration 3
+[formation_super] 0.379441 0.379441
+[formation_super] 0.701837 0.701837
+[formation_super] 0.690183 0.690183
+[formation_super] 0.427210 0.483661
+[formation_super] 0.683609 0.683609
+[formation_super] Iteration 4
+[formation_super] 0.695820 0.695820
+[formation_super] 0.646897 0.701837
+[formation_super] 0.715487 0.715487
+[formation_super] 0.491663 0.491663
+[formation_super] 0.689828 0.689828
+[formation_super] Iteration 5
+[formation_super] 0.727502 0.727502
+[formation_super] 0.721305 0.721305
+[formation_super] 0.660967 0.715487
+[formation_super] 0.538100 0.538100
+[formation_super] 0.746886 0.746886
+[formation_super] Iteration 6
+[formation_super] 0.678548 0.727502
+[formation_super] 0.721481 0.721481
+[formation_super] 0.649477 0.715487
+[formation_super] 0.688088 0.688088
+[formation_super] 0.724783 0.746886
+[formation_super] Iteration 7
+[formation_super] 0.723796 0.727502
+[formation_super] 0.744925 0.744925
+[formation_super] 0.726333 0.726333
+[formation_super] 0.726335 0.726335
+[formation_super] 0.766786 0.766786
+[formation_super] Iteration 8
+[formation_super] 0.674174 0.727502
+[formation_super] 0.780792 0.780792
+[formation_super] 0.756196 0.756196
+[formation_super] 0.710547 0.726335
+[formation_super] 0.761096 0.766786
+[formation_super] Iteration 9
+[formation_super] 0.715540 0.727502
+[formation_super] 0.727463 0.780792
+[formation_super] 0.716566 0.756196
+[formation_super] 0.706592 0.726335
+[formation_super] 0.757319 0.766786
+[formation_super] 
+[formation_super] 
+[formation_super] 
+[formation_super] The optimal parameters are: 
+[formation_super] ___________ w_goal...................... = 5.700723
+[formation_super] ___________ w_keep_formation............ = 2.859432
+[formation_super] ___________ w_avoid_robo................ = 3.809521
+[formation_super] ___________ w_avoid_obstacles........... = 6.175103
+[formation_super] ___________ w_noise..................... = 1.000000
+[formation_super] ___________ noise_gen_frequency......... = 10
+[formation_super] ___________ fading...................... = 1
+[formation_super] ___________ avoid_obst_min_threshold.... = 0.150000
+[formation_super] ___________ avoid_obst_max_threshold.... = 0.300000
+[formation_super] ___________ move_to_goal_min_threshold.. = 0.100000
+[formation_super] ___________ move_to_goal_max_threshold.. = 0.500000
+[formation_super] ___________ avoid_robot_min_threshold... = 0.050000
+[formation_super] ___________ avoid_robot_max_threshold... = 0.100000
+[formation_super] ___________ keep_formation_min_threshold = 0.100000
+[formation_super] ___________ keep_formation_max_threshold = 0.200000
+[formation_super] 
+[formation_super] 
+[formation_super] Beginning of the real simulation
+[formation_super] Supervisor reset.
+[formation_super] Init poses sent.
+[formation_super] Chosen formation: wedge.
+[formation_super] Weights sent
+[formation_super] 
+[formation_super] 
+[formation_super] 
+[formation_super] 
+[formation_super] ______________________________________GOAL REACHED!______________________________________
+[formation_super] 
+[formation_super] 
+[formation_super] [FITNESS] mean_v................... = 0.028050
+[formation_super] [FITNESS] mean_delta_v............. = 0.006351
+[formation_super] [FITNESS] mean_formation_distance.. = 0.103772
+[formation_super] [FITNESS] mean_obstacle_term....... = 0.055669
+[formation_super] [FITNESS] distance_goal_term............. = 1.000000
+[formation_super] [FITNESS] 0.028^2 * (1 - sqrt(1.0 * 0.006)) * (1/(10.0 * 0.104)) * (1.0 * (0.056 + 0.05)) + * 0.5 * 1.000000
+[formation_super] fitness = 0.735415

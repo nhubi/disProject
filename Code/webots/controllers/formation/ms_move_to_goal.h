@@ -33,7 +33,7 @@
 
 // methods
 
-void get_move_to_goal_vector(float* direction, bool* goalReached);
+void get_move_to_goal_vector(float* direction);
 
 
 

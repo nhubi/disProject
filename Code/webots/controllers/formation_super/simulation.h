@@ -20,11 +20,17 @@
 
 // definitions
 
-#define FORMATION_SIZE       4	    // Number of robots in formation
-#define TIME_STEP           64	    // [ms] Length of time step
-#define ARENA_SIZE           2.0       // Size of the arenas used to assign random positions to robots and obstacles
-#define ROB_DIST             0.035     // Distance between robots in formation
-#define NB_OBSTACLES         6         // Number of obstacles 
+#define FORMATION_SIZE       4	     // Number of robots in formation
+#define TIME_STEP           64	     // [ms] Length of time step
+#define ARENA_SIZE           2.0     // Size of the arenas used to assign positions to objects
+#define ROB_DIST             0.035   // Distance between robots in formation
+#define NB_OBSTACLES         6       // Number of obstacles (do not change, the supervisor can send the position
+                                     //   of at most 6 obstacles)
+
+// message types
+#define MSG_INIT_PARAMS   1
+#define MSG_POSITION_INIT 2
+#define MSG_POSITION      3
 
 
 
@@ -83,7 +89,8 @@ float avoid_robot_max_threshold;
 float keep_formation_min_threshold; // < min threshold: dead zone, no correction of direction
 float keep_formation_max_threshold; // > max threshold: ballistic zone, full correction of direction
 
-
+// title
+char label[20];
 
 // methods
 void initialize(void);
@@ -95,7 +102,6 @@ void reset_barrier_world(void);
 void reset_world2(void);
 void reset_random_world(void);
 void reset_to_initial_values(void);
-void send_current_poses(void);
 void send_current_poses(void);
 void send_init_poses(void);
 void send_real_run_init_poses(void);

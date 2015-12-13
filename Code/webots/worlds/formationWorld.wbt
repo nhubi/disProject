@@ -1,4 +1,4 @@
-#VRML_SIM V8.3.0 utf8
+#VRML_SIM V8.0.0 utf8
 WorldInfo {
   info [
     "Description"
@@ -290,6 +290,5 @@ Supervisor {
     }
   ]
   controller "formation_super"
-  controllerArgs "0" # Choose the formation type: line 0, column 1, wedge 2, diamond 3.
-                     # Default: line
+  controllerArgs "2"
 }

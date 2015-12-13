@@ -59,7 +59,8 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
     init_particles();
 
     for(i = 0; i < NB_ITERATIONS; i++){
-
+        sprintf(label, "Iteration: %d",i);
+        wb_supervisor_set_label(0,label,0.01,0.01,0.1,0xffffff,0);
         // evaluate new particle position n0 times        
         for(p = 0; p < POPULATION_SIZE; p++){
             // reset the number of samples per iteration to 0
@@ -82,6 +83,9 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
             }
         }
 
+        
+        printf("Best values after iteration %d:\n", i);
+
         // update personal best
         for(p = 0; p < POPULATION_SIZE; p++) {
             if(p_best_val[p] < perf_mean[p]){
@@ -93,7 +97,23 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
                     p_best_pos[p][d] = positions[p][d];
                 }
             }
+            printf(" - Particle %d: (mean, var, #samps) = (%1.4f, %1.4f, %d)\n", 
+                p, p_best_val[p], p_best_var[p], p_best_samples[p]);
+            
+            // save result
+            if (i==0) {
+                result[i][p][0]=perf_mean[p];
+                result[i][p][1]=perf_mean[p];                
+            } else {
+                result[i][p][0]=perf_mean[p];
+                if (result[i][p][0]>result[i-1][p][1]) {            
+                    result[i][p][1]=perf_mean[p];   
+                } else {
+                    result[i][p][1]=result[i-1][p][1];   
+                }
+            }
         }
+        printf("============================================================\n\n\n");
 
         // update neighbourhood best (needs to be done AFTER all p_bests are found)
         for(p = 0; p < POPULATION_SIZE; p++) {
@@ -101,7 +121,7 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
             for(n = 0; n < 2*NB_NEIGHBOURS; n++){
                 neighbour_id = neighbours[p][n];
 
-                // TODO: do we need to compare with the neighbours' current or best position?
+                // compare with the neighbours' best position?
                 if(n_best_val[p] < p_best_val[neighbour_id]){
                     n_best_val[p] = p_best_val[neighbour_id];
                     for(d = 0; d < DIMENSIONALITY; d++){
@@ -128,6 +148,18 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
         printf("[PSO] - Candidate%d: (%f, %f) --> mean: %f, var: %f, #samples: %d\n", p, p_best_pos[p][0], p_best_pos[p][1], p_best_val[p], p_best_var[p], p_best_samples[p]);
     }
     convert_pos_to_params(p_best_pos[best_idx], parameters);
+    
+    
+    printf("\n\nSIMULATION ENDED\n\n");
+    int j;
+    for (i=0;i<NB_ITERATIONS;i++) {
+        printf("Iteration %d\n",i);
+        
+        for (j=0;j<POPULATION_SIZE;j++) {
+            printf("%f %f\n",result[i][j][0],result[i][j][1]);
+        }
+    
+    }
 }
 
 
@@ -141,9 +173,6 @@ void init_particles(void){
     int p;  // particle pointer
     int d;  // dimension pointer
     int n;  // neighbour pointer
-
-    // init the random generator
-    //init_rand_01();
     
     for(p = 0; p < POPULATION_SIZE; p++){
         perf_samples[p] = 0;
@@ -172,7 +201,7 @@ void init_particles(void){
 
 /*
  * Evaluates a particle's position. Out of a certain amount of samples, the mean and the variance
- * are calculated and saved in mean and var.
+ * are calculated and saved in mean and var. 
  * Attributes: 
  *  - position:   the position to be evaluated
  *  - mean:       the position's current mean performance
@@ -218,27 +247,36 @@ void evaluate_position(float position[DIMENSIONALITY], float* mean, float* var, 
 
 /*
  * Runs simulation and computes performance. The performance value should not be negative.
- * TODO: currently, this is just a dummy function.
- *       Later, we will start the simulation here and execute the fitness function.
  */
 float evaluate_parameters(float* params){
     float performance = 0;  // return value
-
-    printf("[PSO] Simulation with random positions\n");
-    reset_random_world();
-    printf("[PSO] Supervisor reset.\n");
-    send_init_poses();
-    printf("[PSO] Init poses sent.\n");
-
-
+    float single_perf = 0;  // performance of one single pso run
+    bool end_run = false;   // true if time is not out and a single simulation ends
     
     // each motorschema's weight
     w_goal            = params[0];
     w_keep_formation  = params[1];
     w_avoid_robot     = params[2];
     w_avoid_obstacles = params[3];
-    w_noise           = params[4];
+    w_noise           = 1;/*
+    w_noise           = params[4];*/
 
+
+    // thresholds
+    avoid_obst_min_threshold     = 0.15;
+    avoid_obst_max_threshold     = 0.3;
+    move_to_goal_min_threshold   = 0.1;
+    move_to_goal_max_threshold   = 0.5;
+    avoid_robot_min_threshold    = 0.05;
+    avoid_robot_max_threshold    = 0.1;
+    keep_formation_min_threshold = 0.1;
+    keep_formation_max_threshold = 0.2;
+
+    // noise parameters
+    noise_gen_frequency = 10;
+    fading              = 1; // = 0 or 1
+    
+    /*
     // thresholds
     avoid_obst_min_threshold     = params[5];
     avoid_obst_max_threshold     = params[5] + params[6];
@@ -252,29 +290,164 @@ float evaluate_parameters(float* params){
     // noise parameters
     noise_gen_frequency = params[13];
     fading              = round(params[14]); // = 0 or 1
+    */
+    
+    // show the tested parameters.
+    printf("\n\n\nTesting the following configuration: \n");
+    printf(" - w_goal...................... = %f\n", w_goal);
+    printf(" - w_keep_formation............ = %f\n", w_keep_formation);
+    printf(" - w_avoid_robo................ = %f\n", w_avoid_robot);
+    printf(" - w_avoid_obstacles........... = %f\n", w_avoid_obstacles);
+    printf(" - w_noise..................... = %f\n", w_noise);
+    printf(" - noise_gen_frequency......... = %d\n", noise_gen_frequency);
+    printf(" - fading...................... = %d\n", fading);
+    printf(" - avoid_obst_min_threshold.... = %f\n", avoid_obst_min_threshold);
+    printf(" - avoid_obst_max_threshold.... = %f\n", avoid_obst_max_threshold);
+    printf(" - move_to_goal_min_threshold.. = %f\n", move_to_goal_min_threshold);
+    printf(" - move_to_goal_max_threshold.. = %f\n", move_to_goal_max_threshold);
+    printf(" - avoid_robot_min_threshold... = %f\n", avoid_robot_min_threshold);
+    printf(" - avoid_robot_max_threshold... = %f\n", avoid_robot_max_threshold);
+    printf(" - keep_formation_min_threshold = %f\n", keep_formation_min_threshold);
+    printf(" - keep_formation_max_threshold = %f\n", keep_formation_max_threshold);
+    printf("\n\n");
 
-    // sending weights
-    send_weights();
+    //PSO runs with a world with a wall of obstacles
+    if(PSO_WALL)
+    {
+        printf("[PSO] Simulation with a wall of obstacle\n");
+        reset_barrier_world();
+        reset_fitness_computation(FORMATION_SIZE, migrx, migrz, obstacle_loc);
+        printf("[PSO] Supervisor reset.\n");
 
-    // pso loop (nb iterations is limited)
-    int t;
-    for(t = 0; t*64/1000 < MAX_EVAL_DURATION; t++) {
-        wb_robot_step(TIME_STEP);
+        send_init_poses();
+        printf("[PSO] Init poses sent.\n");
 
-        // every 10 TIME_STEP (640ms)
-        if (simulation_duration % 10 == 0) {
-            send_current_poses();
+        // sending weights
+        send_weights();
+        printf("[PSO] Weights sent.\n");
+        
+        // pso loop (nb iterations is limited)
+        int t;
+        for(t = 0; t*64/1000 < MAX_EVAL_DURATION; t++) {
+            wb_robot_step(TIME_STEP);
+    
+            // every 10 TIME_STEP (640ms)
+            if (simulation_duration % 10 == 0) {
+                send_current_poses();
 
-            update_fitness();
+                update_fitness();
+            }
+
+            simulation_duration += TIME_STEP;
+            end_run = simulation_has_ended();
+            if (end_run) {
+                printf("[PSO] Goal reached in formation\n");
+                break;
+            }
+
         }
-        simulation_duration += TIME_STEP;
-        if (simulation_has_ended()){
-            printf("Goal reached.\n");
-            break;
+        
+        if (end_run) {
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
+        } else {
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
         }
+
+        printf("[FITNESS] Single fitness = %f\n\n", single_perf); 
+        performance += single_perf;
     }
-    performance = compute_fitness(FORMATION_SIZE);
-    printf("fitness = %f\n\n\n\n\n",performance);
+    
+    //PSO runs with a world with a difficult configuration
+    if(PSO_HARD) {
+        printf("[PSO] Simulation with a difficult configuration\n"); 
+        reset_world2();
+        reset_fitness_computation(FORMATION_SIZE, migrx, migrz, obstacle_loc);
+        printf("[PSO] Supervisor reset.\n");
+
+        send_init_poses();
+        printf("[PSO] Init poses sent.\n");
+
+        // sending weights
+        send_weights();
+        printf("[PSO] Weights sent.\n");
+    
+        // pso loop (nb iterations is limited)
+        int t;
+        for(t = 0; t*64/1000 < MAX_EVAL_DURATION; t++) {
+            wb_robot_step(TIME_STEP);
+    
+            // every 10 TIME_STEP (640ms)
+            if (simulation_duration % 10 == 0) {
+                send_current_poses();
+
+                update_fitness();
+            }
+            simulation_duration += TIME_STEP;
+            
+            end_run = simulation_has_ended();
+            if (end_run) {
+                printf("[PSO] Goal reached in formation\n");
+                break;
+            }
+        }
+        
+        if (end_run) {
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
+        } else {
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
+        }
+
+        printf("[FITNESS] Single fitness: %f\n\n", single_perf); 
+        performance += single_perf;
+    }
+    
+    //PSO runs with a random world
+    if(PSO_RANDOM) {
+        printf("[PSO] Simulation with random positions\n");
+        reset_random_world();
+        reset_fitness_computation(FORMATION_SIZE, migrx, migrz, obstacle_loc);
+        printf("[PSO] Supervisor reset.\n");
+        
+        send_init_poses();
+        printf("[PSO] Init poses sent.\n");
+    
+        // sending weights
+        send_weights();
+        printf("[PSO] Weights sent.\n");
+    
+        // pso loop (nb iterations is limited)
+        int t;
+        for(t = 0; t*64/1000 < MAX_EVAL_DURATION; t++) {
+            wb_robot_step(TIME_STEP);
+    
+            // every 10 TIME_STEP (640ms)
+            if (simulation_duration % 10 == 0) {
+                send_current_poses();
+    
+                update_fitness();
+            }
+            simulation_duration += TIME_STEP;
+            end_run = simulation_has_ended();
+            if (end_run) {
+                printf("[PSO] Goal reached in formation\n");
+                break;
+            }
+        }
+        
+        if (end_run) {
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
+        } else {
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
+        }
+
+        printf("[FITNESS] Single fitness: %f\n\n", single_perf); 
+        performance += single_perf;
+    }
+    
+    if(PSO_WALL || PSO_HARD || PSO_RANDOM)
+        performance /= (PSO_WALL + PSO_HARD + PSO_RANDOM);
+    
+    printf("[FITNESS] Total fitness = %f\n\n\n",performance);
     return performance;
 }
 
@@ -474,36 +647,7 @@ void ocba(int * remaining_budget){
         additional_budget[idx] = round(DELTA * ratio[idx] / sum_ratio);
         *remaining_budget -= additional_budget[idx];
     }
-
-
-    // debug messages
-    printf("\n==========================================================\n");
-    printf("|| REMAINING BUDGET = %d\n", *remaining_budget);
-    printf("==========================================================\n\n");
-
-    for(p = 0; p < DELTA; p++){
-        idx = ratio_indexes[p];
-        printf("[OCBA] Candidate %d: \n", idx);
-        if(idx < POPULATION_SIZE){
-            printf("___________ position = (%f, %f)\n", positions[idx][0], positions[idx][1]);
-            printf("___________ (mean, var, #samples) = (%1.3f, %1.3f, %d)\n", perf_mean[idx], perf_var[idx], perf_samples[idx]);
-        } else {
-            printf("___________ position = (%f, %f)\n", p_best_pos[idx-POPULATION_SIZE][0], p_best_pos[idx-POPULATION_SIZE][1]);
-            printf("___________ (mean, var, #samples) = (%1.3f, %1.3f, %d)\n", p_best_val[idx-POPULATION_SIZE], p_best_var[idx-POPULATION_SIZE], p_best_samples[idx-POPULATION_SIZE]);
-        }        
-        printf("___________ additional budget = %d * %1.2f / %1.2f = %1.2f = %d \n", DELTA, ratio[idx], sum_ratio, DELTA * ratio[idx] / sum_ratio, additional_budget[idx]);
-        if(idx == b)
-            printf("> > > > > > BEST CANDIDATE < < < < < <\n");
-        if(idx == s)
-            printf("> > > > > > 2nd BEST CANDIDATE < < < < < <\n");
-        printf("\n\n");
-    }
-    printf("\n\n");
 }
-
-
-
-
 
 
 /*

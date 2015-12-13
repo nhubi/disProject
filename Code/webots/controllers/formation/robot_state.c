@@ -32,6 +32,8 @@ const float sens_dir[NB_SENSORS] = {1.27,
                                     2.37,
                                     1.87};
 
+int msg_type;
+
 
 
 /*
@@ -88,46 +90,39 @@ void reset(void) {
  * Initialize robot's position
  * The robot receive infomation on his ID, position and the goal
  */
-void initial_pos(void){
-	char *inbuffer;
-	int rob_nb,initial_pos_flag;
+void init_pos(char* inbuffer){
+	int rob_nb;
 	float rob_x, rob_z, rob_theta; // Robot position and orientation
+	sscanf(inbuffer,"%1d##%1d#%f#%f#%f##%f#%f#%1d#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f",
+        &msg_type,
+        &rob_nb,
+        &rob_x,
+        &rob_z,
+        &rob_theta,
+        &migr[0],
+        &migr[1],
+        &formation_type,
+        &obstacle_loc[0][0],
+        &obstacle_loc[0][1],
+        &obstacle_loc[1][0],
+        &obstacle_loc[1][1],
+        &obstacle_loc[2][0],
+        &obstacle_loc[2][1],
+        &obstacle_loc[3][0],
+        &obstacle_loc[3][1],
+        &obstacle_loc[4][0],
+        &obstacle_loc[4][1],
+        &obstacle_loc[5][0],
+        &obstacle_loc[5][1]);
 	
-	
-	while (initialized[robot_id] == 0) {
-		
-		// wait for message
-		while (wb_receiver_get_queue_length(receiver) == 0)	{
-            	wb_robot_step(TIME_STEP);
-        }
-		
-		inbuffer = (char*) wb_receiver_get_data(receiver);
-		sscanf(inbuffer,"%d#%d#%f#%f#%f##%f#%f#%d",
-                        &rob_nb,
-                        &initial_pos_flag,
-                        &rob_x,
-                        &rob_z,
-                        &rob_theta,
-                        &migr[0],
-                        &migr[1],
-                        &formation_type);
-		
-
-		if (rob_nb == robot_id && initial_pos_flag==0) {
-			// Initialize self position
-			loc[rob_nb][0] = rob_x;                 // x-position
-			loc[rob_nb][1] = rob_z;                 // z-position
-			loc[rob_nb][2] = rob_theta;             // theta
-			prev_loc[rob_nb][0] = loc[rob_nb][0];
-			prev_loc[rob_nb][1] = loc[rob_nb][1];
-			initialized[rob_nb] = 1;                // initialized = true
-		}
-		
-//if(robot_id ==0)
-//printf("My positions: %f, %f\n", loc[0][0], loc[0][1]);
-		
-		wb_receiver_next_packet(receiver);
-	}
+    if (rob_nb == robot_id) {
+        loc[rob_nb][0] = rob_x;                 // x-position
+        loc[rob_nb][1] = rob_z;                 // z-position
+        loc[rob_nb][2] = rob_theta;             // theta
+        prev_loc[rob_nb][0] = loc[rob_nb][0];
+        prev_loc[rob_nb][1] = loc[rob_nb][1];
+        initialized[rob_nb] = 1;                // initialized = true
+    }
 }
 
 
@@ -135,83 +130,83 @@ void initial_pos(void){
 
 
 /*
- * Initialize robot's weights
+ * Saves received weights in parameter variables.
  */
-void initial_weights(void){
-	char *inbuffer;
-	int rob_nb,initial_pos_flag; // if initial_pos_flag==1 the supervisor is sending weights
+void init_params(char* inbuffer){
+	int rob_nb;
+		
+	// temporal variable
+	// motorschema weights
+	float w_goal_temp;
+	float w_keep_formation_temp;
+	float w_avoid_robot_temp;
+	float w_avoid_obstacles_temp;
+	float w_noise_temp;
 	
-	while (initialized_weights[robot_id] == 0) {
-		
-		// wait for message
-		while (wb_receiver_get_queue_length(receiver) == 0)	{
-			wb_robot_step(TIME_STEP);
-		}
-		
-		// temporal variable
+	// thresholds
+	float avoid_robot_min_threshold_temp;
+	float avoid_robot_max_threshold_temp;
+	float avoid_obst_min_threshold_temp;
+	float avoid_obst_max_threshold_temp;
+	float keep_formation_min_threshold_temp;
+	float keep_formation_max_threshold_temp;
+	float move_to_goal_min_threshold_temp;
+	float move_to_goal_max_threshold_temp;
+	
+	// noise
+	int noise_gen_frequency_temp;  // defines, after how many steps a new random vector should be generated
+	int fading_temp;               // true, if nice transition is wished from one random vector to the next
+
+	
+	
+	inbuffer = (char*) wb_receiver_get_data(receiver);
+	sscanf(inbuffer,"%1d##%1d#%f#%f#%f#%f#%f#%d#%d#%f#%f#%f#%f#%f#%f#%f#%f",
+        &msg_type,
+        &rob_nb,
+        &w_goal_temp,
+        &w_keep_formation_temp,
+        &w_avoid_robot_temp,
+        &w_avoid_obstacles_temp,
+        &w_noise_temp,
+        &noise_gen_frequency_temp,
+        &fading_temp,
+        &avoid_obst_min_threshold_temp,
+        &avoid_obst_max_threshold_temp,
+        &move_to_goal_min_threshold_temp,
+        &move_to_goal_max_threshold_temp,
+        &avoid_robot_min_threshold_temp,
+        &avoid_robot_max_threshold_temp,
+        &keep_formation_min_threshold_temp,
+        &keep_formation_max_threshold_temp);
+
+	// Only info about self will be taken into account at first.
+	
+	if (rob_nb == robot_id)
+	{
+		// Initialize robot's weights
 		// motorschema weights
-		float w_goal_temp;
-		float w_keep_formation_temp;
-		float w_avoid_robot_temp;
-		float w_avoid_obstacles_temp;
-		float w_noise_temp;
+		w_goal=w_goal_temp;
+		w_keep_formation=w_keep_formation_temp;
+		w_avoid_robot=w_avoid_robot_temp;
+		w_avoid_obstacles=w_avoid_obstacles_temp;
+		w_noise=w_noise_temp;
 		
 		// thresholds
-		float avoid_robot_min_threshold_temp;
-		float avoid_robot_max_threshold_temp;
-		float avoid_obst_min_threshold_temp;
-		float avoid_obst_max_threshold_temp;
-		float keep_formation_min_threshold_temp;
-		float keep_formation_max_threshold_temp;
-		float move_to_goal_min_threshold_temp;
-		float move_to_goal_max_threshold_temp;
+		avoid_robot_min_threshold    = avoid_robot_min_threshold_temp;
+		avoid_robot_max_threshold    = avoid_robot_max_threshold_temp;
+		avoid_obst_min_threshold     = avoid_obst_min_threshold_temp;
+		avoid_obst_max_threshold     = avoid_obst_max_threshold_temp;
+		keep_formation_min_threshold = keep_formation_min_threshold_temp;
+		keep_formation_max_threshold = keep_formation_max_threshold_temp;
+		move_to_goal_min_threshold   = move_to_goal_min_threshold_temp;
+		move_to_goal_max_threshold   = move_to_goal_max_threshold_temp;
 		
 		// noise
-		int noise_gen_frequency_temp;  // defines, after how many steps a new random vector should be generated
-		int fading_temp;              // true, if nice transition is wished from one random vector to the next
-
+		noise_gen_frequency=noise_gen_frequency_temp;
+		fading=fading_temp;
 		
-		
-		inbuffer = (char*) wb_receiver_get_data(receiver);
-		sscanf(inbuffer,"%d#%d#%f#%f#%f#%f#%f#%d#%d#%f#%f#%f#%f#%f#%f#%f#%f",&rob_nb,&initial_pos_flag,
-			   &w_goal_temp,&w_keep_formation_temp,&w_avoid_robot_temp,&w_avoid_obstacles_temp,&w_noise_temp,
-			   &noise_gen_frequency_temp,&fading_temp,
-			   &avoid_obst_min_threshold_temp,&avoid_obst_max_threshold_temp,
-			   &move_to_goal_min_threshold_temp,&move_to_goal_max_threshold_temp,
-			   &avoid_robot_min_threshold_temp,&avoid_robot_max_threshold_temp,
-			   &keep_formation_min_threshold_temp,&keep_formation_max_threshold_temp);
-
-		// Only info about self will be taken into account at first.
-		
-		if (rob_nb == robot_id && initial_pos_flag==1)
-		{
-			// Initialize robot's weights
-			// motorschema weights
-			w_goal=w_goal_temp;
-			w_keep_formation=w_keep_formation_temp;
-			w_avoid_robot=w_avoid_robot_temp;
-			w_avoid_obstacles=w_avoid_obstacles_temp;
-			w_noise=w_noise_temp;
-			
-			// thresholds
-			avoid_robot_min_threshold    = avoid_robot_min_threshold_temp;
-			avoid_robot_max_threshold    = avoid_robot_max_threshold_temp;
-			avoid_obst_min_threshold     = avoid_obst_min_threshold_temp;
-			avoid_obst_max_threshold     = avoid_obst_max_threshold_temp;
-			keep_formation_min_threshold = keep_formation_min_threshold_temp;
-			keep_formation_max_threshold = keep_formation_max_threshold_temp;
-			move_to_goal_min_threshold   = move_to_goal_min_threshold_temp;
-			move_to_goal_max_threshold   = move_to_goal_max_threshold_temp;
-			
-			// noise
-			noise_gen_frequency=noise_gen_frequency_temp;
-			fading=fading_temp;
-			
-			initialized_weights[rob_nb] = 1;    // initialized = true
-			
-		}
-		wb_receiver_next_packet(receiver);
-	}
+		initialized_weights[rob_nb] = 1;    // initialized = true
+    }
 }
 
 

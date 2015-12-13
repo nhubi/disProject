@@ -42,8 +42,6 @@ double initial_loc_goal[3];
 // true if the random generator has been initialized
 bool seed_set = false;
 
-int last_run = 0;
-
 
 /* 
  * Initialization common to the running world AND the pso worlds;
@@ -151,7 +149,7 @@ void reset_barrier_world(void) {
 
     // Randomly set up robots on the other side of the wall of obstacles
     for (i=0; i<FORMATION_SIZE; i++) {
-        random_pos_rob(i, -1.0, -0.75); //-2.0,-1.5
+        random_pos_rob(i, -1.0, -0.75);
         robs_trans[i]    = wb_supervisor_node_get_field(robs[i],"translation");
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }
@@ -172,6 +170,11 @@ void reset_barrier_world(void) {
     }
     
     simulation_duration = 0;
+    
+    // save goal position
+    migrx  = wb_supervisor_field_get_sf_vec3f(goal_field)[0];   // X
+    offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1];   // Y
+    migrz  = wb_supervisor_field_get_sf_vec3f(goal_field)[2];   // Z
 
 }
 
@@ -201,14 +204,14 @@ void reset_world2(void) {
         new_rot_obs[2][0] = 0.0; new_rot_obs[2][1] = 1.0; new_rot_obs[2][2] = 0.0; new_rot_obs[2][3] = 4.45059; 
         new_loc_obs[2][0] = 0.0546256; new_loc_obs[2][1] = 0.0; new_loc_obs[2][2] = -0.0362992;
         for (obs_id=3; obs_id<NB_OBSTACLES; obs_id++) {
-          new_rot_obs[obs_id][0] = 0.0;
-          new_rot_obs[obs_id][1] = 1.0;
-          new_rot_obs[obs_id][2] = 0.0;
-          new_rot_obs[obs_id][3] = 4.45059;
-        
-          new_loc_obs[obs_id][0] = -0.25 + obs_id*dist_between_obs;
-          new_loc_obs[obs_id][1] = -1.25566e-13;
-          new_loc_obs[obs_id][2] = -1.23;
+            new_rot_obs[obs_id][0] = 0.0;
+            new_rot_obs[obs_id][1] = 1.0;
+            new_rot_obs[obs_id][2] = 0.0;
+            new_rot_obs[obs_id][3] = 4.45059;
+
+            new_loc_obs[obs_id][0] = -0.25 + obs_id*dist_between_obs;
+            new_loc_obs[obs_id][1] = -1.25566e-13;
+            new_loc_obs[obs_id][2] = -1.23;
         }
         
         for (obs_id=0; obs_id<NB_OBSTACLES; obs_id++) {
@@ -244,7 +247,23 @@ void reset_world2(void) {
         robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
     }
     
+    //obstacle initialisation    	
+    char obs[5]="obs0";
+    for (i=0;i<NB_OBSTACLES;i++) {
+        sprintf(obs,"obs%d",i);
+        obstacles[i]= wb_supervisor_node_get_from_def(obs);
+        obstacles_trans[i]=wb_supervisor_node_get_field(obstacles[i],"translation");
+        
+        obstacle_loc[i][0] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[0];  // X
+        obstacle_loc[i][1] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[2];  // Z
+    }
+    
     simulation_duration = 0;
+    
+    // save goal position
+    migrx  = wb_supervisor_field_get_sf_vec3f(goal_field)[0];   // X
+    offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1];   // Y
+    migrz  = wb_supervisor_field_get_sf_vec3f(goal_field)[2];   // Z
 }
 
 
@@ -281,6 +300,23 @@ void reset_random_world(void) {
     }
     
     simulation_duration = 0;
+    
+    //obstacle initialisation    	
+    char obs[5]="obs0";
+    for (i=0;i<NB_OBSTACLES;i++) {
+        sprintf(obs,"obs%d",i);
+        obstacles[i]= wb_supervisor_node_get_from_def(obs);
+        obstacles_trans[i]=wb_supervisor_node_get_field(obstacles[i],"translation");
+        
+        obstacle_loc[i][0] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[0];  // X
+        obstacle_loc[i][1] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[2];  // Z
+    }
+    
+    // save goal position
+    migrx  = wb_supervisor_field_get_sf_vec3f(goal_field)[0];   // X
+    offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1];   // Y
+    migrz  = wb_supervisor_field_get_sf_vec3f(goal_field)[2];   // Z
+    
 
 }
 
@@ -348,16 +384,27 @@ void send_init_poses(void){
         }
 	
         // Send it out
-        sprintf(buffer, "%1d#%1d#%f#%f#%f##%f#%f#%1d#%1d",
-                        i,          // robot ID
-                        0,          // 0 if we are sending poses, 1 if we are sending weights
-                        loc[i][0],
-                        loc[i][1],
-                        loc[i][2],
-                        migrx,
-                        migrz,
-                        last_run,
-                        formation_type);
+        sprintf(buffer, "%1d##%1d#%f#%f#%f##%f#%f#%1d#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f",
+            MSG_POSITION_INIT,
+            i,          // robot ID
+            loc[i][0],
+            loc[i][1],
+            loc[i][2],
+            migrx,
+            migrz,
+            formation_type,
+            obstacle_loc[0][0],
+            obstacle_loc[0][1],
+            obstacle_loc[1][0],
+            obstacle_loc[1][1],
+            obstacle_loc[2][0],
+            obstacle_loc[2][1],
+            obstacle_loc[3][0],
+            obstacle_loc[3][1],
+            obstacle_loc[4][0],
+            obstacle_loc[4][1],
+            obstacle_loc[5][0],
+            obstacle_loc[5][1]);
         wb_emitter_send(emitter,buffer,strlen(buffer));
 
         // Run one step
@@ -369,7 +416,6 @@ void send_init_poses(void){
 
 void send_real_run_init_poses(void) {
     char buffer[255];	// Buffer for sending data
-    last_run = 1;
     int i;
 
     for (i = 0; i < FORMATION_SIZE; i++) {
@@ -388,68 +434,26 @@ void send_real_run_init_poses(void) {
         offset = initial_loc_goal[1];   // Y
         migrz = initial_loc_goal[2];    // Z
         
-        orient_migr = -atan2f(migrx,migrz);                         // angle of migration urge
+        orient_migr = -atan2f(migrx,migrz);   // angle of migration urge
         if (orient_migr<0) {
-            orient_migr+=2*M_PI; // Keep value between 0 and 2PI
+            orient_migr+=2*M_PI;              // Keep value between 0 and 2PI
         }
 	
         // Send it out
-        sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d#%1d",i,0,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,last_run,formation_type);
+        sprintf(buffer,"%1d##%1d#%f#%f#%f##%f#%f#%1d",
+            MSG_POSITION_INIT,
+            i,
+            loc[i][0],
+            loc[i][1],
+            loc[i][2],
+            migrx,
+            migrz,
+            formation_type);
         wb_emitter_send(emitter,buffer,strlen(buffer));
 
         // Run one step
         wb_robot_step(TIME_STEP);
     }
-}
-
-
-void send_weights(void){
-    char buffer[255];	// Buffer for sending data
-    int i;
-     
-    for (i=0;i<FORMATION_SIZE;i++) {
-	
-        // Send it out
-        sprintf(buffer, "%1d#%1d#%f#%f#%f#%f#%f#%1d#%1d#%f#%f#%f#%f#%f#%f#%f#%f",
-                        i,          // robot ID
-                        1,          // 0 if we are sending poses, 1 if we are sending weights
-                        w_goal,
-                        w_keep_formation,
-                        w_avoid_robot,
-                        w_avoid_obstacles,
-                        w_noise,
-                        noise_gen_frequency,
-                        fading,
-                        avoid_obst_min_threshold,
-                        avoid_obst_max_threshold,
-                        move_to_goal_min_threshold,
-                        move_to_goal_max_threshold,
-                        avoid_robot_min_threshold,
-                        avoid_robot_max_threshold,
-                        keep_formation_min_threshold,
-                        keep_formation_max_threshold);
-
-        wb_emitter_send(emitter,buffer,strlen(buffer));
-
-        // Run one step
-        wb_robot_step(TIME_STEP);
-    }
-printf("Parameters: w_goal............. = %f\n", w_goal);
-printf("___________ w_keep_formation... = %f\n", w_keep_formation);
-printf("___________ w_avoid_robo....... = %f\n", w_avoid_robot);
-printf("___________ w_avoid_obstacles.. = %f\n", w_avoid_obstacles);
-printf("___________ w_noise............ = %f\n", w_noise);
-printf("___________ noise_gen_frequency = %d\n", noise_gen_frequency);
-printf("___________ fading............. = %d\n", fading);
-printf("___________ avoid_obst_min_threshold.... = %f\n", avoid_obst_min_threshold);
-printf("___________ avoid_obst_max_threshold.... = %f\n", avoid_obst_max_threshold);
-printf("___________ move_to_goal_min_threshold.. = %f\n", move_to_goal_min_threshold);
-printf("___________ move_to_goal_max_threshold.. = %f\n", move_to_goal_max_threshold);
-printf("___________ avoid_robot_min_threshold... = %f\n", avoid_robot_min_threshold);
-printf("___________ avoid_robot_max_threshold... = %f\n", avoid_robot_max_threshold);
-printf("___________ keep_formation_min_threshold = %f\n", keep_formation_min_threshold);
-printf("___________ keep_formation_max_threshold = %f\n", keep_formation_max_threshold);
-
 }
 
 
@@ -476,8 +480,52 @@ void send_current_poses(void){
         loc[i][2] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]; // THETA
 
         // Sending positions to the robots
-        sprintf(buffer,"%1d#%1d#%f#%f#%f##%f#%f#%1d",i+offset,0,loc[i][0],loc[i][1],loc[i][2],migrx,migrz,last_run);
+        sprintf(buffer,"%d##%1d#%f#%f#%f##%f#%f",
+            MSG_POSITION,
+            i+offset,
+            loc[i][0],
+            loc[i][1],
+            loc[i][2],
+            migrx,
+            migrz);
         wb_emitter_send(emitter,buffer,strlen(buffer));
+    }
+}
+
+
+
+
+
+void send_weights(void){
+    char buffer[255];	// Buffer for sending data
+    int i;
+     
+    for (i=0;i<FORMATION_SIZE;i++) {
+	
+        // Send it out
+        sprintf(buffer, "%1d##%1d#%f#%f#%f#%f#%f#%d#%d#%f#%f#%f#%f#%f#%f#%f#%f",
+                        MSG_INIT_PARAMS,
+                        i,          // robot ID
+                        w_goal,
+                        w_keep_formation,
+                        w_avoid_robot,
+                        w_avoid_obstacles,
+                        w_noise,
+                        noise_gen_frequency,
+                        fading,
+                        avoid_obst_min_threshold,
+                        avoid_obst_max_threshold,
+                        move_to_goal_min_threshold,
+                        move_to_goal_max_threshold,
+                        avoid_robot_min_threshold,
+                        avoid_robot_max_threshold,
+                        keep_formation_min_threshold,
+                        keep_formation_max_threshold);
+
+        wb_emitter_send(emitter,buffer,strlen(buffer));
+
+        // Run one step
+        wb_robot_step(TIME_STEP);
     }
 }
 
@@ -501,28 +549,32 @@ void update_fitness(void){
 
 /*
  * Returns true if formation is close enough from goal node. 
- * TODO: what about max timestep per simulation? (Ondine has implemented something somewhere i think)
  */
 int simulation_has_ended(void) {
 	float centre_x=0;
 	float centre_z=0;
 	float distance_to_goal=0;
-	
-	
+	float keep_formation_d = 0;
+
+
 	// compute the formation center
 	int i;
 	for (i=0; i<FORMATION_SIZE; i++) {
 		centre_x+=loc[i][0];
 		centre_z+=loc[i][1];
+                  keep_formation_d += keep_formation_distance[i];
+
 	}   
 	centre_x/=FORMATION_SIZE;
 	centre_z/=FORMATION_SIZE;
 	
 	distance_to_goal+=(centre_x-migrx)*(centre_x-migrx);
 	distance_to_goal+=(centre_z-migrz)*(centre_z-migrz);
-	distance_to_goal=sqrt(distance_to_goal);
-		
-	if (distance_to_goal<0.1) {
+  	distance_to_goal=sqrt(distance_to_goal);
+  	keep_formation_d /= FORMATION_SIZE;
+                	
+	//if (distance_to_goal < 0.1 && keep_formation_d < 0.5) { // with keep_formation control
+	if (distance_to_goal < 0.1) { // without keep_formation control
 		return 1;
 	}
 	
