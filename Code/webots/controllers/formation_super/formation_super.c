@@ -134,33 +134,6 @@ int main(int argc, char *args[]) {
 
 
 
-
-
-
-
-    // each motorschema's weight
-    w_goal            = 1 / 3.0;
-    w_keep_formation  = 3 / 3.0;
-    w_avoid_robot     = 0.5 / 3.0;
-    w_avoid_obstacles = 3 / 3.0;
-    w_noise           = 3 / 3.0;
-
-    // thresholds
-    avoid_obst_min_threshold     =  60;
-    avoid_obst_max_threshold     = 200;
-    move_to_goal_min_threshold   =   0.1;
-    move_to_goal_max_threshold   =   0.5;
-    avoid_robot_min_threshold    =   0.05;
-    avoid_robot_max_threshold    =   0.1;
-    keep_formation_min_threshold =   0.03;
-    keep_formation_max_threshold =   0.1;
-
-
-    // noise parameters
-    noise_gen_frequency = 10;
-    fading              = 1;
-
-
     // Real simulation with optimized parameters:
     initialize();
     // reset and communication part
