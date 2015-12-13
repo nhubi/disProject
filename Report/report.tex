@@ -588,7 +588,6 @@ simulations and the final section \ref{sec:5} will be reserved to our conclusion
 %\item \textit{Avoid obstacles}
 %\item \textit{Random walk}
 %\end{itemize}
-
 Each schema provides a normalized speed vector (with norm between
 0 and 1). All of these contributions are then summed with appropriate weights, obtaining the
 global speed vector which will determine the wheel speeds of the robots. 
@@ -599,13 +598,10 @@ behaviour influences the robot only if its value is lower (or higher,
 depending on the behaviour) than a certain value S (the radius of the sphere
 of influence). We can extend this concept considering two thresholds R
 and S: the reaction will be maximum (or minimum) if the value is below
-R and minimum (or maximum) if it is higher than S. Between R and S we usually adopt a linear behaviour, even if more complex equations can be
-considered.
+R and minimum (or maximum) if it is higher than S. Between R and S we usually adopt a linear behaviour, even if more complex equations can be considered.
 
 To compute all the necessary information, the robots can communicate
-with a supervisor that sends them their own position (not the ones of the other robots) and the goal position. They
-can also communicate with the other robots which are not too far away in order to exchange their
-relative position. They moreoever use their infrared (\textbf{TODO: check if true})
+with a supervisor that sends them their own position (not the ones of the other robots) and the goal position. They can also communicate with the other robots which are not too far away in order to exchange their relative position. They moreover use their infrared (\textbf{TODO: check if true})
 sensors to detect obstacles.
 
 \subsection{Move to goal}  
@@ -665,14 +661,14 @@ components:
 % (should never be an issue)
 
 
-\subsection{Subsection Heading Here}
-Subsection text here.
+%\subsection{Subsection Heading Here}
+%Subsection text here.
 
 % needed in second column of first page if using \IEEEpubid
 %\IEEEpubidadjcol
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
+%\subsubsection{Subsubsection Heading Here}
+%Subsubsection text here.
 
 
 % An example of a floating figure using the graphicx package.
@@ -763,32 +759,26 @@ Subsubsection text here.
 \label{sec:3}
 
 \subsection{Fitness function}
-The choice of the fitness function is fundamental in PSO. One of the
-most famous fitness function in this fields is the Floreano-Mondada
-one \cite{IEEEhowto:fitness_floreano_mondada}:
+The choice of a good fitness function is fundamental in PSO. One of the most famous fitness functions in this field is the Floreano-Mondada one \cite{IEEEhowto:fitness_floreano_mondada}:
 \begin {equation}
 F=V(1-\sqrt{\Delta V})(1-i)
 \end{equation}
-where $V$ is the average wheel speed, $\Delta V$ the wheel speed
-difference, $i$ is the value of the highest proximity sensor, all
-normalised in the interval $[0,1]$.
-Our choice is quite similar, the final equation is this:
+where $V$ is the average wheel speed, $\Delta V$ the wheel speed difference, and $i$ is the value of the highest proximity sensor, everything normalized in the interval $[0,1]$. We took inspiration from this function, our final one being the following: 
 \begin {equation}
-F=\alpha_vV(1-\sqrt{\Delta V})\frac{1}{D_o+\alpha_o}\frac{1}{D_f}+\alpha_gG
+F=\alpha_vV(1-\sqrt{\alpha_{\Delta}\Delta V})\frac{1}{D_o+\alpha_o}\frac{1}{D_f}+\alpha_gG
 \end{equation}
-where $\alpha_v$, $\alpha_o$, $\alpha_g$ are appropriates weights,
-$D_o$ and $D_f$ are normalised quantitie that tells the medium
-distance respectively with the
-nearest obstacle and the expected position in formation, 
-$G$ is a binary variable that tells if the goal is reached.
-All the quantities are computed in the supervisor: some little
-adjustments are indeed necessary. The $\Delta V$ is computed as the
-mean variation of $\Theta$, the robot bearing (\textbf{check}). We
-decided to introduce $D_o$ instead of $i$, since the value of $i$
-is not accessible from the supervisor. Moreover it's higly influenced
-by noise. The paramether $\alpha_o$ becomes indeed necessary since it
-may happen that $D_o$ is very low. For the part relative to formation
-we found in our experiments that this paramether is not necessary.
+where:
+\begin{itemize}
+\item[-] $\alpha_v$, $\alpha_\Delta$, $\alpha_o$, $\alpha_g$ are appropriate weights;
+\item[-] $D_o$ and $D_f$ are normalised quantities that represent, respectively, the mean distance of the robots with the nearest obstacle and the mean distance to the expected position of the robots if they were in formation; 
+\item[-] $G$ is a binary variable that is $1$ if the goal is reached.
+\end{itemize} 
+All of these quantities are computed in the supervisor: some little adjustments are thus necessary: 
+\begin{itemize}
+\item[-] $D_o$ has been introduced instead of $i$, since $i$ is a value that is highly influenced by noise and which is not accessible from the supervisor. The performance computation is thus more precise;
+\item[-] $\Delta V$ is computed from $\Theta$, the angular speed of the robots.
+\end{itemize}
+Moreover, $\alpha_o$ is necessary since it may happen that $D_o$ is very low, almost tending to zero. No weight is explicitly set in front of $D_f$ since $\alpha_v$ already influences it.
 
 \section{Results}
 \label{sec:4}
