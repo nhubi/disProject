@@ -93,7 +93,7 @@ void reset(void) {
 void init_pos(char* inbuffer){
 	int rob_nb;
 	float rob_x, rob_z, rob_theta; // Robot position and orientation
-	sscanf(inbuffer,"%1d##%1d#%f#%f#%f##%f#%f#%1d",
+	sscanf(inbuffer,"%1d##%1d#%f#%f#%f##%f#%f#%1d#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f",
         &msg_type,
         &rob_nb,
         &rob_x,
@@ -101,7 +101,19 @@ void init_pos(char* inbuffer){
         &rob_theta,
         &migr[0],
         &migr[1],
-        &formation_type);
+        &formation_type,
+        &obstacle_loc[0][0],
+        &obstacle_loc[0][1],
+        &obstacle_loc[1][0],
+        &obstacle_loc[1][1],
+        &obstacle_loc[2][0],
+        &obstacle_loc[2][1],
+        &obstacle_loc[3][0],
+        &obstacle_loc[3][1],
+        &obstacle_loc[4][0],
+        &obstacle_loc[4][1],
+        &obstacle_loc[5][0],
+        &obstacle_loc[5][1]);
 	
     if (rob_nb == robot_id) {
         loc[rob_nb][0] = rob_x;                 // x-position

@@ -65,6 +65,8 @@ float prev_relative_pos[FORMATION_SIZE][3];
 float relative_pos[FORMATION_SIZE][3];
 float unit_center[3];		    	        // X, Z, Theta of the unit center of all robots
 
+float obstacle_loc[6][2];
+float tryVariable;
 
 // Migration vector
 float migr[2];

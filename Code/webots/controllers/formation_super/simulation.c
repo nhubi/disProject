@@ -368,7 +368,7 @@ void send_init_poses(void){
         }
 	
         // Send it out
-        sprintf(buffer, "%1d##%1d#%f#%f#%f##%f#%f#%1d",
+        sprintf(buffer, "%1d##%1d#%f#%f#%f##%f#%f#%1d#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f#%f",
             MSG_POSITION_INIT,
             i,          // robot ID
             loc[i][0],
@@ -376,7 +376,19 @@ void send_init_poses(void){
             loc[i][2],
             migrx,
             migrz,
-            formation_type);
+            formation_type,
+            obstacle_loc[0][0],
+            obstacle_loc[0][1],
+            obstacle_loc[1][0],
+            obstacle_loc[1][1],
+            obstacle_loc[2][0],
+            obstacle_loc[2][1],
+            obstacle_loc[3][0],
+            obstacle_loc[3][1],
+            obstacle_loc[4][0],
+            obstacle_loc[4][1],
+            obstacle_loc[5][0],
+            obstacle_loc[5][1]);
         wb_emitter_send(emitter,buffer,strlen(buffer));
 
         // Run one step

@@ -128,8 +128,22 @@ int main(){
             }
             wb_receiver_next_packet(receiver);
         }
-		
+		/*
+         printf("\n\n\n%f\n",obstacle_loc[0][0]);
+            printf("%f\n",obstacle_loc[0][1]);
+            printf("%f\n",obstacle_loc[1][0]);
+            printf("%f\n",obstacle_loc[1][1]);
+            printf("%f\n",obstacle_loc[2][0]);
+            printf("%f\n",obstacle_loc[2][1]);
+            printf("%f\n",obstacle_loc[3][0]);
+            printf("%f\n",obstacle_loc[3][1]);
+            printf("%f\n",obstacle_loc[4][0]);
+            printf("%f\n",obstacle_loc[4][1]);
+            printf("%f\n",obstacle_loc[5][0]);
+            printf("%f\n",obstacle_loc[5][1]);
+            */
         if(initialized){
+            printf("%f\n",obstacle_loc[0][0]);
             // Send a ping to the other robots, receive their ping and use it for computing their position
             send_ping();
             process_received_ping_messages(robot_id);
