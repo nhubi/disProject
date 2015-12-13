@@ -228,9 +228,6 @@ float evaluate_parameters(float* params){
     w_avoid_obstacles = params[3];
     w_noise           = params[4];
 
-
-
-
     // thresholds
     avoid_obst_min_threshold     = params[5];
     avoid_obst_max_threshold     = params[5] + params[6];
@@ -245,9 +242,26 @@ float evaluate_parameters(float* params){
     noise_gen_frequency = params[13];
     fading              = round(params[14]); // = 0 or 1
 
+    // show the tested parameters.
+    printf("\n\n\nTesting the following configuration: \n");
+    printf(" - w_goal...................... = %f\n", w_goal);
+    printf(" - w_keep_formation............ = %f\n", w_keep_formation);
+    printf(" - w_avoid_robo................ = %f\n", w_avoid_robot);
+    printf(" - w_avoid_obstacles........... = %f\n", w_avoid_obstacles);
+    printf(" - w_noise..................... = %f\n", w_noise);
+    printf(" - noise_gen_frequency......... = %d\n", noise_gen_frequency);
+    printf(" - fading...................... = %d\n", fading);
+    printf(" - avoid_obst_min_threshold.... = %f\n", avoid_obst_min_threshold);
+    printf(" - avoid_obst_max_threshold.... = %f\n", avoid_obst_max_threshold);
+    printf(" - move_to_goal_min_threshold.. = %f\n", move_to_goal_min_threshold);
+    printf(" - move_to_goal_max_threshold.. = %f\n", move_to_goal_max_threshold);
+    printf(" - avoid_robot_min_threshold... = %f\n", avoid_robot_min_threshold);
+    printf(" - avoid_robot_max_threshold... = %f\n", avoid_robot_max_threshold);
+    printf(" - keep_formation_min_threshold = %f\n", keep_formation_min_threshold);
+    printf(" - keep_formation_max_threshold = %f\n", keep_formation_max_threshold);
+    printf("\n\n");
+
     //PSO runs with a world with a wall of obstacles
-    //int sim; 
-    //for(sim = 0; sim < NB_PSO_WALL_RUNS; sim++) {
     if(PSO_WALL)
     {
         printf("[PSO] Simulation with a wall of obstacle\n");
@@ -260,7 +274,7 @@ float evaluate_parameters(float* params){
 
         // sending weights
         send_weights();
-        printf("Weights sent.\n");
+        printf("[PSO] Weights sent.\n");
         
         // pso loop (nb iterations is limited)
         int t;
@@ -273,28 +287,27 @@ float evaluate_parameters(float* params){
 
                 update_fitness();
             }
+
             simulation_duration += TIME_STEP;
-            
             end_run = simulation_has_ended();
             if (end_run) {
                 printf("[PSO] Goal reached in formation\n");
                 break;
             }
+
         }
-        if(!end_run)
-            printf("Goal NOT reached.\n");
         
         if (end_run) {
             single_perf = compute_fitness(FORMATION_SIZE,1);
         } else {
             single_perf = compute_fitness(FORMATION_SIZE,0);
         }
-        printf("Single fitness: %f\n", single_perf); 
+
+        printf("[FITNESS] Single fitness = %f\n\n", single_perf); 
         performance += single_perf;
     }
     
     //PSO runs with a world with a difficult configuration
-    //for(sim = 0; sim < NB_PSO_WORLD2_RUNS; sim++) {
     if(PSO_HARD) {
         printf("[PSO] Simulation with a difficult configuration\n"); 
         reset_world2();
@@ -306,7 +319,7 @@ float evaluate_parameters(float* params){
 
         // sending weights
         send_weights();
-        printf("Weights sent.\n");
+        printf("[PSO] Weights sent.\n");
     
         // pso loop (nb iterations is limited)
         int t;
@@ -327,20 +340,18 @@ float evaluate_parameters(float* params){
                 break;
             }
         }
-        if(!end_run)
-            printf("Goal NOT reached.\n");
         
         if (end_run) {
             single_perf = compute_fitness(FORMATION_SIZE,1);
         } else {
             single_perf = compute_fitness(FORMATION_SIZE,0);
         }
-        printf("Single fitness: %f\n", single_perf); 
+
+        printf("[FITNESS] Single fitness: %f\n\n", single_perf); 
         performance += single_perf;
     }
     
     //PSO runs with a random world
-    //for(sim = 0; sim < NB_PSO_RANDOM_RUNS; sim++) {
     if(PSO_RANDOM) {
         printf("[PSO] Simulation with random positions\n");
         reset_random_world();
@@ -352,7 +363,7 @@ float evaluate_parameters(float* params){
     
         // sending weights
         send_weights();
-        printf("Weights sent.\n");
+        printf("[PSO] Weights sent.\n");
     
         // pso loop (nb iterations is limited)
         int t;
@@ -376,17 +387,17 @@ float evaluate_parameters(float* params){
         if (end_run) {
             single_perf = compute_fitness(FORMATION_SIZE,1);
         } else {
-            printf("Goal NOT reached in formation.\n");
             single_perf = compute_fitness(FORMATION_SIZE,0);
         }
-        printf("Single fitness: %f\n", single_perf); 
+
+        printf("[FITNESS] Single fitness: %f\n\n", single_perf); 
         performance += single_perf;
     }
     
     if(PSO_WALL || PSO_HARD || PSO_RANDOM)
         performance /= (PSO_WALL + PSO_HARD + PSO_RANDOM);
     
-    printf("Fitness = %f\n\n\n\n\n",performance);
+    printf("[FITNESS] Total fitness = %f\n\n\n",performance);
     return performance;
 }
 

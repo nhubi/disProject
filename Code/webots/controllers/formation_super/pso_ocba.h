@@ -26,21 +26,18 @@
 #define PERSONAL_WEIGHT        2     // PSO function parameter
 #define NEIGHBOURHOOD_WEIGHT   2     // PSO function parameter
 #define INERTIA                0.6   // PSO function parameter
-#define V_MAX                  2     // max velocity of particles
+#define V_MAX                  1     // max velocity of particles
 #define NORMALIZED_BORDER     10     // particle dimensions are normalized to [0, NORMALIZED_BORDER]
 
-//#define NB_PSO_WALL_RUNS       2     // Number of runs for PSO with a wall of obstacles
-//#define NB_PSO_WORLD2_RUNS     2     // Number of runs for PSO with a difficult configuration
-//#define NB_PSO_RANDOM_RUNS     5     // Number of runs for PSO with a random positionning
-#define PSO_WALL                 1     // 1 if we run PSO on a world with a wall of obstacles; 0 if not
-#define PSO_HARD                 1     // 1 if we run PSO on a world with a difficult obstacle avoidance configuration; 0 if not
-#define PSO_RANDOM               1     // 1 if we run PSO on a world with a random configuration; 0 if not
+#define PSO_WALL               0     // 1: run PSO with a wall of obstacles; 0 if not
+#define PSO_HARD               0     // 1: run PSO with a difficult obstacle; 0 if not
+#define PSO_RANDOM             1     // 1: run PSO with a random configuration; 0 if not
 
 
 
 // PSO OCBA specific parameters
 #define NB_ITERATIONS    10
-#define ITERATION_BUDGED 80     // ca. 2 * nb_parameter * POPULATION_SIZE
+#define ITERATION_BUDGED 80
 #define N_ZERO            2     // nb initial evaluations
 #define DELTA             4     // nb samples for 'remaining-budged evaluations'
 

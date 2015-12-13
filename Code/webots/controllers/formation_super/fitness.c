@@ -6,7 +6,7 @@
 
 /* 
  * Pass to the function 1 if goal is reached, 0 if it's not reached
-*/
+ */
 double compute_fitness(int FORMATION_SIZE, int goal_reached) {
 	double mean_v=0;
 	double mean_delta_v=0;
@@ -27,12 +27,6 @@ double compute_fitness(int FORMATION_SIZE, int goal_reached) {
 		mean_formation_distance+=keep_formation_distance[i];
 		mean_obstacle_term+=obstacle_term_sum[i];
 	}
-	
-	/*
-	printf("%f\n",speed_sum[0][0]);
-	printf("%f\n",speed_sum[1][0]);
-	printf("%f\n",speed_sum[2][0]);
-	*/
          
 
 	
@@ -41,11 +35,24 @@ double compute_fitness(int FORMATION_SIZE, int goal_reached) {
 	mean_formation_distance=mean_formation_distance/FORMATION_SIZE/number_of_time_step;
 	mean_obstacle_term=mean_obstacle_term/FORMATION_SIZE/number_of_time_step;
 
-	printf("%f\n",mean_v);
-	printf("%f\n",mean_delta_v);
-	printf("%f\n",mean_formation_distance);
-	printf("%f\n",mean_obstacle_term);
 
+            printf("\n[FITNESS] mean_v................... = %f\n", mean_v);
+            printf("[FITNESS] mean_delta_v............. = %f\n", mean_delta_v);
+            printf("[FITNESS] mean_formation_distance.. = %f\n", mean_formation_distance);
+            printf("[FITNESS] mean_obstacle_term....... = %f\n", mean_obstacle_term);
+            printf("[FITNESS] goal_reached............. = %d\n", goal_reached);
+
+    
+	printf("[FITNESS] %1.3f^2 * (1 - sqrt(%1.1f * %1.3f)) * (1/(%1.1f * %1.3f)) * (%1.1f * (%1.3f + 0.05)) + * %1.1f * %d\n",
+            mean_v,
+            weight_delta_v,
+            mean_delta_v,
+            weight_formation_distance,
+            mean_formation_distance,
+            weight_obstacle_term,
+            mean_obstacle_term,
+            weight_goal_reached,
+            goal_reached);
 
 	
 	return weight_v*mean_v*(1-sqrt(weight_delta_v*mean_delta_v))
@@ -53,6 +60,10 @@ double compute_fitness(int FORMATION_SIZE, int goal_reached) {
           	/(weight_obstacle_term*(mean_obstacle_term+0.05))+ // to avoid case with mean=0
           	+weight_goal_reached*goal_reached;
 }
+
+
+
+
 
 /*
  * Computes all the quantities that have to be traced for fitness function
@@ -69,6 +80,10 @@ void update_fitness_computation_for_robot(float loc[4][3],float prev_loc[4][3],f
 	}
 }
 
+
+
+
+
 /*
  * Computes the speed of the robots (also the angular speed) given the last 2 positions
  */
@@ -82,6 +97,10 @@ void update_speed_sum(float loc[4][3],float prev_loc[4][3],float speed[4][3],int
     // compute the absolute value of the "turning speed"
     speed_sum[robot_id][1]+=fabs(speed[robot_id][2]);
 }
+
+
+
+
 
 /*
  * Computes the obstacle term
@@ -119,6 +138,10 @@ void update_obstacle_term(float loc[4][3],int robot_id) {
     return;
 }
 
+
+
+
+
 /*
  * Computes the speed of the robots (also the angular speed) given the last 2 positions
  */
@@ -144,8 +167,7 @@ void update_keep_formation_distance(float loc[4][3],int robot_id, int formation_
     get_absolute_formation_coordinates(absolute_coordinates, relative_coordinates, dir_goal,unit_center);
     direction[0] = absolute_coordinates[0] - loc[robot_id][0];
     direction[1] = absolute_coordinates[1] - loc[robot_id][1];
-    //printf("%f %f %f\n",relative_coordinates[0],relative_coordinates[1],relative_coordinates[2]);
-    //printf("%f %f\n",direction[0],direction[1]);
+
     // compute the norm of direction
     keep_formation_distance[robot_id]+=sqrt(direction[0]*direction[0]+direction[1]*direction[1]);
 }
