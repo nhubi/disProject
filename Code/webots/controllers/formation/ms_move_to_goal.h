@@ -12,24 +12,9 @@
 #include "robot_state.h"
 #include "utils.h"
 
-
-// includes
-
-//#include <???>
-
-
-
 // definitions
 
 #define GOAL_REACHED_DISTANCE 0.1
-
-
-
-// declarations
-
-
-
-
 
 // methods
 

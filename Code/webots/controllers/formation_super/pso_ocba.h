@@ -9,13 +9,6 @@
 #define PSO_OCBA_H
 
 
-
-// includes
-
-//#include "something.h"
-
-
-
 // definitions
 
 // PSO general parameters

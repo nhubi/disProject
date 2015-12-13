@@ -12,25 +12,6 @@
 #include "robot_state.h"
 #include "utils.h"
 
-
-// includes
-
-//#include <???>
-
-
-
-// definitions
-
-//#define WHATEVER
-
-
-
-// declarations
-
-
-
-
-
 // methods
 
 void get_avoid_robot_vector(float* direction);

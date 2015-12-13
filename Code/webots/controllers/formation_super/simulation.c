@@ -631,7 +631,6 @@ void random_pos_rob(int robot_id, float x_min, float z_min) {
  * Randomly position the specified obstacle within a certain zone
  */
 void random_pos_obs(int obs_id, float x_min, float z_min) {
-    //printf("Setting random position for %d\n",robot_id);
 
     new_rot_obs[obs_id][0] = 0.0;
     new_rot_obs[obs_id][1] = 1.0;

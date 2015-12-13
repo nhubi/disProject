@@ -586,7 +586,6 @@ void ocba(int * remaining_budget){
     scnd_best_var += 0.0000000000001;
 
 
-    // compute ratio[i] = N_i/N_s
     ratio[s] = 1;           // we compare all positions to second best, hence ratio[s] = 1.
     float delta_bs = best_mean - scnd_best_mean;
     float delta_bi;
