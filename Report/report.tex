@@ -1,4 +1,4 @@
-%% TEST GIT
+
 %% bare_jrnl.tex
 %% V1.3
 %% 2007/01/11
@@ -573,7 +573,7 @@ simulations and the final section \ref{sec:5} will be reserved to our conclusion
 
 \section{Motor-schemas}
 \label{sec:2}
-\IEEEPARstart{W}{e} have considered five basic motor schemas: \textit{move to goal}, \textit{keep formation}, \textit{avoid other robots}, \textit{avoid obstacles}, and \textit{random walk}. % described below:
+\IEEEPARstart{F}{ive} basic motor schemas have been considered: \textit{move to goal}, \textit{keep formation}, \textit{avoid other robots}, \textit{avoid obstacles}, and \textit{random walk}. % described below:
 %\begin{itemize}
 %\item \textit{Move to goal}
 %\item \textit{Keep formation}
@@ -746,8 +746,8 @@ F=\alpha_vV(1-\sqrt{\alpha_{\Delta}\Delta V})\frac{1}{D_o+\alpha_o}\frac{1}{D_f}
 \end{equation}
 where:
 \begin{itemize}
-\item[-] $\alpha_v$, $\alpha_\Delta$, $\alpha_o$, $\alpha_g$ are appropriate weights;
-\item[-] $D_o$ and $D_f$ are normalised quantities that represent, respectively, the mean distance of the robots with the nearest obstacle and the mean distance to the expected position of the robots if they were in formation; 
+\item[-] $\alpha_v$, $\alpha_\Delta$, $\alpha_o$, $\alpha_g$ are appropriate weights that are reported in Table \ref{weights_fitfct};
+\item[-] $D_o$ and $D_f$ are normalized quantities that represent, respectively, the mean distance of the robots with the nearest obstacle and the mean distance to the expected position of the robots if they were in formation; 
 \item[-] $G$ is a binary variable that is $1$ if the goal is reached.
 \end{itemize} 
 All of these quantities are computed in the supervisor: some little adjustments are thus necessary: 
@@ -756,8 +756,54 @@ All of these quantities are computed in the supervisor: some little adjustments 
 \item[-] $\Delta V$ is computed from $\Theta$, the angular speed of the robots.
 \end{itemize}
 Moreover, $\alpha_o$ is necessary since it may happen that $D_o$ is very low, almost tending to zero. No weight is explicitly set in front of $D_f$ since $\alpha_v$ already influences it.
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|}
+  \hline
+  Weight & Value\\
+  \hline
+  $\alpha_v$ &  \textbf{TODO} \\
+  $\alpha_\Delta$ & \textbf{TODO} \\
+  $\alpha_o$ & \textbf{TODO} \\
+  $\alpha_g$ & \textbf{TODO} \\
+  \hline
+\end{tabular}
+\caption{Values of the weights used in the fitness function} \label{weights_fitfct}
+\end{center} 
+\end{table}
 
 \section{Results}
+\IEEEPARstart{T}{he} well functioning of the implementation of the motor-schemas had to be tested fist, to then analyse the results given by PSO. The chosen set-ups are described in this section, followed by the results. 
+
+\subsection{Set-ups}
+Three worlds have been defined, as seen in Figure \textbf{TODO}, in order to try to find parameters that best allow obstacle avoidance:
+\begin{itemize}
+\item[-] a random world, where a goal position is defined, the four robots are randomly positioned in a certain area, and six obstacles are positioned in an area between the goal and the robots;
+\item[-] a world with a wall of obstacles between a predefined goal and the four robots which are randomly positioned behind the wall;
+\item[-] a world with an obstacle configuration which is hard to escape for a robot that get stuck against it. 
+\end{itemize}
+\subsection{Tests of the motor-schemes}
+We can notice that a good feeling allowed us to find good manually tuned parameters quite easily. Those parameters are reported in Table \ref{manual_param}. 
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+  \hline
+  Motor-schema & Weight & Min threshold & Max threshold\\
+  \hline
+  $move\_to\_goal$ &  $0.07$ & $0.1$ & $0.5$\\
+  $keep\_formation$ & $0.35$ & $0.03$ & $0.1$\\
+  $avoid\_robot$ & $0.07$ & $0.05$ & $0.1$\\
+  $avoid\_obstacle$ & $0.35$ & $60$ & $200$\\
+  \hline
+  Motor-schema & Weight & Noise gen. frequency & Fading \\
+  \hline
+  $noise$ & $0.33$ & $10$ & $1$\\
+  \hline
+\end{tabular}
+\caption{Values of the parameters manually tuned} \label{manual_param}
+\end{center} 
+\end{table}
+
 \label{sec:4}
 
 \section{Conclusion}
