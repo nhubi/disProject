@@ -544,16 +544,16 @@ for mobile robots (e-puck in our case) based on motor schemas, and test it with 
 using the software
 Webots\textregistered. \cite{IEEEhowto:arkin_motor_schemas} and 
 \cite{IEEEhowto:balch_behaviour_based} provide a
-good explanation of the purpose of motor-schema based
-controllers over traditional and less flexible ones. One of the main challenges that one may encounter while implementing the controller
-is to achieve multiple different objectives at the same time,
+good explanation of the advantage of motor-schema based
+controllers over traditional and less flexible ones. One of the main challenges that one may encounter while implementing a controller
+is to achieve multiple different objectives at the same time
 to obtain an optimised and good looking walk of the robots. 
 Motor schemas provide an elegant way to do so: at each instant, the
 robots compute a different speed vector for each objective and then
 sum them all with appropriate weights. 
 The robots in our case should move in an environment full of obstacles while
 keeping a precise formation, avoiding other robots and moving towards
-a goal. We will show in section \ref{sec:2} how we implemented such behaviour.
+a goal. We will show in section \ref{sec:2} how we implemented this behaviour.
 
 Correctly tuning the motor-schema parameters leads to the second part of our project:
 we studied the influence of Particle Swarm Optimization (PSO), a
@@ -563,15 +563,6 @@ powerful machine learning technique, on the simulation. Indeed, it is difficult 
 technique that, in short, consists in modelling the set of potential
 problem solutions as a swarm of particles moving around in a virtual multi-dimensional
 search space. 
-% TODO: how much about PSO do we want to mention in the intro, how much later?
-Each particle, after being evaluated, moves keeping in memory its neighborhood's and its own best positions acquired so far. Ideally, the particles should converge to a global optimal position. PSO can model an 
-Artificial Neural Network controller: the parameter set contains
-the weights and, with appropriate extensions and taking into account the noise, this method suits perfectly the robot swarm problem. 
-A key part of PSO is the choice of a good fitness function to evaluate the performance of each
-parameter set. A good reference fitness function is the one
-of Floreano and Mondada \cite{IEEEhowto:fitness_floreano_mondada}. Based on
-this, we have developed our own fitness function that will be explained in section
-\ref{sec:3}. 
 
 In section \ref{sec:4}, we will present the results of our
 simulations and the final section \ref{sec:5} will be reserved to our conclusions. 
@@ -769,6 +760,36 @@ Subsubsection text here.
 \section{PSO}
 \label{sec:3}
 
+Each of the five above mentioned motor-schemas is specified through several parameters that 
+must be well set in order to develop an optimally behaving robot. In fact, the tuning of those 
+parameters is an NP-hard problem since the complexity of its computation increases 
+exponentially with the number of parameters.
+
+\subsection{The Algorithm}
+In 1995, Eberhart and Kennedy proposed a new method called \textit{Particle Swarm Optimization}, which evolved from the intent to simulate the movements of bird flocks and fish schools, to solve this kind of problems \cite{IEEEhowto:first_pso}. 
+
+PSO generates a swarm of so called particles and distributes them randomly in the $D$-
+dimensional  `particle space'. Thereby, $D$ is determined by the number of parameters to 
+optimize, i.e. each parameter is a dimension in the `particle space'. The main principle of 
+the algorithm is that the particles move around in space for optimizing a certain objective 
+function. In the case of determining the parameters of a robot controller, this objective 
+function is called \textit{fitness function} and evaluates how the robot performs when it 
+solves its intended task. 
+
+At every iteration of the algorithm, each particle is getting evaluated: Its current position 
+is transformed into actual parameters which are passed to the objective function. Then, each 
+particle's new position is computed. This position is defined by a speed vector with limited 
+length, which is directed to a random point on the line between the best position of a 
+particle's neighbouring particles and the particle's own best position acquired so far. 
+
+In the optimal case, all the particles should converge to the global optimum of the objective function. The size of the swarm does thereby play an important role: the more particles, the better the result. This is, because with an increasing number of particles, the chance of getting stuck in a local maximum does decrease. For the results not to be biased, the swarm size should be greater or equal to the dimensionality $D$. Due to simulation problems with webots, we had to set the number of particles to the smallest number possible. 
+
+In our implementation, we have decided to normalize the ranges of each dimension in `particle space'. The reason is that the maximum velocity: Usually, not all ranges of parameters to optimise are in the same order of magnitude. For example e-puck's distance sensors return values in the range $[0,4096]$, whereas the communication range of a robot is limited to a few meters. Optimising certain thresholds would return values in the according ranges. Now, a velocity limit of $1$ does not at all have the same meaning in both dimensions: Whilst in the communication range direction, a particle could cross the whole space in only one iteration when moving at full speed, it would need many steps for reaching the border in the sensor value dimension. Therefore, each dimension in our `particle space' is limited to the range $[0, 10]$ and before passing a particle's position to the fitness function, each coordinate is transformed to the range of the respective controller parameter.
+
+
+\subsection{OCBA}
+
+
 \subsection{Fitness function}
 The choice of the fitness function is fundamental in PSO. One of the
 most famous fitness function in this fields is the Floreano-Mondada
@@ -881,6 +902,10 @@ Robotics and Automation. Proceedings. 1987 IEEE International Conference on. Vol
 Balch, Tucker, and Ronald C. Arkin. \emph{Behavior-based formation
   control for multirobot teams.}
  Robotics and Automation, IEEE Transactions on 14.6 (1998): 926-939.
+ 
+\bibitem{IEEEhowto:first_pso}
+Eberhart, Kennedy. \emph{A New Optimizer Using Particle Swarm Theory.}
+ Sixth International Symposium on Micro Machine and Human Science. IEEE, 1995.
 
 \bibitem{IEEEhowto:martinoli_pso}
 Pugh, Jim, Yizhen Zhang, and Alcherio Martinoli. \emph{Particle swarm
