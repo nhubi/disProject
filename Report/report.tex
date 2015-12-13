@@ -607,6 +607,14 @@ The \textit{keep formation} schema is conceptually similar to the move to goal s
 \caption{Computation of the expected position in the keep formation motor schema}
 \label{img:keep_formation}
 \end{figure}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=3.5in]{Images/formation.jpg}
+\caption{Different formations implemented}
+\label{img:formation}
+\end{figure}
+
+According to \cite{IEEEhowto:balch_behaviour_based}, unit based formations lead to better results than leader referenced formations, this is why the former has been implemented. Four formations can be chosen by the user by passing a value as an argument to the world: \textit{line} ($0$), \textit{column} ($1$), \textit{wedge} ($2$) and \textit{diamond} ($3$), as it is showed in Figure \ref{img:formation}. 
 
 \subsection{Avoid other robots}
 To detect the other robots, we can either use the built-in sensors, or local communication. We decided to use the second variant since we found it much more precise and less noisy than sensor values. Once implemented local communications, the robots can easily receive the
@@ -617,7 +625,7 @@ positions of the other robots. For each robots, a speed vector is generated, poi
 \end{equation}
 where $d$ is the distance between the two robots. Then all the generated vectors
 are summed. Note that the formula is the opposite to the one in the
-\textit{move to goal} scheme, since in this case we want to avoid an object
+\textit{move to goal} schema, since in this case we want to avoid an object
 instead of moving towards it.
 
 \subsection{Avoid obstacles}
@@ -773,17 +781,27 @@ Moreover, $\alpha_o$ is necessary since it may happen that $D_o$ is very low, al
 \end{table}
 
 \section{Results}
+\label{sec:4}
 \IEEEPARstart{T}{he} well functioning of the implementation of the motor-schemas had to be tested fist, to then analyse the results given by PSO. The chosen set-ups are described in this section, followed by the results. 
 
 \subsection{Set-ups}
-Three worlds have been defined, as seen in Figure \textbf{TODO}, in order to try to find parameters that best allow obstacle avoidance:
+Three worlds have been defined, as seen in Figure \ref{img:worlds}, in order to try to find parameters that best allow obstacle avoidance:
 \begin{itemize}
-\item[-] a random world, where a goal position is defined, the four robots are randomly positioned in a certain area, and six obstacles are positioned in an area between the goal and the robots;
-\item[-] a world with a wall of obstacles between a predefined goal and the four robots which are randomly positioned behind the wall;
-\item[-] a world with an obstacle configuration which is hard to escape for a robot that get stuck against it. 
+\item[1.] a random world, where a goal position is defined, the four robots are randomly positioned in a certain area, and six obstacles are positioned in an area between the goal and the robots;
+\item[2.] a world with a wall of obstacles between a predefined goal and the four robots which are randomly positioned behind the wall;
+\item[3.] a world with an obstacle configuration which is hard to escape for a robot that get stuck against it. 
 \end{itemize}
-\subsection{Tests of the motor-schemes}
-We can notice that a good feeling allowed us to find good manually tuned parameters quite easily. Those parameters are reported in Table \ref{manual_param}. 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=3.5in]{Images/world.jpg}
+\caption{Different worlds chosen for testing}
+\label{img:worlds}
+\end{figure}
+Fifteen parameters should be set, and thus optimized through PSO: the weights of each motor-schema, $S$ and $R$ the minimum and maximum thresholds, respectively, of every motor-schema based on the concept of \textit{Sphere of convergence}, and the noise generating frequency and the fading for the \textit{random walk} motor-schema. 
+However, with that many parameters, each run is quite long, and we experimented some issues with Webots\textregistered. After a few simulated hours, sensors showed strange values or robots stopped even if the control panel showed turning wheels. Consequently, we decided to reduce the number of parameters to be optimized to four: the weights of the motor-schema $A$, $B$, $C$ and $D$. Note that the last weight, corresponding to the random walk motor-schema, is uniquely determined from the four other ones since we normalized them so that the sum is a unit.
+
+\subsection{Test of the motor-schemas}
+A good feeling allowed us to find good manually tuned parameters quite easily. Those parameters are reported in Table \ref{manual_param}. Robots are positioning themselves well in the four possible formations, heading quite fast to the goal. However, they have some trouble to get over some hard configurations of obstacles, as presented in worlds $2$ and $3$ for example: this is where PSO can help in an efficient way. 
 \begin{table}
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -804,7 +822,8 @@ We can notice that a good feeling allowed us to find good manually tuned paramet
 \end{center} 
 \end{table}
 
-\label{sec:4}
+\subsection{Results on PSO}
+
 
 \section{Conclusion}
 \label{sec:5}
@@ -879,7 +898,7 @@ Appendix two text goes here.
 \begin{thebibliography}{1}
 
 \bibitem{IEEEhowto:arkin_motor_schemas}
-Arkin, Ronald~C.\emph{Motor schema based navigation for a mobile
+Arkin, Ronald~C. \emph{Motor schema based navigation for a mobile
   robot: An approach to programming by behavior.} 
 Robotics and Automation. Proceedings. 1987 IEEE International Conference on. Vol. 4. IEEE, 1987.
 
@@ -887,11 +906,6 @@ Robotics and Automation. Proceedings. 1987 IEEE International Conference on. Vol
 Balch, Tucker, and Ronald C. Arkin. \emph{Behavior-based formation
   control for multirobot teams.}
  Robotics and Automation, IEEE Transactions on 14.6 (1998): 926-939.
-
-\bibitem{IEEEhowto:martinoli_pso}
-Pugh, Jim, Yizhen Zhang, and Alcherio Martinoli. \emph{Particle swarm
-  optimization for unsupervised robotic learning.}
- Swarm Intelligence Symposium. No. SWIS-CONF-2005-004. 2005.
 
 \bibitem{IEEEhowto:martinoli_pso_noise}
 Di Mario, Ezequiel, Inaki Navarro, and Alcherio
@@ -910,6 +924,11 @@ Martinoli.
 Floreano, D . \& Mondada, F. \emph{Evolution of Homing Navigation in a Real
 Mobile Robot} Systems, Man and Cybernetics, Part B, IEEE Transactions
 on, Vol.26 , Iss.3 , Jun 1996 , pages:396-407
+
+\bibitem{IEEEhowto:martinoli_pso}
+Pugh, Jim, Yizhen Zhang, and Alcherio Martinoli. \emph{Particle swarm
+  optimization for unsupervised robotic learning.}
+ Swarm Intelligence Symposium. No. SWIS-CONF-2005-004. 2005.
 
 \end{thebibliography}
 
