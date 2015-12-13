@@ -555,14 +555,12 @@ The robots in our case should move in an environment full of obstacles while
 keeping a precise formation, avoiding other robots and moving towards
 a goal. We will show in section \ref{sec:2} how we implemented this behaviour.
 
-Correctly tuning the motor-schema parameters leads to the second part of our project:
-we studied the influence of Particle Swarm Optimization (PSO), a
-powerful machine learning technique, on the simulation. Indeed, it is difficult to manually set the parameters even if there are just a few, and it becomes almost impossible as their number increases. PSO (see \cite{IEEEhowto:martinoli_pso},
-\cite{IEEEhowto:martinoli_pso_noise},
-\cite{IEEEhowto:martinoli_pso_noise_2}) is a recent and promising
-technique that, in short, consists in modelling the set of potential
-problem solutions as a swarm of particles moving around in a virtual multi-dimensional
-search space. 
+Tuning correctly the motor-schemas parameters leads to the second part of our project:
+we studied the influence on the simulation of Particle Swarm Optimization (PSO), a
+powerful machine learning technique. Indeed, it is difficult to manually set the parameters even with just a few ones, and it becomes almost impossible as their
+number increases. PSO (see \cite{IEEEhowto:martinoli_pso},
+\cite{IEEEhowto:martinoli_pso_noise}, \cite{IEEEhowto:martinoli_pso_noise_2}) is a recent and promising technique that, in short, consists in modelling the set of potential problem solutions as a swarm of particles moving around in a virtual multi-dimensional
+search space.
 
 In section \ref{sec:4}, we will present the results of our
 simulations and the final section \ref{sec:5} will be reserved to our conclusions. 
@@ -578,45 +576,26 @@ simulations and the final section \ref{sec:5} will be reserved to our conclusion
 %\item \textit{Avoid obstacles}
 %\item \textit{Random walk}
 %\end{itemize}
-
 Each schema provides a normalized speed vector (with norm between
 0 and 1). All of these contributions are then summed with appropriate weights, obtaining the
 global speed vector which will determine the wheel speeds of the robots. 
 Excluding the fifth schema, all the other ones use the concept of
 \textit{Sphere of Influence} as proposed in
 \cite{IEEEhowto:arkin_motor_schemas}. The idea is that the cause of a
-behaviour influences the robot only if its value is lower (or higher,
-depending on the behaviour) than a certain value $S$ (the radius of the sphere
-of influence). We can extend this concept considering two thresholds $R$
-and $S$: the reaction will be maximum (or minimum) if the value is below
-$R$ and minimum (or maximum) if it is higher than $S$. Between $R$ and $S$ we 
-usually adopt a linear behaviour, even if more complex equations can be
-considered.
+behaviour influences the robot only if its value is lower (or higher, depending on the behaviour) than a certain value $S$ (the radius of the sphere of influence). We can extend this concept considering two thresholds $R$ and $S$: the reaction will be maximum (or minimum) if the value is below $R$ and minimum (or maximum) if it is higher than $S$. Between $R$ and $S$ we usually adopt a linear behaviour, even if more complex equations can be considered.
 
-To compute all the necessary information, the robots can communicate
-with a supervisor that sends them their own position (not the ones of 
-the other robots) and the goal position. They can also communicate with 
-the other robots which are not too far away in order to exchange their
-relative position. They moreover use their infra-red based distance sensors 
-to detect obstacles.
+To compute all the necessary information, the robots can communicate with a supervisor that sends them their own position (not the ones of the other robots) and the goal position. They can also communicate with the other robots which are not too far away in order to exchange their relative position. They moreover use their infra-red based distance sensors to detect obstacles.
 
 \subsection{Move to goal}  
-The simplest motor schema is the \textit{move to goal} one. Knowing
-the positions of the robots and the position of the goal (communicated by the supervisor), 
-this schema generates a speed vector $d_{goal}$ with a direction from the unit center of the flock to the goal and of norm $|d_{goal}|$. We have:
+The simplest motor schema is the \textit{move to goal} one. Knowing the positions of the robots and the position of the goal (communicated by the supervisor), this schema generates a speed vector $d_{goal}$ with a direction from the unit center of the flock to the goal and of norm $|d_{goal}|$. We have:
 \begin{equation}
-\|d_{goal}| = \begin{cases} 0, & \mbox{if }  d<R \\ \frac{d-R}{S-R}, & \mbox{if }
-  R<d<S \\ 1 & \mbox{if } d>S\end{cases}
+|d_{goal}| = \begin{cases} 0, & \mbox{if }  d<R \\ \frac{d-R}{S-R}, & \mbox{if }
+   R<d<S \\ 1 & \mbox{if } d>S\end{cases}
 \end{equation}
 where $d$ is the distance between the unit center and the goal. The unit center is computed through local communication.
 
 \subsection{Keep formation}
-The \textit{keep formation} schema is conceptually similar to the move
-to goal schema. The difference is that the goal does now correspond to the position in which 
-the robot should be in order to stay in formation and that it has to be computed at each 
-timestep. Knowing the position of the goal, the unit center of the formation, and the 
-coordinates of each robot relatively to the unit center, it is possible to compute the vector 
-from the actual position to the expected one (see figure \ref{img:keep_formation}). 
+The \textit{keep formation} schema is conceptually similar to the move to goal schema. The difference is that the goal does now correspond to the position in which the robot should be in order to stay in formation and that it has to be computed at each time step. Knowing the position of the goal, the unit center of the formation, and the coordinates of each robot relatively to the unit center, it is possible to compute the vector from the actual position to the expected one (see Figure \ref{img:keep_formation}). 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=3.5in]{Images/keep_formation.jpg}
@@ -637,40 +616,31 @@ are summed. Note that the formula is the opposite to the one in the
 instead of moving towards it.
 
 \subsection{Avoid obstacles}
-There are eight infra-red distance sensors on an e-puck and we know the position and thus the orientation of each of them. Now, $R$ and $S$ are sensor values: if the received sensor value is below $R$, we assume that no obstacle is near; if it is over $S$, we generate a normalized vector in the opposite
-direction. 
+There are eight infra-red distance sensors on an e-puck and we know the position and thus the orientation of each of them. Now, $R$ and $S$ are sensor values: if the received sensor value is below $R$, we assume that no obstacle is near; if it is over $S$, we generate a normalized vector in the opposite direction. 
 
-Since the sensor values are very noisy, we have decided to work with a moving average. Through 
-an empirical analysis we came to the conclusion that a perception window size of 2 is a good 
-choice. We thus use each sensor's current and last value for the computation of the average. 
-Furthermore, in order to increase the influence of high sensor values (representing a short 
-distance to a certain object), we double their weight for the computation of the average. 
-Thanks to this technique, the robots behave more smoothly.
-
-The final speed vector is computed as the sum of the vectors relative to each sensor.
+Since the sensor values are very noisy, we have decided to work with a moving average. Through an empirical analysis we came to the conclusion that a perception window size of $2$ is a good choice. We thus use each sensor's current and last value for the computation of the average. Furthermore, in order to increase the influence of high sensor values (representing a short distance to a certain object), we double their weight for the computation of the average. Thanks to this technique, the robots behave more smoothly. The final speed vector is computed as the sum of the vectors relative to each sensor.
 
 \subsection{Random walk}
-The four previous motor schemas are theoretically sufficient to achieve
-the goals of our project, but the presence of noise often creates a tricky evaluation. Moreover, some difficult obstacle configurations are hard to get over considering only with these previously presented schemas. One possible solution to improve the performance is to add a random component to the speed of the robots. This is usually a bad idea in absence of obstacles since it creates a smooth fluid walk, but in our situation, if a robot is stuck behind an obstacle this additional random component can possibly free the robot by leading it towards a random direction.
+The four previous motor schemas are theoretically sufficient to achieve the goals of our project, but the presence of noise often creates a tricky evaluation. Moreover, some difficult obstacle configurations are hard to get over considering only these previously presented schemas. One possible solution to improve the performance is to add a random component to the speed of the robots. This is usually a bad idea in absence of obstacles since it creates a smooth fluid walk, but in our situation, if a robot is stuck behind an obstacle this additional random component can possibly free the robot by leading it towards a random direction.
 There are many ways of adding noise, our implementation is based on two
 components:
 \begin{itemize}
 \item \textit{Noise generation frequency:} this determines how often the noise vector should be recomputed. A higher number would help a robot escape more easily after getting stuck behind an obstacle, while a lower value would allow a smoother walk towards the goal.
-\item \textit{Fading:} At each recomputation, the vector is computed as a linear combination of a completely new random vector and the one previously computed. This helps provide a more natural walk without sudden changes of direction.
+\item \textit{Fading:} At each re-computation, the vector is computed as a linear combination of a completely new random vector and the one previously computed. This helps provide a more natural walk without sudden changes of direction.
 \end{itemize}
 
 % You must have at least 2 lines in the paragraph with the drop letter
 % (should never be an issue)
 
 
-\subsection{Subsection Heading Here}
-Subsection text here.
+%\subsection{Subsection Heading Here}
+%Subsection text here.
 
 % needed in second column of first page if using \IEEEpubid
 %\IEEEpubidadjcol
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
+%\subsubsection{Subsubsection Heading Here}
+%Subsubsection text here.
 
 
 % An example of a floating figure using the graphicx package.
@@ -782,41 +752,50 @@ particle's new position is computed. This position is defined by a speed vector 
 length, which is directed to a random point on the line between the best position of a 
 particle's neighbouring particles and the particle's own best position acquired so far. 
 
-In the optimal case, all the particles should converge to the global optimum of the objective function. The size of the swarm does thereby play an important role: the more particles, the better the result. This is, because with an increasing number of particles, the chance of getting stuck in a local maximum does decrease. For the results not to be biased, the swarm size should be greater or equal to the dimensionality $D$. Due to simulation problems with webots, we had to set the number of particles to the smallest number possible. 
+In the optimal case, all the particles should converge to the global optimum of the objective 
+function. The size of the swarm does thereby play an important role: the more particles, the 
+better the result. This is, because with an increasing number of particles, the chance of 
+getting stuck in a local maximum does decrease. For the results not to be biased, the swarm 
+size should be greater or equal to the dimensionality $D$. Due to simulation problems with 
+webots, we had to set the number of particles to the smallest number possible. 
 
-In our implementation, we have decided to normalize the ranges of each dimension in `particle space'. The reason is that the maximum velocity: Usually, not all ranges of parameters to optimise are in the same order of magnitude. For example e-puck's distance sensors return values in the range $[0,4096]$, whereas the communication range of a robot is limited to a few meters. Optimising certain thresholds would return values in the according ranges. Now, a velocity limit of $1$ does not at all have the same meaning in both dimensions: Whilst in the communication range direction, a particle could cross the whole space in only one iteration when moving at full speed, it would need many steps for reaching the border in the sensor value dimension. Therefore, each dimension in our `particle space' is limited to the range $[0, 10]$ and before passing a particle's position to the fitness function, each coordinate is transformed to the range of the respective controller parameter.
+In our implementation, we have decided to normalize the ranges of each dimension in `particle 
+space'. The reason is that the maximum velocity: Usually, not all ranges of parameters to 
+optimise are in the same order of magnitude. For example e-puck's distance sensors return 
+values in the range $[0,4096]$, whereas the communication range of a robot is limited to a few 
+meters. Optimising certain thresholds would return values in the according ranges. Now, a 
+velocity limit of $1$ does not at all have the same meaning in both dimensions: Whilst in the 
+communication range direction, a particle could cross the whole space in only one iteration 
+when moving at full speed, it would need many steps for reaching the border in the sensor 
+value dimension. Therefore, each dimension in our `particle space' is limited to the range 
+$[0, 10]$ and before passing a particle's position to the fitness function, each coordinate is 
+transformed to the range of the respective controller parameter.
 
 
 \subsection{OCBA}
 
 
 \subsection{Fitness function}
-The choice of the fitness function is fundamental in PSO. One of the
-most famous fitness function in this fields is the Floreano-Mondada
-one \cite{IEEEhowto:fitness_floreano_mondada}:
+The choice of a good fitness function is fundamental in PSO. One of the most famous fitness functions in this field is the Floreano-Mondada one \cite{IEEEhowto:fitness_floreano_mondada}:
 \begin {equation}
 F=V(1-\sqrt{\Delta V})(1-i)
 \end{equation}
-where $V$ is the average wheel speed, $\Delta V$ the wheel speed
-difference, $i$ is the value of the highest proximity sensor, all
-normalised in the interval $[0,1]$.
-Our choice is quite similar, the final equation is this:
+where $V$ is the average wheel speed, $\Delta V$ the wheel speed difference, and $i$ is the value of the highest proximity sensor, everything normalized in the interval $[0,1]$. We took inspiration from this function, our final one being the following: 
 \begin {equation}
-F=\alpha_vV(1-\sqrt{\Delta V})\frac{1}{D_o+\alpha_o}\frac{1}{D_f}+\alpha_gG
+F=\alpha_vV(1-\sqrt{\alpha_{\Delta}\Delta V})\frac{1}{D_o+\alpha_o}\frac{1}{D_f}+\alpha_gG
 \end{equation}
-where $\alpha_v$, $\alpha_o$, $\alpha_g$ are appropriates weights,
-$D_o$ and $D_f$ are normalised quantitie that tells the medium
-distance respectively with the
-nearest obstacle and the expected position in formation, 
-$G$ is a binary variable that tells if the goal is reached.
-All the quantities are computed in the supervisor: some little
-adjustments are indeed necessary. The $\Delta V$ is computed as the
-mean variation of $\Theta$, the robot bearing (\textbf{check}). We
-decided to introduce $D_o$ instead of $i$, since the value of $i$
-is not accessible from the supervisor. Moreover it's higly influenced
-by noise. The paramether $\alpha_o$ becomes indeed necessary since it
-may happen that $D_o$ is very low. For the part relative to formation
-we found in our experiments that this paramether is not necessary.
+where:
+\begin{itemize}
+\item[-] $\alpha_v$, $\alpha_\Delta$, $\alpha_o$, $\alpha_g$ are appropriate weights;
+\item[-] $D_o$ and $D_f$ are normalised quantities that represent, respectively, the mean distance of the robots with the nearest obstacle and the mean distance to the expected position of the robots if they were in formation; 
+\item[-] $G$ is a binary variable that is $1$ if the goal is reached.
+\end{itemize} 
+All of these quantities are computed in the supervisor: some little adjustments are thus necessary: 
+\begin{itemize}
+\item[-] $D_o$ has been introduced instead of $i$, since $i$ is a value that is highly influenced by noise and which is not accessible from the supervisor. The performance computation is thus more precise;
+\item[-] $\Delta V$ is computed from $\Theta$, the angular speed of the robots.
+\end{itemize}
+Moreover, $\alpha_o$ is necessary since it may happen that $D_o$ is very low, almost tending to zero. No weight is explicitly set in front of $D_f$ since $\alpha_v$ already influences it.
 
 \section{Results}
 \label{sec:4}
