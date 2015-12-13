@@ -521,8 +521,13 @@ as the number of schemas increases, it becomes very
 difficult and time expensive to optimally tune the parameters specifying
 schemas. The introduction of machine learning techniques thus becomes necessary.
 
-In this project we have implemented a homogeneous, motor-schema based robot controller and tuned it applying solution-sharing Particle Swarm Optimization (\textit{PSO}) using a group fitness function. 
-\textbf{TODO: Add a paragraph with the results.}
+In this project we have implemented a homogeneous, motor-schema based robot 
+controller and tuned it applying solution-sharing Particle Swarm 
+Optimization (\textit{PSO}) using a group fitness function. 
+
+We compared the resulting fitness values between three different world set-
+ups and evaluated the quality and the convergence of the \textit{PSO} 
+results. 
 
 
 \section{Introduction}
@@ -548,8 +553,10 @@ using the software
 Webots\textregistered. \cite{IEEEhowto:arkin_motor_schemas} and 
 \cite{IEEEhowto:balch_behaviour_based} provide a
 good explanation of the advantage of motor-schema based
-controllers over traditional and less flexible ones. One of the main challenges that one may encounter while implementing a controller
-is to achieve multiple different objectives at the same time
+controllers over traditional and less flexible ones. 
+
+One of the main challenges that one may encounter while implementing a 
+controller is to achieve multiple different objectives at the same time
 to obtain an optimised and good looking walk of the robots. 
 Motor schemas provide an elegant way to do so: at each instant, the
 robots compute a different speed vector for each objective and then
@@ -566,8 +573,8 @@ number increases. \textit{PSO} (see \cite{IEEEhowto:martinoli_pso},
 search space.
 
 In section \ref{sec:4}, we will present the results of our
-simulations and the final section \ref{sec:5} will be reserved to our conclusions. 
-\textbf{TODO: maybe add something on the setting of our simulations and future work}
+simulations and the final section \ref{sec:5} will be reserved to our conclusions and possible future work. \\
+
 
 \section{Motor-schemas}
 \label{sec:2}
