@@ -591,10 +591,10 @@ To compute all the necessary information, the robots can communicate with a supe
 
 \subsection{Move to goal}  
 The simplest motor schema is the \textit{move to goal} one. Knowing the positions of the robots and the position of the goal (communicated by the supervisor), this schema generates a speed vector $d_{goal}$ with a direction from the unit center of the flock to the goal and of norm $|d_{goal}|$. We have:
-\begin{equation}
+\begin{equation*}
 |d_{goal}| = \begin{cases} 0, & \mbox{if }  d<R \\ \frac{d-R}{S-R}, & \mbox{if }
    R<d<S \\ 1 & \mbox{if } d>S\end{cases}
-\end{equation}
+\end{equation*}
 where $d$ is the distance between the unit center and the goal. The unit center is computed through local communication.
 
 \subsection{Keep formation}
@@ -617,10 +617,10 @@ According to \cite{IEEEhowto:balch_behaviour_based}, unit based formations lead 
 \subsection{Avoid other robots}
 To detect the other robots, we can either use the built-in sensors, or local communication. We decided to use the second variant since we found it much more precise and less noisy than sensor values. Once implemented local communications, the robots can easily receive the
 positions of the other robots. For each robots, a speed vector is generated, pointing outward the other robot and having the following norm:
-\begin{equation}
+\begin{equation*}
 \begin{cases} 1, & \mbox{if }  d<R \\ \frac{S-d}{S-R}, & \mbox{if }
   R<d<S \\ 0 & \mbox{if } d>S\end{cases}
-\end{equation}
+\end{equation*}
 where $d$ is the distance between the two robots. Then all the generated vectors
 are summed. Note that the formula is the opposite to the one in the
 \textit{move to goal} schema, since in this case we want to avoid an object
@@ -796,15 +796,15 @@ The elegant thing about \textit{PSO OCBA} is that it distributes the \textit{ite
 
 \subsection{Fitness function}
 The choice of a good fitness function is fundamental in \textit{PSO}. One of the most famous fitness functions in this field is the one of Floreano-Mondada \cite{IEEEhowto:fitness_floreano_mondada}:
-\begin {equation}
+\begin {equation*}
 F=V(1-\sqrt{\Delta V})(1-i)
-\end{equation}
+\end{equation*}
 where $V$ is the average wheel speed, $\Delta V$ the difference of the left and right wheel speed and $i$ is the value of the highest proximity sensor, everything normalized in the interval $[0,1]$. 
 
 We took inspiration from this  and came up with the following group-fitness function: 
-\begin {equation}
+\begin {equation*}
 F=\alpha_vV(1-\sqrt{\alpha_{\Delta}\Delta V})\frac{1}{D_o+\alpha_o}\frac{1}{D_f}+\alpha_gG
-\end{equation}
+\end{equation*}
 where:
 \begin{itemize}
 \item[-] $\alpha_v$, $\alpha_\Delta$, $\alpha_o$, $\alpha_g$ are appropriate weights that are reported in Table \ref{weights_fitfct};
@@ -857,6 +857,7 @@ the four robots which are randomly positioned behind the wall;
 \caption{Different worlds chosen for testing}
 \label{img:worlds}
 \end{figure}
+
 Fifteen parameters should be set, and thus optimized through \textit{PSO}: 
 the weights of each motor-schema, $S$ and $R$ the minimum and maximum 
 thresholds, respectively, of every motor-schema based on the concept of 
@@ -872,7 +873,7 @@ reduce the number of parameters to be optimized to four: the weights of the
 motor-schema $A$, $B$, $C$ and $D$. Note that the last weight, 
 corresponding to the random walk motor-schema, is uniquely determined from 
 the four other ones since we normalized them so that the sum is a unit.
-
+ We gave to the other parameters the values manually found and reported in Table \ref{manual_param}.
 \subsection{Test of the motor-schemas}
 A good feeling allowed us to find good manually tuned parameters quite 
 easily. Those parameters are reported in Table \ref{manual_param}. Robots 
@@ -887,13 +888,13 @@ $3$: this is where \textit{PSO} can help in an efficient way.
   Motor-schema & Weight & Min threshold & Max threshold\\
   \hline
   $move\_to\_goal$ &  $0.07$ & $0.10$ & $0.50$\\
-  $keep\_formation$ & $0.35$ & $0.03$ & $0.10$\\
+  $keep\_formation$ & $0.35$ & $0.10$ & $0.20$\\
   $avoid\_robot$ & $0.07$ & $0.05$ & $0.10$\\
   $avoid\_obstacle$ & $0.35$ & $60$ & $200$\\
   \hline
   Motor-schema & Weight & Noise gen. frequency & Fading \\
   \hline
-  $noise$ & $0.33$ & $10$ & $1.0$\\
+  $random\_walk$ & $0.33$ & $10$ & $1.0$\\
   \hline
 \end{tabular}
 \caption{Values of the parameters manually tuned} \label{manual_param}
@@ -918,15 +919,34 @@ world $1$ using the sensors.
   $keep\_formation$ & $0.33$ & $0.30$ & $0.15$ & $0.10$\\
   $avoid\_robot$ & $0.14$ & $0.11$ & $0.19$ & $0.30$\\
   $avoid\_obstacle$ & $0.27$ & $0.26$ & $0.32$ & $0.15$\\
-  $noise$ & $0.04$ & $0.06$ & $0.05$ & $0.26$\\
+  $random\_walk$ & $0.04$ & $0.06$ & $0.05$ & $0.26$\\
   \hline
 \end{tabular}
-\caption{Values of the parameters manually tuned} \label{weights}
+\caption{Values of the weights found by PSO} \label{weights}
 \end{center} 
 \end{table}
 
+We can first observe that the motor-schema \textit{random\_walk} get a higher value when we use sensors to detect obstacles. It could seem strange since sensors are already intrinsically noisy, but the explanation comes from the fact that sensors detect the obstacles later and thus need a higher random factor to get away from them when \textit{avoid\_obstacles} is not sufficient. 
+
+We can also notice that \textit{keep\_formation} and \textit{avoid\_obstacles} get always a slightly higher weight, as we guessed when we manually tuned the parameters. Almost all the weights found are quite similar between the different worlds, which shows a certain consistency in the results. 
+
+In Figure \ref{graphs} are reported for each world the best global fitness acquired so far at each iteration (in blue) and the mean fitness values of the particles at each iteration with their standard deviation (in red). 
+\begin{figure*}[!t]
+\centerline{
+\subfloat[Random world]{\includegraphics[width=2.5in]{Images/randomWorldGraph.jpg} \label{graph_random}}
+\hfill
+\subfloat[World with a wall of obstacles]{\includegraphics[width=2.5in]{Images/wallWorldGraph.jpg} \label{graph_wall}}
+\hfill
+\subfloat[Difficult obstacle configuration]{\includegraphics[width=2.5in]{Images/difficultWorldGraph.jpg}\label{graph_hard}}}
+\caption{Fitness values in different worlds}
+\label{graphs}
+\end{figure*}
+
+The final performance is similar in the three cases, even if the value is a bit lower in the hard configuration case. While a certain convergence can be observed well in the third case, it is less clear in the two other worlds. This might come from the fact that in the first world, the probability is high to reach the goal even with a bad parameter set, and on the other side, in the second one, it is too hard. That is why the standard deviation stays high over the ten iterations, while in the last worlds, it shrinks drastically. We would need more iterations and more particles to reach a better convergence in all cases. 
+
 
 \section{Conclusion}
+\label{sec:5}
 
 \IEEEPARstart{W}{e} have implemented a motor-schema based e-puck controller 
 that allows the robot to approach a given goal while being in a user chosen 
