@@ -647,38 +647,7 @@ void ocba(int * remaining_budget){
         additional_budget[idx] = round(DELTA * ratio[idx] / sum_ratio);
         *remaining_budget -= additional_budget[idx];
     }
-
-
-    // debug messages
-/*
-    printf("\n==========================================================\n");
-    printf("|| REMAINING BUDGET = %d\n", *remaining_budget);
-    printf("==========================================================\n\n");
-
-    for(p = 0; p < DELTA; p++){
-        idx = ratio_indexes[p];
-        printf("[OCBA] Candidate %d: \n", idx);
-        if(idx < POPULATION_SIZE){
-            printf("___________ position = (%f, %f)\n", positions[idx][0], positions[idx][1]);
-            printf("___________ (mean, var, #samples) = (%1.3f, %1.3f, %d)\n", perf_mean[idx], perf_var[idx], perf_samples[idx]);
-        } else {
-            printf("___________ position = (%f, %f)\n", p_best_pos[idx-POPULATION_SIZE][0], p_best_pos[idx-POPULATION_SIZE][1]);
-            printf("___________ (mean, var, #samples) = (%1.3f, %1.3f, %d)\n", p_best_val[idx-POPULATION_SIZE], p_best_var[idx-POPULATION_SIZE], p_best_samples[idx-POPULATION_SIZE]);
-        }        
-        printf("___________ additional budget = %d * %1.2f / %1.2f = %1.2f = %d \n", DELTA, ratio[idx], sum_ratio, DELTA * ratio[idx] / sum_ratio, additional_budget[idx]);
-        if(idx == b)
-            printf("> > > > > > BEST CANDIDATE < < < < < <\n");
-        if(idx == s)
-            printf("> > > > > > 2nd BEST CANDIDATE < < < < < <\n");
-        printf("\n\n");
-    }
-    printf("\n\n");
-*/
 }
-
-
-
-
 
 
 /*

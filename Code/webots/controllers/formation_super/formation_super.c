@@ -43,6 +43,8 @@ int main(int argc, char *args[]) {
 //                                              PSO                                               //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // The paramethers that we don't optimise are commented. 
+    // To add them to the simulation you should uncomment it here, in pso_ocba and change DIMENSIONALITY
     
     // each motorschema's weight
     parameter_ranges[0][0] =  0;

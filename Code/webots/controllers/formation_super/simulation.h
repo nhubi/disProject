@@ -24,7 +24,8 @@
 #define TIME_STEP           64	     // [ms] Length of time step
 #define ARENA_SIZE           2.0     // Size of the arenas used to assign positions to objects
 #define ROB_DIST             0.035   // Distance between robots in formation
-#define NB_OBSTACLES         6       // Number of obstacles 
+#define NB_OBSTACLES         6       // Number of obstacles (do not change, the supervisor can send the position
+                                     //   of at most 6 obstacles)
 
 // message types
 #define MSG_INIT_PARAMS   1
