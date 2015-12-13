@@ -320,9 +320,9 @@ float evaluate_parameters(float* params){
         }
         
         if (end_run) {
-            single_perf = compute_fitness(FORMATION_SIZE,1);
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
         } else {
-            single_perf = compute_fitness(FORMATION_SIZE,0);
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
         }
 
         printf("[FITNESS] Single fitness = %f\n\n", single_perf); 
@@ -364,9 +364,9 @@ float evaluate_parameters(float* params){
         }
         
         if (end_run) {
-            single_perf = compute_fitness(FORMATION_SIZE,1);
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
         } else {
-            single_perf = compute_fitness(FORMATION_SIZE,0);
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
         }
 
         printf("[FITNESS] Single fitness: %f\n\n", single_perf); 
@@ -407,9 +407,9 @@ float evaluate_parameters(float* params){
         }
         
         if (end_run) {
-            single_perf = compute_fitness(FORMATION_SIZE,1);
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
         } else {
-            single_perf = compute_fitness(FORMATION_SIZE,0);
+            single_perf = compute_fitness(FORMATION_SIZE,loc);
         }
 
         printf("[FITNESS] Single fitness: %f\n\n", single_perf); 

@@ -170,6 +170,11 @@ void reset_barrier_world(void) {
     }
     
     simulation_duration = 0;
+    
+    // save goal position
+    migrx  = wb_supervisor_field_get_sf_vec3f(goal_field)[0];   // X
+    offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1];   // Y
+    migrz  = wb_supervisor_field_get_sf_vec3f(goal_field)[2];   // Z
 
 }
 
@@ -254,6 +259,11 @@ void reset_world2(void) {
     }
     
     simulation_duration = 0;
+    
+    // save goal position
+    migrx  = wb_supervisor_field_get_sf_vec3f(goal_field)[0];   // X
+    offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1];   // Y
+    migrz  = wb_supervisor_field_get_sf_vec3f(goal_field)[2];   // Z
 }
 
 
@@ -301,6 +311,12 @@ void reset_random_world(void) {
         obstacle_loc[i][0] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[0];  // X
         obstacle_loc[i][1] = wb_supervisor_field_get_sf_vec3f(obstacles_trans[i])[2];  // Z
     }
+    
+    // save goal position
+    migrx  = wb_supervisor_field_get_sf_vec3f(goal_field)[0];   // X
+    offset = wb_supervisor_field_get_sf_vec3f(goal_field)[1];   // Y
+    migrz  = wb_supervisor_field_get_sf_vec3f(goal_field)[2];   // Z
+    
 
 }
 
