@@ -179,9 +179,9 @@ int main(int argc, char *args[]) {
     }
     
     if (is_goal_reached){
-        fitness = compute_fitness(FORMATION_SIZE,1);
+        fitness = compute_fitness(FORMATION_SIZE,loc);
     } else {
-        fitness = compute_fitness(FORMATION_SIZE,1);
+        fitness = compute_fitness(FORMATION_SIZE,loc);
     }
     printf("fitness = %f\n",fitness);
     
