@@ -16,7 +16,6 @@
 #include "utils.h"
 
 
-
 // definitions
 
 #define PERC_WINDOW_SIZE 2 // defines, over how many steps to average the sensor perceptions 
@@ -26,8 +25,6 @@
 // declarations
 
 float sens_back_weight;
-
-
 
 
 // methods
