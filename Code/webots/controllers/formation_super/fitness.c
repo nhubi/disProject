@@ -4,25 +4,58 @@
 
 #include "fitness.h"
 
-double compute_fitness(int FORMATION_SIZE) {
+/* 
+ * Pass to the function 1 if goal is reached, 0 if it's not reached
+ */
+double compute_fitness(int FORMATION_SIZE, float loc[4][3]) {
 	double mean_v=0;
 	double mean_delta_v=0;
 	double mean_formation_distance=0;
 	double mean_obstacle_term=0;
 	
-	int i;
+	double weight_v=1;
+	double weight_delta_v=1;
+	double weight_formation_distance=10;
+	double weight_obstacle_term=1;
+	double weight_goal_reached=0.5;
+	
+	float unit_center[2] = {0,0};
+
+	
+	// compute the unit center
+         int i,j;	
+         for(j = 0; j < 2; j++) {
+            unit_center[j] = 0;
+            for(i = 0; i < 4; i++) {
+                unit_center[j] += loc[i][j];
+            }
+            unit_center[j] /= 4;
+         }
+         
+         get_move_to_goal_vector(dir_goal,unit_center);
+         float distance_to_goal=sqrt(dir_goal[0]*dir_goal[0]+dir_goal[1]*dir_goal[1]);
+
+	double low_threshold_goal=0.1;
+	double high_threshold_goal=0.5;
+	double distance_goal_term;
+	// compute the distance_to_goal_term
+         if (distance_to_goal>high_threshold_goal) {
+             distance_goal_term=0;
+         } else if (distance_to_goal<low_threshold_goal) {
+             distance_goal_term=1;
+         } else {
+             distance_goal_term=(high_threshold_goal-distance_to_goal)
+                     /(high_threshold_goal-low_threshold_goal);
+         }
+	
+	
+	// other terms
 	for (i=0; i<FORMATION_SIZE; i++) {
 		mean_v+=speed_sum[i][0];
 		mean_delta_v+=speed_sum[i][1];
 		mean_formation_distance+=keep_formation_distance[i];
 		mean_obstacle_term+=obstacle_term_sum[i];
 	}
-	
-	/*
-	printf("%f\n",speed_sum[0][0]);
-	printf("%f\n",speed_sum[1][0]);
-	printf("%f\n",speed_sum[2][0]);
-	*/
          
 
 	
@@ -31,15 +64,37 @@ double compute_fitness(int FORMATION_SIZE) {
 	mean_formation_distance=mean_formation_distance/FORMATION_SIZE/number_of_time_step;
 	mean_obstacle_term=mean_obstacle_term/FORMATION_SIZE/number_of_time_step;
 
-	printf("%f\n",mean_v);
-	printf("%f\n",mean_delta_v);
-	printf("%f\n",mean_formation_distance);
-	printf("%f\n",mean_obstacle_term);
+
+         printf("\n[FITNESS] mean_v................... = %f\n", mean_v);
+         printf("[FITNESS] mean_delta_v............. = %f\n", mean_delta_v);
+         printf("[FITNESS] mean_formation_distance.. = %f\n", mean_formation_distance);
+         printf("[FITNESS] mean_obstacle_term....... = %f\n", mean_obstacle_term);
+         printf("[FITNESS] distance_goal_term............. = %f\n", distance_goal_term);
+
+    
+	printf("[FITNESS] %1.3f^2 * (1 - sqrt(%1.1f * %1.3f)) * (1/(%1.1f * %1.3f)) * (%1.1f * (%1.3f + 0.05)) + * %1.1f * %f\n",
+            mean_v,
+            weight_delta_v,
+            mean_delta_v,
+            weight_formation_distance,
+            mean_formation_distance,
+            weight_obstacle_term,
+            mean_obstacle_term,
+            weight_goal_reached,
+            distance_goal_term);
 
 
+         
 	
-	return mean_v*(1-sqrt(mean_delta_v));
+	return weight_v*mean_v*(1-sqrt(weight_delta_v*mean_delta_v))
+          	*(1/(weight_formation_distance*mean_formation_distance))
+          	/(weight_obstacle_term*(mean_obstacle_term+0.05))+ // to avoid case with mean=0
+          	+weight_goal_reached*distance_goal_term;
 }
+
+
+
+
 
 /*
  * Computes all the quantities that have to be traced for fitness function
@@ -56,6 +111,10 @@ void update_fitness_computation_for_robot(float loc[4][3],float prev_loc[4][3],f
 	}
 }
 
+
+
+
+
 /*
  * Computes the speed of the robots (also the angular speed) given the last 2 positions
  */
@@ -70,6 +129,10 @@ void update_speed_sum(float loc[4][3],float prev_loc[4][3],float speed[4][3],int
     speed_sum[robot_id][1]+=fabs(speed[robot_id][2]);
 }
 
+
+
+
+
 /*
  * Computes the obstacle term
  */
@@ -77,6 +140,9 @@ void update_obstacle_term(float loc[4][3],int robot_id) {
     float minimum_obstacle_distance=1000000;
     float distance_vector[2];
     float distance;
+    float distance_lower_threshold=0.15;
+    float distance_higher_threshold=0.3;
+    
     int i;
     for (i=0;i<6;i++) {
         distance_vector[0]=loc[robot_id][0]-fitness_obstacle_loc[i][0];
@@ -87,8 +153,21 @@ void update_obstacle_term(float loc[4][3],int robot_id) {
         }
     }
     
-    obstacle_term_sum[robot_id]+=minimum_obstacle_distance;
+    if (minimum_obstacle_distance>distance_higher_threshold) {
+        
+    } else if (minimum_obstacle_distance<distance_lower_threshold) {
+        obstacle_term_sum[robot_id]+=1;
+    } else {
+        obstacle_term_sum[robot_id]+=(distance_higher_threshold-minimum_obstacle_distance)
+              /(distance_higher_threshold-distance_lower_threshold);
+    }
+    
+    return;
 }
+
+
+
+
 
 /*
  * Computes the speed of the robots (also the angular speed) given the last 2 positions
@@ -115,8 +194,7 @@ void update_keep_formation_distance(float loc[4][3],int robot_id, int formation_
     get_absolute_formation_coordinates(absolute_coordinates, relative_coordinates, dir_goal,unit_center);
     direction[0] = absolute_coordinates[0] - loc[robot_id][0];
     direction[1] = absolute_coordinates[1] - loc[robot_id][1];
-    //printf("%f %f %f\n",relative_coordinates[0],relative_coordinates[1],relative_coordinates[2]);
-    //printf("%f %f\n",direction[0],direction[1]);
+
     // compute the norm of direction
     keep_formation_distance[robot_id]+=sqrt(direction[0]*direction[0]+direction[1]*direction[1]);
 }
@@ -146,6 +224,7 @@ void reset_fitness_computation(int FORMATION_SIZE,float migrx,float migrz,float 
         speed_sum[i][0]=0;
         speed_sum[i][1]=0;
         keep_formation_distance[i]=0;
+        obstacle_term_sum[i]=0;
     }
     
     // Goal
@@ -164,6 +243,8 @@ void reset_fitness_computation(int FORMATION_SIZE,float migrx,float migrz,float 
 
 ///////////////////////////////////////////////////////////////
 // FROM HERE METHODS AND DEFINITIONS FROM ms_keep_formation  //
+// TODO: Keep them like that?                                //
+///////////////////////////////////////////////////////////////
 
 //definitions
 const float robot_dist = 1.0/12.0;
@@ -251,8 +332,6 @@ void get_absolute_formation_coordinates(float* coordinates, float* relative_coor
     // Theta is the angle between the x-axis and the direction vector to the goal.  
     float cosTheta = dir_goal[0] / dist_to_goal;
     float sinTheta = dir_goal[1] / dist_to_goal;
-
-    //printf("%f %f\n",dir_goal[0],dir_goal[1]);
 
     // Changing system coordinates, rotation + translation, taking care of the right angle Theta
     coordinates[0] = relative_coordinates[0] * sinTheta

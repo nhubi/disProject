@@ -12,28 +12,13 @@
 #include "robot_state.h"
 #include "utils.h"
 
-
-// includes
-
-//#include <???>
-
-
-
 // definitions
 
 #define GOAL_REACHED_DISTANCE 0.1
 
-
-
-// declarations
-
-
-
-
-
 // methods
 
-void get_move_to_goal_vector(float* direction, bool* goalReached);
+void get_move_to_goal_vector(float* direction);
 
 
 

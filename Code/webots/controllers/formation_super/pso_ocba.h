@@ -9,31 +9,31 @@
 #define PSO_OCBA_H
 
 
-
-// includes
-
-//#include "something.h"
-
-
-
 // definitions
 
 // PSO general parameters
-#define DIMENSIONALITY        15     // nb parameters to optimize
-#define POPULATION_SIZE       30     // nb particles
-#define NB_NEIGHBOURS          5     // size of neighbourhoods
-#define MAX_EVAL_DURATION    300     // max time (in seconds) of evaluation run
+#define DIMENSIONALITY         4     // nb parameters to optimize
+#define POPULATION_SIZE        5     // nb particles
+#define NB_NEIGHBOURS          2     // size of neighbourhoods
+#define MAX_EVAL_DURATION    180     // max time (in seconds) of evaluation run
 #define PERSONAL_WEIGHT        2     // PSO function parameter
 #define NEIGHBOURHOOD_WEIGHT   2     // PSO function parameter
 #define INERTIA                0.6   // PSO function parameter
-#define V_MAX                  2     // max velocity of particles
+#define V_MAX                  1     // max velocity of particles
 #define NORMALIZED_BORDER     10     // particle dimensions are normalized to [0, NORMALIZED_BORDER]
+
+#define PSO_WALL               0     // 1: run PSO with a wall of obstacles; 0 if not
+#define PSO_HARD               0     // 1: run PSO with a difficult obstacle; 0 if not
+#define PSO_RANDOM             1     // 1: run PSO with a random configuration; 0 if not
+
+
 
 // PSO OCBA specific parameters
 #define NB_ITERATIONS    10
-#define ITERATION_BUDGED 80     // ca. 2 * nb_parameter * POPULATION_SIZE
+#define ITERATION_BUDGED 13
 #define N_ZERO            2     // nb initial evaluations
 #define DELTA             4     // nb samples for 'remaining-budged evaluations'
+
 
 
 
@@ -55,6 +55,8 @@ float n_best_val[POPULATION_SIZE];                  // best performance in each 
 int additional_budget[2*POPULATION_SIZE];           // ocba calculated budget for each particle + best
 
 float ratio[2*POPULATION_SIZE]; // ratios N_i/N_s for each position i (where N_s is assumed to be 1)
+
+float result [NB_ITERATIONS][POPULATION_SIZE][2];
 
 
 // methods

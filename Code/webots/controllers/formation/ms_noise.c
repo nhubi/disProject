@@ -25,6 +25,8 @@ float prev_x_rand = 0;
 float prev_z_rand = 0;
 
 
+// true if the random generator has been initialized
+bool seed_set = false;
 
 
 
@@ -37,10 +39,14 @@ void get_noise_vector(float* direction) {
             prev_z_rand = z_rand;
         }
 
-        srand(time(NULL)*robot_id);
+        if (seed_set == false)
+        {
+           srand(time(NULL)*robot_id);
+           seed_set = true;
+        }
         
         // generate random x and z in [-1, -1]
-	    x_rand = rand()/(float)RAND_MAX * 2 - 1;
+        x_rand = rand()/(float)RAND_MAX * 2 - 1;
         z_rand = rand()/(float)RAND_MAX * 2 - 1;
     }
 

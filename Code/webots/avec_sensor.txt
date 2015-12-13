@@ -1,0 +1,55 @@
+[formation_super] Best values after iteration 9:
+[formation_super] - Particle 0: (mean, var, #samps) = (0.0705, 0.0001, 88)
+[formation_super] - Particle 1: (mean, var, #samps) = (0.0416, 0.0001, 31)
+[formation_super] - Particle 2: (mean, var, #samps) = (0.0715, 0.0001, 94)
+[formation_super] - Particle 3: (mean, var, #samps) = (0.0463, 0.0001, 36)
+[formation_super] - Particle 4: (mean, var, #samps) = (0.0809, 0.0001, 55)
+[formation_super] - Particle 5: (mean, var, #samps) = (0.1434, 0.0000, 4)
+[formation_super] - Particle 6: (mean, var, #samps) = (0.0693, 0.0001, 87)
+[formation_super] - Particle 7: (mean, var, #samps) = (0.0608, 0.0001, 65)
+[formation_super] - Particle 8: (mean, var, #samps) = (0.0337, 0.0001, 21)
+[formation_super] - Particle 9: (mean, var, #samps) = (0.5683, 0.0000, 3)
+[formation_super] ============================================================
+[formation_super] 
+[formation_super] 
+[formation_super] [PSO] Best positions: 
+[formation_super] [PSO] - Candidate0: (6.136648, 6.745944) --> mean: 0.070484, var: 0.000058, #samples: 88
+[formation_super] [PSO] - Candidate1: (8.730431, 3.065061) --> mean: 0.041637, var: 0.000060, #samples: 31
+[formation_super] [PSO] - Candidate2: (7.008068, 5.727072) --> mean: 0.071524, var: 0.000056, #samples: 94
+[formation_super] [PSO] - Candidate3: (6.064981, 0.709190) --> mean: 0.046324, var: 0.000063, #samples: 36
+[formation_super] [PSO] - Candidate4: (8.966777, 5.468376) --> mean: 0.080883, var: 0.000123, #samples: 55
+[formation_super] [PSO] - Candidate5: (2.398792, 7.787125) --> mean: 0.143425, var: 0.000000, #samples: 4
+[formation_super] [PSO] - Candidate6: (3.835349, 4.049361) --> mean: 0.069291, var: 0.000056, #samples: 87
+[formation_super] [PSO] - Candidate7: (4.375325, 8.068680) --> mean: 0.060829, var: 0.000059, #samples: 65
+[formation_super] [PSO] - Candidate8: (0.891060, 4.128662) --> mean: 0.033675, var: 0.000060, #samples: 21
+[formation_super] [PSO] - Candidate9: (5.603271, 3.239681) --> mean: 0.568347, var: 0.000002, #samples: 3
+[formation_super] 
+[formation_super] 
+[formation_super] 
+[formation_super] The optimal parameters are: 
+[formation_super] ___________ w_goal...................... = 5.603271
+[formation_super] ___________ w_keep_formation............ = 3.239681
+[formation_super] ___________ w_avoid_robo................ = 9.614389
+[formation_super] ___________ w_avoid_obstacles........... = 4.762668
+[formation_super] ___________ w_noise..................... = 8.308076
+[formation_super] ___________ noise_gen_frequency......... = 10
+[formation_super] ___________ fading...................... = 1
+[formation_super] ___________ avoid_obst_min_threshold.... = 60.000000
+[formation_super] ___________ avoid_obst_max_threshold.... = 200.000000
+[formation_super] ___________ move_to_goal_min_threshold.. = 0.100000
+[formation_super] ___________ move_to_goal_max_threshold.. = 0.500000
+[formation_super] ___________ avoid_robot_min_threshold... = 0.050000
+[formation_super] ___________ avoid_robot_max_threshold... = 0.100000
+[formation_super] ___________ keep_formation_min_threshold = 0.100000
+[formation_super] ___________ keep_formation_max_threshold = 0.200000
+[formation_super] 
+[formation_super] 
+[formation_super] Beginning of the real simulation
+[formation_super] Supervisor reset.
+[formation_super] Init poses sent.
+[formation_super] Chosen formation: line.
+[formation_super] Weights sent
+
+
+
+Temp -> 36 heures

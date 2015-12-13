@@ -74,10 +74,6 @@ void get_avoid_robot_vector(float* direction) {
 		direction[0]-=(weight_vector[i]*distance_matrix[i][0]);
 		direction[1]-=(weight_vector[i]*distance_matrix[i][1]);
 	}
-    // printf("Robot %d\n",robot_id);
-    // printf("Direction %f %f\n",direction[0],direction[1]);
-    // printf("Weight vector %f %f %f %f\n",weight_vector[0],weight_vector[1],weight_vector[2],weight_vector[3]);
-	
 	return;
 	
 }

@@ -16,7 +16,6 @@
 #include "utils.h"
 
 
-
 // definitions
 
 #define PERC_WINDOW_SIZE 2 // defines, over how many steps to average the sensor perceptions 
@@ -28,11 +27,10 @@
 float sens_back_weight;
 
 
-
-
 // methods
 
 void get_stat_obst_avoidance_vector(float * direction);
+void get_stat_obst_avoidance_vector_supervisor(float * direction);
 
 
 #endif

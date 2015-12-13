@@ -17,10 +17,9 @@
 
 
 
-
+// Definitions
 
 // Robot specs
-
 #define AXLE_LENGTH         0.052   // Distance between wheels of robot (meters)
 #define SPEED_UNIT_RADS     0.00628 // Conversion factor from speed unit to radian per second
 #define WHEEL_RADIUS        0.0205  // Wheel radius (meters)
@@ -29,16 +28,18 @@
 #define MAX_SENS         4096       // Minimum sensibility value
 #define MAX_SPEED         800       // Maximum speed
 
-
-//Formation types
-
+// Formation types
 #define LINE          0
 #define COLUMN        1
 #define WEDGE         2
 #define DIAMOND       3
 
-// other definitions
+// Message types
+#define MSG_INIT_PARAMS     1
+#define MSG_POSITION_INIT   2
+#define MSG_POSITION        3
 
+// Others
 #define FORMATION_SIZE      4       // Size of flock
 #define TIME_STEP          64       // [ms] Length of time step
 
@@ -64,6 +65,7 @@ float prev_relative_pos[FORMATION_SIZE][3];
 float relative_pos[FORMATION_SIZE][3];
 float unit_center[3];		    	        // X, Z, Theta of the unit center of all robots
 
+float obstacle_loc[6][2];
 
 // Migration vector
 float migr[2];
@@ -118,8 +120,8 @@ int time_steps_since_start;
 // Methods
 
 void reset(void);
-void initial_pos(void);
-void initial_weights(void);
+void init_pos(char* inbuffer);
+void init_params(char* inbuffer);
 void compute_unit_center(void);
 void update_self_motion(int msl, int msr);
 void compute_wheel_speeds(int *msl, int *msr);
