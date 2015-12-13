@@ -798,6 +798,34 @@ Subsubsection text here.
 \section{PSO}
 \label{sec:3}
 
+\subsection{Fitness function}
+The choice of the fitness function is fundamental in PSO. One of the
+most famous fitness function in this fields is the Floreano-Mondada
+one \cite{IEEEhowto:fitness_floreano_mondada}:
+\begin {equation}
+F=V(1-\sqrt{\Delta V})(1-i)
+\end{equation}
+where $V$ is the average wheel speed, $\Delta V$ the wheel speed
+difference, $i$ is the value of the highest proximity sensor, all
+normalised in the interval $[0,1]$.
+Our choice is quite similar, the final equation is this:
+\begin {equation}
+F=\alpha_vV(1-\sqrt{\Delta V})\frac{1}{D_o+\alpha_o}\frac{1}{D_f}+\alpha_gG
+\end{equation}
+where $\alpha_v$, $\alpha_o$, $\alpha_g$ are appropriates weights,
+$D_o$ and $D_f$ are normalised quantitie that tells the medium
+distance respectively with the
+nearest obstacle and the expected position in formation, 
+$G$ is a binary variable that tells if the goal is reached.
+All the quantities are computed in the supervisor: some little
+adjustments are indeed necessary. The $\Delta V$ is computed as the
+mean variation of $\Theta$, the robot bearing (\textbf{check}). We
+decided to introduce $D_o$ instead of $i$, since the value of $i$
+is not accessible from the supervisor. Moreover it's higly influenced
+by noise. The paramether $\alpha_o$ becomes indeed necessary since it
+may happen that $D_o$ is very low. For the part relative to formation
+we found in our experiments that this paramether is not necessary.
+
 \section{Results}
 \label{sec:4}
 
