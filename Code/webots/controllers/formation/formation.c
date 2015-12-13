@@ -53,7 +53,9 @@ void computeDirection(void){
         speed[robot_id][d] += w_avoid_robot     * dir_avoid_robot[d];
         speed[robot_id][d] += w_avoid_obstacles * dir_avoid_obstacles[d];
         speed[robot_id][d] += w_noise           * dir_noise[d]; 
-    }
+     }
+
+
 
     // make sure that the resulting vector is not too long. Otherwise, it would permanently get 
     // limited in compuete_wheel_speeds(). 

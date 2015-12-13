@@ -89,7 +89,7 @@ float avoid_robot_max_threshold;
 float keep_formation_min_threshold; // < min threshold: dead zone, no correction of direction
 float keep_formation_max_threshold; // > max threshold: ballistic zone, full correction of direction
 
-// title
+// Title on screen
 char label[20];
 
 // methods

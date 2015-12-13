@@ -14,7 +14,6 @@
 #define DEFAULT_FORMATION "line"        // Line formation as default
 
 
-
 /*
  * Main function.
  */
@@ -90,6 +89,7 @@ int main(int argc, char *args[]) {
     initialize();
     reset();
     
+
     pso_ocba(optimal_params);
 
     // each motorschema's weight

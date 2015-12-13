@@ -64,6 +64,7 @@
 % draft mode.
 %
 \documentclass[journal]{IEEEtran}
+\usepackage{courier}
 %
 % If IEEEtran.cls has not been installed into the LaTeX system files,
 % manually specify the path to it like:
@@ -126,7 +127,7 @@
 % *** GRAPHICS RELATED PACKAGES ***
 %
 \ifCLASSINFOpdf
-  % \usepackage[pdftex]{graphicx}
+\usepackage[pdftex]{graphicx}
   % declare the path(s) where your graphic files are
   % \graphicspath{{../pdf/}{../jpeg/}}
   % and their extensions so you won't have to specify these with
@@ -136,7 +137,7 @@
   % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
   % will default to the driver specified in the system graphics.cfg if no
   % driver is specified.
-  % \usepackage[dvips]{graphicx}
+\usepackage[dvips]{graphicx}
   % declare the path(s) where your graphic files are
   % \graphicspath{{../eps/}}
   % and their extensions so you won't have to specify these with
@@ -169,7 +170,7 @@
 
 % *** MATH PACKAGES ***
 %
-%\usepackage[cmex10]{amsmath}
+\usepackage[cmex10]{amsmath}
 % A popular package from the American Mathematical Society that provides
 % many useful and powerful commands for dealing with mathematics. If using
 % it, be sure to load this package with the cmex10 option to ensure that
@@ -192,7 +193,7 @@
 
 % *** SPECIALIZED LIST PACKAGES ***
 %
-%\usepackage{algorithmic}
+\usepackage{algorithmic}
 % algorithmic.sty was written by Peter Williams and Rogerio Brito.
 % This package provides an algorithmic environment fo describing algorithms.
 % You can use the algorithmic environment in-text or within a figure
@@ -214,7 +215,7 @@
 
 % *** ALIGNMENT PACKAGES ***
 %
-%\usepackage{array}
+\usepackage{array}
 % Frank Mittelbach's and David Carlisle's array.sty patches and improves
 % the standard LaTeX2e array and tabular environments to provide better
 % appearance and additional user controls. As the default LaTeX2e table
@@ -263,8 +264,8 @@
 
 
 
-%\usepackage[caption=false]{caption}
-%\usepackage[font=footnotesize]{subfig}
+\usepackage{caption}
+\usepackage[font=footnotesize]{subfig}
 % subfig.sty, also written by Steven Douglas Cochran, is the modern
 % replacement for subfigure.sty. However, subfig.sty requires and
 % automatically loads Axel Sommerfeldt's caption.sty which will override
@@ -385,6 +386,21 @@
 % to submit to, of course. )
 
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%      PACKAGES INTRODUCED BY US      %%%%%%%%%
+
+%for the copyright
+\usepackage{textcomp}
+
+
+
+
+
+
+
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
 
@@ -393,7 +409,7 @@
 %
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{Bare Demo of IEEEtran.cls for Journals}
+\title{Optimized navigation behaviour of multiple robots based on motor-schema}
 %
 %
 % author names and IEEE memberships
@@ -405,9 +421,10 @@
 % was not built to handle multiple paragraphs
 %
 
-\author{Michael~Shell,~\IEEEmembership{Member,~IEEE,}
-        John~Doe,~\IEEEmembership{Fellow,~OSA,}
-        and~Jane~Doe,~\IEEEmembership{Life~Fellow,~IEEE}}% <-this % stops a space
+\author{Ondine~Chanon,~\IEEEmembership{CSE},
+        Nicolas~Hubacher,~\IEEEmembership{IN},
+        Stefano~Savar\`e,~\IEEEmembership{CSE} \\
+        Under the supervision of Zeynab Talebpour}% <-this % stops a space
 %\thanks{M. Shell is with the Department
 %of Electrical and Computer Engineering, Georgia Institute of Technology, Atlanta,
 %GA, 30332 USA e-mail: (see http://www.michaelshell.org/contact.html).}% <-this % stops a space
@@ -435,7 +452,7 @@
 
 
 % The paper headers
-\markboth{TCP/IP Research Assignment, December 2011}%
+\markboth{Distributed Intelligent System, Course Project, December 2015}%
 {Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Journals}
 % The only time the second header will appear is for the odd numbered pages
 % after the title page when using the twoside option.
@@ -497,9 +514,24 @@
 % creates the second title. It will be ignored for other modes.
 \IEEEpeerreviewmaketitle
 
+\section*{Abstract}
+\IEEEPARstart{M}{otor-schemas} are among the main techniques that allow navigation
+of mobile robots in complex worlds full of obstacles. However,
+as the number of schemas increases, it becomes very
+difficult and time expensive to optimally tune the parameters specifying
+schemas. The introduction of machine learning techniques thus becomes necessary.
+
+In this project we have implemented a homogeneous, motor-schema based robot 
+controller and tuned it applying solution-sharing Particle Swarm 
+Optimization (\textit{PSO}) using a group fitness function. 
+
+We compared the resulting fitness values between three different world set-
+ups and evaluated the quality and the convergence of the \textit{PSO} 
+results. 
 
 
 \section{Introduction}
+\label {sec:1}
 % The very first letter is a 2 line initial drop letter followed
 % by the rest of the first word in caps.
 % 
@@ -515,25 +547,120 @@
 % 
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
-\IEEEPARstart{T}{his} demo file is intended to serve as a ``starter file''
-for IEEE journal papers produced under \LaTeX\ using
-IEEEtran.cls version 1.7 and later.
+\IEEEPARstart{T}{he} first aim of the project was to implement a controller
+for mobile robots (e-puck in our case) based on motor schemas, and test it with simulations
+using the software
+Webots\textregistered. \cite{IEEEhowto:arkin_motor_schemas} and 
+\cite{IEEEhowto:balch_behaviour_based} provide a
+good explanation of the advantage of motor-schema based
+controllers over traditional and less flexible ones. 
+
+One of the main challenges that one may encounter while implementing a 
+controller is to achieve multiple different objectives at the same time
+to obtain an optimised and good looking walk of the robots. 
+Motor schemas provide an elegant way to do so: at each instant, the
+robots compute a different speed vector for each objective and then
+sum them all with appropriate weights. 
+The robots in our case should move in an environment full of obstacles while
+keeping a precise formation, avoiding other robots and moving towards
+a goal. We will show in section \ref{sec:2} how we implemented this behaviour.
+
+Tuning correctly the motor-schemas parameters leads to the second part of our project:
+we studied the influence on the simulation of Particle Swarm Optimization (\textit{PSO}), a
+powerful machine learning technique. Indeed, it is difficult to manually set the parameters even with just a few ones, and it becomes almost impossible as their
+number increases. \textit{PSO} (see \cite{IEEEhowto:martinoli_pso},
+\cite{IEEEhowto:martinoli_pso_noise}, \cite{IEEEhowto:martinoli_pso_noise_2}) is a recent and promising technique that, in short, consists in modelling the set of potential problem solutions as a swarm of particles moving around in a virtual multi-dimensional
+search space.
+
+In section \ref{sec:4}, we will present the results of our
+simulations and the final section \ref{sec:5} will be reserved to our conclusions and possible future work. \\
+
+
+\section{Motor-schemas}
+\label{sec:2}
+\IEEEPARstart{F}{ive} basic motor schemas have been considered: \textit{move to goal}, \textit{keep formation}, \textit{avoid other robots}, \textit{avoid obstacles}, and \textit{random walk}. % described below:
+%\begin{itemize}
+%\item \textit{Move to goal}
+%\item \textit{Keep formation}
+%\item \textit{Avoid other robots}
+%\item \textit{Avoid obstacles}
+%\item \textit{Random walk}
+%\end{itemize}
+Each schema provides a normalized speed vector (with norm between
+0 and 1). All of these contributions are then summed with appropriate weights, obtaining the
+global speed vector which will determine the wheel speeds of the robots. 
+Excluding the fifth schema, all the other ones use the concept of
+\textit{Sphere of Influence} as proposed in
+\cite{IEEEhowto:arkin_motor_schemas}. The idea is that the cause of a
+behaviour influences the robot only if its value is lower (or higher, depending on the behaviour) than a certain value $S$ (the radius of the sphere of influence). We can extend this concept considering two thresholds $R$ and $S$: the reaction will be maximum (or minimum) if the value is below $R$ and minimum (or maximum) if it is higher than $S$. Between $R$ and $S$ we usually adopt a linear behaviour, even if more complex equations can be considered.
+
+To compute all the necessary information, the robots can communicate with a supervisor that sends them their own position (not the ones of the other robots) and the goal position. They can also communicate with the other robots which are not too far away in order to exchange their relative position. They moreover use their infra-red based distance sensors to detect obstacles.
+
+\subsection{Move to goal}  
+The simplest motor schema is the \textit{move to goal} one. Knowing the positions of the robots and the position of the goal (communicated by the supervisor), this schema generates a speed vector $d_{goal}$ with a direction from the unit center of the flock to the goal and of norm $|d_{goal}|$. We have:
+\begin{equation*}
+|d_{goal}| = \begin{cases} 0, & \mbox{if }  d<R \\ \frac{d-R}{S-R}, & \mbox{if }
+   R<d<S \\ 1 & \mbox{if } d>S\end{cases}
+\end{equation*}
+where $d$ is the distance between the unit center and the goal. The unit center is computed through local communication.
+
+\subsection{Keep formation}
+The \textit{keep formation} schema is conceptually similar to the move to goal schema. The difference is that the goal does now correspond to the position in which the robot should be in order to stay in formation and that it has to be computed at each time step. Knowing the position of the goal, the unit center of the formation, and the coordinates of each robot relatively to the unit center, it is possible to compute the vector from the actual position to the expected one (see Figure \ref{img:keep_formation}). 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=3.5in]{Images/keep_formation.jpg}
+\caption{Computation of the expected position in the keep formation motor schema}
+\label{img:keep_formation}
+\end{figure}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=3.5in]{Images/formation.jpg}
+\caption{Different formations implemented}
+\label{img:formation}
+\end{figure}
+
+According to \cite{IEEEhowto:balch_behaviour_based}, unit based formations lead to better results than leader referenced formations, this is why the former has been implemented. Four formations can be chosen by the user by passing a value as an argument to the world: \textit{line} ($0$), \textit{column} ($1$), \textit{wedge} ($2$) and \textit{diamond} ($3$), as it is showed in Figure \ref{img:formation}. 
+
+\subsection{Avoid other robots}
+To detect the other robots, we can either use the built-in sensors, or local communication. We decided to use the second variant since we found it much more precise and less noisy than sensor values. Once implemented local communications, the robots can easily receive the
+positions of the other robots. For each robots, a speed vector is generated, pointing outward the other robot and having the following norm:
+\begin{equation*}
+\begin{cases} 1, & \mbox{if }  d<R \\ \frac{S-d}{S-R}, & \mbox{if }
+  R<d<S \\ 0 & \mbox{if } d>S\end{cases}
+\end{equation*}
+where $d$ is the distance between the two robots. Then all the generated vectors
+are summed. Note that the formula is the opposite to the one in the
+\textit{move to goal} schema, since in this case we want to avoid an object
+instead of moving towards it.
+
+\subsection{Avoid obstacles}
+There are eight infra-red distance sensors on an e-puck and we know the position and thus the orientation of each of them. Now, $R$ and $S$ are sensor values: if the received sensor value is below $R$, we assume that no obstacle is near; if it is over $S$, we generate a normalized vector in the opposite direction. 
+
+Since the sensor values are very noisy, we have decided to work with a moving average. Through an empirical analysis, we came to the conclusion that a perception window size of $2$ is a good choice. We thus use each sensor's current and last value for the computation of the average. Furthermore, in order to increase the influence of high sensor values (representing a short distance to a certain object), we double their weight for the computation of the average. Thanks to this technique, the robots behave more smoothly. The final speed vector is computed as the sum of the vectors relative to each sensor.
+
+However, to test the well functioning of this motor-schema, we have also implemented another version in which the supervisor sends the obstacles' positions instead of using the sensors to detect them. Noise then almost disappear and values are more reliable, even if this situation is not realistic if it were implemented with real robots. 
+
+\subsection{Random walk}
+The four previous motor schemas are theoretically sufficient to achieve the goals of our project, but the presence of noise often creates a tricky evaluation. Moreover, some difficult obstacle configurations are hard to get over considering only these previously presented schemas. One possible solution to improve the performance is to add a random component to the speed of the robots. This is usually a bad idea in absence of obstacles since it creates a smooth fluid walk, but in our situation, if a robot is stuck behind an obstacle this additional random component can possibly free the robot by leading it towards a random direction.
+There are many ways of adding noise, our implementation is based on two
+components:
+\begin{itemize}
+\item \textit{Noise generation frequency:} this determines how often the noise vector should be recomputed. A higher number would help a robot escape more easily after getting stuck behind an obstacle, while a lower value would allow a smoother walk towards the goal.
+\item \textit{Fading:} At each re-computation, the vector is computed as a linear combination of a completely new random vector and the one previously computed. This helps provide a more natural walk without sudden changes of direction.
+\end{itemize}
+
 % You must have at least 2 lines in the paragraph with the drop letter
 % (should never be an issue)
-I wish you the best of success.
 
-\hfill mds
- 
-\hfill January 11, 2007
 
-\subsection{Subsection Heading Here}
-Subsection text here.
+%\subsection{Subsection Heading Here}
+%Subsection text here.
 
 % needed in second column of first page if using \IEEEpubid
 %\IEEEpubidadjcol
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
+%\subsubsection{Subsubsection Heading Here}
+%Subsubsection text here.
 
 
 % An example of a floating figure using the graphicx package.
@@ -620,9 +747,239 @@ Subsubsection text here.
 
 
 
-\section{Conclusion}
-The conclusion goes here.
+\section{PSO}
+\label{sec:3}
 
+\IEEEPARstart{E}{ach} of the five above mentioned motor-schemas is specified through several parameters that 
+must be well set in order to develop an optimally behaving robot. In fact, the tuning of those 
+parameters is an NP-hard problem since the complexity of its computation increases 
+exponentially with the number of parameters.
+
+\subsection{The Algorithm}
+In 1995, Eberhart and Kennedy proposed a new method called \textit{Particle Swarm Optimization}, which evolved from the intent to simulate the movements of bird flocks and fish schools, to efficiently solve this kind of problems \cite{IEEEhowto:first_pso}. 
+
+\textit{PSO} generates a swarm of so called particles and distributes them randomly in the $D$-dimensional `particle space'. Thereby, $D$ is determined by the number of parameters to 
+optimize, i.e. each parameter is a dimension in the `particle space'. The main principle of 
+the algorithm is that the particles move around in space for optimizing a certain objective 
+function. In the case of determining the parameters of a robot controller, this objective 
+function is called \textit{fitness function} and evaluates how the robot performs when it 
+solves its intended task. 
+
+At every iteration of the algorithm, each particle is getting evaluated: Its current position 
+is transformed into actual parameters which are passed to the objective function. Then, each 
+particle's new position is computed. This position is defined by a speed vector with limited 
+length, which is directed to a random point on the line between the best position of a 
+particle's neighbouring particles and the particle's own best position acquired so far. 
+
+In the optimal case, all the particles should converge to the global optimum of the objective 
+function. The size of the swarm does thereby play an important role: the more particles, the 
+better the result. This is, because with an increasing number of particles, the chance of 
+getting stuck in a local maximum does decrease. For the results not to be biased, the swarm 
+size should be greater or equal to the dimensionality $D$. Due to simulation problems with 
+webots\textregistered, we had to set the number of particles to the smallest number possible. 
+
+In our implementation, we have decided to normalize the ranges of each dimension in `particle 
+space'. The reason is that the maximum velocity: Usually, not all ranges of parameters to 
+optimise are in the same order of magnitude. For example e-puck's distance sensors return 
+values in the range $[0,4096]$, whereas the communication range of a robot is limited to a few 
+meters. Optimising certain thresholds would return values in the according ranges. Now, a 
+velocity limit of $1$ does not at all have the same meaning in both dimensions: Whilst in the 
+communication range direction, a particle could cross the whole space in only one iteration 
+when moving at full speed, it would need many steps for reaching the border in the sensor 
+value dimension. Therefore, each dimension in our `particle space' is limited to the range 
+$[0, 10]$ and before passing a particle's position to the fitness function, each coordinate is 
+transformed to the range of the respective controller parameter.
+
+\subsection{OCBA}
+Since the first \textit{PSO} version in 1995, much research has been done for improving the algorithm's performance. One of the most recent extensions is called \textit{PSO OCBA} and was proposed by Di Mario, Navarro and Martinoli in 2015 \cite{IEEEhowto:martinoli_pso_noise_2}. 
+
+The problem of the initial \textit{PSO} algorithm is that it does not deal with randomness. When it comes to determine controller parameters this is a big issue since in this case the measured performances of several evaluations with same parameters usually have a big variance. This is because there are many sources of randomness, such as noisy sensor measurements or moving obstacles (other robots). The problem is, that therefore a bad choice of parameters can result in a good measured performance and converely. We can thus not be sure the particle position with the best evaluation is actually the optimal one.
+
+A way to face this problem is to evaluate the particle positions several times. It is especially important to re-evaluate the best solution, since we want to be certain that it really is the best.
+
+With \textit{PSO OCBA} we can achieve exactly this objective. In every iteration, \textit{PSO OCBA} evaluates each new particle position $n_0$ times and calculates mean and variance of the performance measure. Then it distributes the user defined \textit{iteration budget} (an amount of re-evaluations) among the most promising positions with the highest variances. In doing so, it is assured that the fitness value of the finally returned optimal parameter setting has a low variance and therefore a higher possibility to be correct. 
+
+The elegant thing about \textit{PSO OCBA} is that it distributes the \textit{iteration budget} in a very intelligent way, meaning that non-promising positions will not be re-evaluated. Using \textit{PSO OCBA} allowed us thus to deploy the available computational power in an efficient way and thus reduce the running time.
+
+\subsection{Fitness function}
+The choice of a good fitness function is fundamental in \textit{PSO}. One of the most famous fitness functions in this field is the one of Floreano-Mondada \cite{IEEEhowto:fitness_floreano_mondada}:
+\begin {equation*}
+F=V(1-\sqrt{\Delta V})(1-i)
+\end{equation*}
+where $V$ is the average wheel speed, $\Delta V$ the difference of the left and right wheel speed and $i$ is the value of the highest proximity sensor, everything normalized in the interval $[0,1]$. 
+
+We took inspiration from this  and came up with the following group-fitness function: 
+\begin {equation*}
+F=\alpha_vV(1-\sqrt{\alpha_{\Delta}\Delta V})\frac{1}{D_o+\alpha_o}\frac{1}{D_f}+\alpha_gG
+\end{equation*}
+where:
+\begin{itemize}
+\item[-] $\alpha_v$, $\alpha_\Delta$, $\alpha_o$, $\alpha_g$ are appropriate weights that are reported in Table \ref{weights_fitfct};
+\item[-] $D_o$ and $D_f$ are normalized quantities that represent, respectively, the mean distance of the robots with the nearest obstacle and the mean distance to the expected position of the robots if they were in formation; 
+\item[-] $G$ is a variable in the range $[0,1]$ that decreases with the final distance to the goal.
+\end{itemize} 
+All of these quantities are computed in the supervisor: some little adjustments are thus necessary: 
+\begin{itemize}
+\item[-] $D_o$ has been introduced instead of $i$, since $i$ is a value that is highly influenced by noise. The performance computation is thus more precise;
+\item[-] $\Delta V$ is computed from $\Theta$, the angular speed of the robots.
+\end{itemize}
+Moreover, $\alpha_o$ is necessary since it may happen that $D_o$ is very low, almost tending to zero. No weight is explicitly set in front of $D_f$ since $\alpha_v$ already influences it.
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|}
+  \hline
+  Weight & Value\\
+  \hline
+  $\alpha_v$      & $0.10$ \\
+  $\alpha_\Delta$ & $1.00$ \\
+  $\alpha_o$      & $0.05$ \\
+  $\alpha_g$      & $0.50$ \\
+  \hline
+\end{tabular}
+\caption{Values of the weights used in the fitness function} \label{weights_fitfct}
+\end{center} 
+\end{table}
+
+\section{Results}
+\label{sec:4}
+\IEEEPARstart{T}{he} well functioning of the implementation of the motor-
+schemas had to be tested first, to then analyse the results given by 
+\textit{PSO}. The chosen set-ups are described in this section, followed by 
+the results. 
+
+\subsection{Set-ups}
+Three worlds have been defined, as seen in Figure \ref{img:worlds}, in 
+order to try to find parameters that best allow obstacle avoidance:
+\begin{itemize}
+\item[1.] A random world, where a goal position is defined, the four robots 
+are randomly positioned in a certain area, and six obstacles are randomly 
+positioned in an area between the goal and the robots;
+\item[2.] A world with a wall of obstacles between a predefined goal and 
+the four robots which are randomly positioned behind the wall;
+\item[3.] A world with an obstacle configuration which is hard to escape for a robot that gets stuck against it. 
+\end{itemize}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=3.5in]{Images/world.jpg}
+\caption{Different worlds chosen for testing}
+\label{img:worlds}
+\end{figure}
+
+Fifteen parameters should be set, and thus optimized through \textit{PSO}: 
+the weights of each motor-schema, $S$ and $R$ the minimum and maximum 
+thresholds, respectively, of every motor-schema based on the concept of 
+\textit{Sphere of convergence}, and the noise generating frequency and the 
+fading for the \textit{random walk} motor-schema. 
+However, that many parameters increase the complexity of the problem, which 
+should result in a higher number of particles and \textit{PSO} iterations. 
+
+Furthermore we experimented some issues with Webots\textregistered. After a 
+few simulated hours, sensors showed strange values or robots stopped even 
+if the control panel showed turning wheels. Consequently, we decided to 
+reduce the number of parameters to be optimized to four: the weights of the 
+motor-schema $A$, $B$, $C$ and $D$. Note that the last weight, 
+corresponding to the random walk motor-schema, is uniquely determined from 
+the four other ones since we normalized them so that the sum is a unit.
+ We gave to the other parameters the values manually found and reported in Table \ref{manual_param}.
+\subsection{Test of the motor-schemas}
+A good feeling allowed us to find good manually tuned parameters quite 
+easily. Those parameters are reported in Table \ref{manual_param}. Robots 
+are positioning themselves well in the four possible formations, heading 
+quite fast to the goal. However, they have some trouble to get over some 
+hard configurations of obstacles such as those presented in worlds $2$ and 
+$3$: this is where \textit{PSO} can help in an efficient way. 
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+  \hline
+  Motor-schema & Weight & Min threshold & Max threshold\\
+  \hline
+  $move\_to\_goal$ &  $0.07$ & $0.10$ & $0.50$\\
+  $keep\_formation$ & $0.35$ & $0.10$ & $0.20$\\
+  $avoid\_robot$ & $0.07$ & $0.05$ & $0.10$\\
+  $avoid\_obstacle$ & $0.35$ & $60$ & $200$\\
+  \hline
+  Motor-schema & Weight & Noise gen. frequency & Fading \\
+  \hline
+  $random\_walk$ & $0.33$ & $10$ & $1.0$\\
+  \hline
+\end{tabular}
+\caption{Values of the parameters manually tuned} \label{manual_param}
+\end{center} 
+\end{table}
+
+\subsection{Results on PSO}
+Different runs have been done, using each of the different worlds 
+previously introduced to run \textit{PSO}. The final actual run is set to 
+be the world $3$ in order to see how well the robots get over the difficult 
+configuration of obstacles. The optimized weights found by \textit{PSO} are 
+reported in Table \ref{weights} for the three worlds and using the 
+supervisor to send the positions of the obstacles to the robots, and the 
+world $1$ using the sensors. 
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+  \hline
+  Motor-schema & World $1$ & World $2$ & World $3$ & World $1$ sensors \\
+  \hline
+  $move\_to\_goal$ &  $0.21$ & $0.28$ & $0.29$ & $0.18$\\
+  $keep\_formation$ & $0.33$ & $0.30$ & $0.15$ & $0.10$\\
+  $avoid\_robot$ & $0.14$ & $0.11$ & $0.19$ & $0.30$\\
+  $avoid\_obstacle$ & $0.27$ & $0.26$ & $0.32$ & $0.15$\\
+  $random\_walk$ & $0.04$ & $0.06$ & $0.05$ & $0.26$\\
+  \hline
+\end{tabular}
+\caption{Values of the weights found by PSO} \label{weights}
+\end{center} 
+\end{table}
+
+We can first observe that the motor-schema \textit{random\_walk} get a higher value when we use sensors to detect obstacles. It could seem strange since sensors are already intrinsically noisy, but the explanation comes from the fact that sensors detect the obstacles later and thus need a higher random factor to get away from them when \textit{avoid\_obstacles} is not sufficient. 
+
+We can also notice that \textit{keep\_formation} and \textit{avoid\_obstacles} get always a slightly higher weight, as we guessed when we manually tuned the parameters. Almost all the weights found are quite similar between the different worlds, which shows a certain consistency in the results. 
+
+In Figure \ref{graphs} are reported for each world the best global fitness acquired so far at each iteration (in blue) and the mean fitness values of the particles at each iteration with their standard deviation (in red). 
+\begin{figure*}[!t]
+\centerline{
+\subfloat[Random world]{\includegraphics[width=2.5in]{Images/randomWorldGraph.jpg} \label{graph_random}}
+\hfill
+\subfloat[World with a wall of obstacles]{\includegraphics[width=2.5in]{Images/wallWorldGraph.jpg} \label{graph_wall}}
+\hfill
+\subfloat[Difficult obstacle configuration]{\includegraphics[width=2.5in]{Images/difficultWorldGraph.jpg}\label{graph_hard}}}
+\caption{Fitness values in different worlds}
+\label{graphs}
+\end{figure*}
+
+The final performance is similar in the three cases, even if the value is a bit lower in the hard configuration case. While a certain convergence can be observed well in the third case, it is less clear in the two other worlds. This might come from the fact that in the first world, the probability is high to reach the goal even with a bad parameter set, and on the other side, in the second one, it is too hard. That is why the standard deviation stays high over the ten iterations, while in the last worlds, it shrinks drastically. We would need more iterations and more particles to reach a better convergence in all cases. 
+
+
+\section{Conclusion}
+\label{sec:5}
+
+\IEEEPARstart{W}{e} have implemented a motor-schema based e-puck controller 
+that allows the robot to approach a given goal while being in a user chosen 
+formation with other robots and avoiding obstacles. In order to tune the 
+motor-schema parameters we have applied \textit{PSO OCBA}. 
+
+Unfortunately we had troubles with Webots\textregistered{} in that e-pucks 
+showed bizarre and physically impossible behaviour after several hours of 
+simulated time.
+
+However, even though we could not completely proof its correctness, and even though we could only optimize a small set of parameters, we 
+could show that we are on a good path with our approach.
+
+For future work we propose to implement PSO in a webot-external program, 
+which, for each evaluation, executes the supervisor and passes the 
+parameters to evaluate. At the end of each evaluation, \textit{PSO} would 
+then call \texttt{wb\_supervisor\_simulation\_revert()}. In doing so, we 
+could avoid the current situation, where come robots crash after a several 
+hours of simulated time. This would allow us to run \textit{PSO} for longer 
+time and thus to have a bigger swarm size and more \textit{PSO} iterations. Also running each of the three worlds per evaluation and generate a combined fitness would be possible.
+Furthermore we would probably be able to better reproduce the results 
+presented in the paper of Di Mario et al 
+\cite{IEEEhowto:martinoli_pso_noise_2}.
+For making the simulation more realistic, one could further implement 
+odometry based positioning and the computation of fitness metrics directly 
+in the e-pucks.
 
 
 
@@ -641,22 +998,6 @@ The conclusion goes here.
 % starts a section numbered zero.)
 %
 
-
-\appendices
-\section{Proof of the First Zonklar Equation}
-Appendix one text goes here.
-
-% you can choose not to have a title for an appendix
-% if you want by leaving the argument blank
-\section{}
-Appendix two text goes here.
-
-
-% use section* for acknowledgement
-%\section*{Acknowledgment}
-%
-%
-%The authors would like to thank...
 
 
 % Can use something like this to put references on a page
@@ -691,9 +1032,42 @@ Appendix two text goes here.
 % (used to reserve space for the reference number labels box)
 \begin{thebibliography}{1}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+\bibitem{IEEEhowto:arkin_motor_schemas}
+Arkin, Ronald~C. \emph{Motor schema based navigation for a mobile
+  robot: An approach to programming by behavior.} 
+Robotics and Automation. Proceedings. 1987 IEEE International Conference on. Vol. 4. IEEE, 1987.
+
+\bibitem{IEEEhowto:balch_behaviour_based}
+Balch, Tucker, and Ronald C. Arkin. \emph{Behavior-based formation
+  control for multirobot teams.}
+ Robotics and Automation, IEEE Transactions on 14.6 (1998): 926-939.
+ 
+\bibitem{IEEEhowto:first_pso}
+Eberhart, Kennedy. \emph{A New Optimizer Using Particle Swarm Theory.}
+ Sixth International Symposium on Micro Machine and Human Science. IEEE, 1995.
+
+\bibitem{IEEEhowto:martinoli_pso_noise}
+Di Mario, Ezequiel, Inaki Navarro, and Alcherio
+Martinoli. \emph{Analysis of fitness noise in particle swarm
+  optimization: From robotic learning to benchmark functions.}
+ Evolutionary Computation (CEC), 2014 IEEE Congress on. IEEE, 2014.
+
+\bibitem{IEEEhowto:martinoli_pso_noise_2}
+Di Mario, Ezequiel Leonardo, Inaki Navarro Oiza, and Alcherio
+Martinoli. 
+\emph{A Distributed Noise-Resistant Particle Swarm Optimization
+  Algorithm for High-Dimensional Multi-Robot Learning.}
+ IEEE International Conference on Robotics and Automation. No. EPFL-CONF-206842. 2015.
+
+\bibitem{IEEEhowto:fitness_floreano_mondada}
+Floreano, D . \& Mondada, F. \emph{Evolution of Homing Navigation in a Real
+Mobile Robot} Systems, Man and Cybernetics, Part B, IEEE Transactions
+on, Vol.26 , Iss.3 , Jun 1996 , pages:396-407
+
+\bibitem{IEEEhowto:martinoli_pso}
+Pugh, Jim, Yizhen Zhang, and Alcherio Martinoli. \emph{Particle swarm
+  optimization for unsupervised robotic learning.}
+ Swarm Intelligence Symposium. No. SWIS-CONF-2005-004. 2005.
 
 \end{thebibliography}
 
