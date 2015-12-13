@@ -20,7 +20,7 @@
 
 // PSO general parameters
 #define DIMENSIONALITY         4     // nb parameters to optimize
-#define POPULATION_SIZE        6     // nb particles
+#define POPULATION_SIZE        5     // nb particles
 #define NB_NEIGHBOURS          2     // size of neighbourhoods
 #define MAX_EVAL_DURATION    180     // max time (in seconds) of evaluation run
 #define PERSONAL_WEIGHT        2     // PSO function parameter
@@ -37,7 +37,7 @@
 
 // PSO OCBA specific parameters
 #define NB_ITERATIONS    10
-#define ITERATION_BUDGED 18
+#define ITERATION_BUDGED 13
 #define N_ZERO            2     // nb initial evaluations
 #define DELTA             4     // nb samples for 'remaining-budged evaluations'
 
@@ -62,6 +62,8 @@ float n_best_val[POPULATION_SIZE];                  // best performance in each 
 int additional_budget[2*POPULATION_SIZE];           // ocba calculated budget for each particle + best
 
 float ratio[2*POPULATION_SIZE]; // ratios N_i/N_s for each position i (where N_s is assumed to be 1)
+
+float result [NB_ITERATIONS][POPULATION_SIZE][2];
 
 
 // methods

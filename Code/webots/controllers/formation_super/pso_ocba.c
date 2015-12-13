@@ -99,6 +99,19 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
             }
             printf(" - Particle %d: (mean, var, #samps) = (%1.4f, %1.4f, %d)\n", 
                 p, p_best_val[p], p_best_var[p], p_best_samples[p]);
+            
+            // save result
+            if (i==0) {
+                result[i][p][0]=perf_mean[p];
+                result[i][p][1]=perf_mean[p];                
+            } else {
+                result[i][p][0]=perf_mean[p];
+                if (result[i][p][0]>result[i-1][p][1]) {            
+                    result[i][p][1]=perf_mean[p];   
+                } else {
+                    result[i][p][1]=result[i-1][p][1];   
+                }
+            }
         }
         printf("============================================================\n\n\n");
 
@@ -135,6 +148,18 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
         printf("[PSO] - Candidate%d: (%f, %f) --> mean: %f, var: %f, #samples: %d\n", p, p_best_pos[p][0], p_best_pos[p][1], p_best_val[p], p_best_var[p], p_best_samples[p]);
     }
     convert_pos_to_params(p_best_pos[best_idx], parameters);
+    
+    
+    printf("\n\nSIMULATION ENDED\n\n");
+    int j;
+    for (i=0;i<NB_ITERATIONS;i++) {
+        printf("Iteration %d\n",i);
+        
+        for (j=0;j<POPULATION_SIZE;j++) {
+            printf("%f %f\n",result[i][j][0],result[i][j][1]);
+        }
+    
+    }
 }
 
 
