@@ -1,0 +1,51 @@
+[formation_super] Best values after iteration 9:
+[formation_super] - Particle 0: (mean, var, #samps) = (0.1722, 0.0018, 18)
+[formation_super] - Particle 1: (mean, var, #samps) = (0.7192, 0.0000, 3)
+[formation_super] - Particle 2: (mean, var, #samps) = (0.1401, 0.0015, 15)
+[formation_super] - Particle 3: (mean, var, #samps) = (0.1113, 0.0017, 9)
+[formation_super] - Particle 4: (mean, var, #samps) = (0.2460, 0.0004, 2)
+[formation_super] - Particle 5: (mean, var, #samps) = (0.7157, 0.0000, 4)
+[formation_super] - Particle 6: (mean, var, #samps) = (0.1279, 0.0015, 11)
+[formation_super] - Particle 7: (mean, var, #samps) = (0.1124, 0.0014, 11)
+[formation_super] - Particle 8: (mean, var, #samps) = (0.8832, 0.0028, 2)
+[formation_super] - Particle 9: (mean, var, #samps) = (0.3570, 0.0179, 9)
+[formation_super] ============================================================
+[formation_super] 
+[formation_super] 
+[formation_super] [PSO] Best positions: 
+[formation_super] [PSO] - Candidate0: (6.156389, 7.401383) --> mean: 0.172192, var: 0.001847, #samples: 18
+[formation_super] [PSO] - Candidate1: (4.817883, 2.943179) --> mean: 0.719211, var: 0.000004, #samples: 3
+[formation_super] [PSO] - Candidate2: (6.098103, 7.109112) --> mean: 0.140139, var: 0.001503, #samples: 15
+[formation_super] [PSO] - Candidate3: (2.667720, 6.599667) --> mean: 0.111291, var: 0.001738, #samples: 9
+[formation_super] [PSO] - Candidate4: (0.488258, 7.068090) --> mean: 0.246000, var: 0.000369, #samples: 2
+[formation_super] [PSO] - Candidate5: (3.010279, 2.317735) --> mean: 0.715703, var: 0.000040, #samples: 4
+[formation_super] [PSO] - Candidate6: (3.448667, 4.779486) --> mean: 0.127878, var: 0.001505, #samples: 11
+[formation_super] [PSO] - Candidate7: (8.096873, 0.944354) --> mean: 0.112429, var: 0.001390, #samples: 11
+[formation_super] [PSO] - Candidate8: (4.983175, 7.857223) --> mean: 0.883206, var: 0.002780, #samples: 2
+[formation_super] [PSO] - Candidate9: (5.134781, 6.667588) --> mean: 0.356950, var: 0.017917, #samples: 9
+[formation_super] 
+[formation_super] 
+[formation_super] 
+[formation_super] The optimal parameters are: 
+[formation_super] ___________ w_goal...................... = 4.983175
+[formation_super] ___________ w_keep_formation............ = 7.857223
+[formation_super] ___________ w_avoid_robo................ = 3.324399
+[formation_super] ___________ w_avoid_obstacles........... = 6.355999
+[formation_super] ___________ w_noise..................... = 1.056716
+[formation_super] ___________ noise_gen_frequency......... = 10
+[formation_super] ___________ fading...................... = 1
+[formation_super] ___________ avoid_obst_min_threshold.... = 0.150000
+[formation_super] ___________ avoid_obst_max_threshold.... = 0.300000
+[formation_super] ___________ move_to_goal_min_threshold.. = 0.100000
+[formation_super] ___________ move_to_goal_max_threshold.. = 0.500000
+[formation_super] ___________ avoid_robot_min_threshold... = 0.050000
+[formation_super] ___________ avoid_robot_max_threshold... = 0.100000
+[formation_super] ___________ keep_formation_min_threshold = 0.100000
+[formation_super] ___________ keep_formation_max_threshold = 0.200000
+[formation_super] 
+[formation_super] 
+[formation_super] Beginning of the real simulation
+[formation_super] Supervisor reset.
+[formation_super] Init poses sent.
+[formation_super] Chosen formation: diamond.
+[formation_super] Weights sent

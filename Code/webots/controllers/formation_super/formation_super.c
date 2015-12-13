@@ -52,9 +52,9 @@ int main(int argc, char *args[]) {
     parameter_ranges[2][0] =  0;
     parameter_ranges[2][1] = 10;
     parameter_ranges[3][0] =  0;
-    parameter_ranges[3][1] = 10;
+    parameter_ranges[3][1] = 10; /*
     parameter_ranges[4][0] =  0;
-    parameter_ranges[4][1] =  1;
+    parameter_ranges[4][1] =  4;*/
 
 
     /*
@@ -94,10 +94,10 @@ int main(int argc, char *args[]) {
     w_goal            = optimal_params[0];
     w_keep_formation  = optimal_params[1];
     w_avoid_robot     = optimal_params[2];
-    w_avoid_obstacles = optimal_params[3];
+    w_avoid_obstacles = optimal_params[3];/*
     w_noise           = optimal_params[4];
 
-    /*
+    
     // thresholds
     avoid_obst_min_threshold     = optimal_params[5];
     avoid_obst_max_threshold     = optimal_params[5] + optimal_params[6];

@@ -59,7 +59,8 @@ void pso_ocba(float parameters[DIMENSIONALITY]){
     init_particles();
 
     for(i = 0; i < NB_ITERATIONS; i++){
-
+        sprintf(label, "Iteration: %d",i);
+        wb_supervisor_set_label(0,label,0.01,0.01,0.1,0xffffff,0);
         // evaluate new particle position n0 times        
         for(p = 0; p < POPULATION_SIZE; p++){
             // reset the number of samples per iteration to 0
@@ -232,11 +233,13 @@ float evaluate_parameters(float* params){
     w_keep_formation  = params[1];
     w_avoid_robot     = params[2];
     w_avoid_obstacles = params[3];
-    w_noise           = params[4];
+    w_noise           = 1;/*
+    w_noise           = params[4];*/
+
 
     // thresholds
-    avoid_obst_min_threshold     = 60;
-    avoid_obst_max_threshold     = 200;
+    avoid_obst_min_threshold     = 0.15;
+    avoid_obst_max_threshold     = 0.3;
     move_to_goal_min_threshold   = 0.1;
     move_to_goal_max_threshold   = 0.5;
     avoid_robot_min_threshold    = 0.05;
