@@ -64,6 +64,7 @@
 % draft mode.
 %
 \documentclass[journal]{IEEEtran}
+\usepackage{courier}
 %
 % If IEEEtran.cls has not been installed into the LaTeX system files,
 % manually specify the path to it like:
@@ -808,7 +809,7 @@ where:
 \begin{itemize}
 \item[-] $\alpha_v$, $\alpha_\Delta$, $\alpha_o$, $\alpha_g$ are appropriate weights that are reported in Table \ref{weights_fitfct};
 \item[-] $D_o$ and $D_f$ are normalized quantities that represent, respectively, the mean distance of the robots with the nearest obstacle and the mean distance to the expected position of the robots if they were in formation; 
-\item[-] $G$ is a binary variable that is $1$ if the goal is reached.
+\item[-] $G$ is a variable in the range $[0,1]$ that decreases with the final distance to the goal.
 \end{itemize} 
 All of these quantities are computed in the supervisor: some little adjustments are thus necessary: 
 \begin{itemize}
@@ -834,14 +835,21 @@ Moreover, $\alpha_o$ is necessary since it may happen that $D_o$ is very low, al
 
 \section{Results}
 \label{sec:4}
-\IEEEPARstart{T}{he} well functioning of the implementation of the motor-schemas had to be tested fist, to then analyse the results given by PSO. The chosen set-ups are described in this section, followed by the results. 
+\IEEEPARstart{T}{he} well functioning of the implementation of the motor-
+schemas had to be tested first, to then analyse the results given by 
+\textit{PSO}. The chosen set-ups are described in this section, followed by 
+the results. 
 
 \subsection{Set-ups}
-Three worlds have been defined, as seen in Figure \ref{img:worlds}, in order to try to find parameters that best allow obstacle avoidance:
+Three worlds have been defined, as seen in Figure \ref{img:worlds}, in 
+order to try to find parameters that best allow obstacle avoidance:
 \begin{itemize}
-\item[1.] a random world, where a goal position is defined, the four robots are randomly positioned in a certain area, and six obstacles are positioned in an area between the goal and the robots;
-\item[2.] a world with a wall of obstacles between a predefined goal and the four robots which are randomly positioned behind the wall;
-\item[3.] a world with an obstacle configuration which is hard to escape for a robot that get stuck against it. 
+\item[1.] A random world, where a goal position is defined, the four robots 
+are randomly positioned in a certain area, and six obstacles are randomly 
+positioned in an area between the goal and the robots;
+\item[2.] A world with a wall of obstacles between a predefined goal and 
+the four robots which are randomly positioned behind the wall;
+\item[3.] A world with an obstacle configuration which is hard to escape for a robot that gets stuck against it. 
 \end{itemize}
 \begin{figure}[!t]
 \centering
@@ -849,11 +857,29 @@ Three worlds have been defined, as seen in Figure \ref{img:worlds}, in order to 
 \caption{Different worlds chosen for testing}
 \label{img:worlds}
 \end{figure}
-Fifteen parameters should be set, and thus optimized through PSO: the weights of each motor-schema, $S$ and $R$ the minimum and maximum thresholds, respectively, of every motor-schema based on the concept of \textit{Sphere of convergence}, and the noise generating frequency and the fading for the \textit{random walk} motor-schema. 
-However, with that many parameters, each run is quite long, and we experimented some issues with Webots\textregistered. After a few simulated hours, sensors showed strange values or robots stopped even if the control panel showed turning wheels. Consequently, we decided to reduce the number of parameters to be optimized to four: the weights of the motor-schema $A$, $B$, $C$ and $D$. Note that the last weight, corresponding to the random walk motor-schema, is uniquely determined from the four other ones since we normalized them so that the sum is a unit.
+Fifteen parameters should be set, and thus optimized through \textit{PSO}: 
+the weights of each motor-schema, $S$ and $R$ the minimum and maximum 
+thresholds, respectively, of every motor-schema based on the concept of 
+\textit{Sphere of convergence}, and the noise generating frequency and the 
+fading for the \textit{random walk} motor-schema. 
+However, that many parameters increase the complexity of the problem, which 
+should result in a higher number of particles and \textit{PSO} iterations. 
+
+Furthermore we experimented some issues with Webots\textregistered. After a 
+few simulated hours, sensors showed strange values or robots stopped even 
+if the control panel showed turning wheels. Consequently, we decided to 
+reduce the number of parameters to be optimized to four: the weights of the 
+motor-schema $A$, $B$, $C$ and $D$. Note that the last weight, 
+corresponding to the random walk motor-schema, is uniquely determined from 
+the four other ones since we normalized them so that the sum is a unit.
 
 \subsection{Test of the motor-schemas}
-A good feeling allowed us to find good manually tuned parameters quite easily. Those parameters are reported in Table \ref{manual_param}. Robots are positioning themselves well in the four possible formations, heading quite fast to the goal. However, they have some trouble to get over some hard configurations of obstacles, as presented in worlds $2$ and $3$ for example: this is where PSO can help in an efficient way. 
+A good feeling allowed us to find good manually tuned parameters quite 
+easily. Those parameters are reported in Table \ref{manual_param}. Robots 
+are positioning themselves well in the four possible formations, heading 
+quite fast to the goal. However, they have some trouble to get over some 
+hard configurations of obstacles such as those presented in worlds $2$ and 
+$3$: this is where \textit{PSO} can help in an efficient way. 
 \begin{table}
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -875,7 +901,13 @@ A good feeling allowed us to find good manually tuned parameters quite easily. T
 \end{table}
 
 \subsection{Results on PSO}
-Different runs have been done, using each of the different worlds previously introduced to run PSO. The final actual run is set to be the world $3$ in order to see how well the robots get over the difficult configuration of obstacles. The optimized weights found by PSO are reported in Table \ref{weights} for the three worlds and using the supervisor to send the positions of the obstacles to the robots, and the world $1$ using the sensors. 
+Different runs have been done, using each of the different worlds 
+previously introduced to run \textit{PSO}. The final actual run is set to 
+be the world $3$ in order to see how well the robots get over the difficult 
+configuration of obstacles. The optimized weights found by \textit{PSO} are 
+reported in Table \ref{weights} for the three worlds and using the 
+supervisor to send the positions of the obstacles to the robots, and the 
+world $1$ using the sensors. 
 \begin{table}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
@@ -896,11 +928,31 @@ Different runs have been done, using each of the different worlds previously int
 
 \section{Conclusion}
 
-\IEEEPARstart{W}{e} have implemented a motor-schema based e-puck controller that
-allows the robot to approach a given goal while being in a user chosen formation with
-other robots and avoiding obstacles. In order to tune the motor-schema parameters we 
-have applied \textit{PSO OCBA}. 
+\IEEEPARstart{W}{e} have implemented a motor-schema based e-puck controller 
+that allows the robot to approach a given goal while being in a user chosen 
+formation with other robots and avoiding obstacles. In order to tune the 
+motor-schema parameters we have applied \textit{PSO OCBA}. 
 
+Unfortunately we had troubles with Webots\textregistered{} in that e-pucks 
+showed bizarre and physically impossible behaviour after several hours of 
+simulated time.
+
+However, even though we could not completely proof its correctness, and even though we could only optimize a small set of parameters, we 
+could show that we are on a good path with our approach.
+
+For future work we propose to implement PSO in a webot-external program, 
+which, for each evaluation, executes the supervisor and passes the 
+parameters to evaluate. At the end of each evaluation, \textit{PSO} would 
+then call \texttt{wb\_supervisor\_simulation\_revert()}. In doing so, we 
+could avoid the current situation, where come robots crash after a several 
+hours of simulated time. This would allow us to run \textit{PSO} for longer 
+time and thus to have a bigger swarm size and more \textit{PSO} iterations.
+Furthermore we would probably be able to better reproduce the results 
+presented in the paper of Di Mario et al 
+\cite{IEEEhowto:martinoli_pso_noise_2}.
+For making the simulation more realistic, one could further implement 
+odometry based positioning and the computation of fitness metrics directly 
+in the e-pucks.
 
 
 
