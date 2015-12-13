@@ -263,8 +263,8 @@
 
 
 
-%\usepackage[caption=false]{caption}
-%\usepackage[font=footnotesize]{subfig}
+\usepackage{caption}
+\usepackage[font=footnotesize]{subfig}
 % subfig.sty, also written by Steven Douglas Cochran, is the modern
 % replacement for subfigure.sty. However, subfig.sty requires and
 % automatically loads Axel Sommerfeldt's caption.sty which will override
@@ -631,7 +631,9 @@ instead of moving towards it.
 \subsection{Avoid obstacles}
 There are eight infra-red distance sensors on an e-puck and we know the position and thus the orientation of each of them. Now, $R$ and $S$ are sensor values: if the received sensor value is below $R$, we assume that no obstacle is near; if it is over $S$, we generate a normalized vector in the opposite direction. 
 
-Since the sensor values are very noisy, we have decided to work with a moving average. Through an empirical analysis we came to the conclusion that a perception window size of $2$ is a good choice. We thus use each sensor's current and last value for the computation of the average. Furthermore, in order to increase the influence of high sensor values (representing a short distance to a certain object), we double their weight for the computation of the average. Thanks to this technique, the robots behave more smoothly. The final speed vector is computed as the sum of the vectors relative to each sensor.
+Since the sensor values are very noisy, we have decided to work with a moving average. Through an empirical analysis, we came to the conclusion that a perception window size of $2$ is a good choice. We thus use each sensor's current and last value for the computation of the average. Furthermore, in order to increase the influence of high sensor values (representing a short distance to a certain object), we double their weight for the computation of the average. Thanks to this technique, the robots behave more smoothly. The final speed vector is computed as the sum of the vectors relative to each sensor.
+
+However, to test the well functioning of this motor-schema, we have also implemented another version in which the supervisor sends the obstacles' positions instead of using the sensors to detect them. Noise then almost disappear and values are more reliable, even if this situation is not realistic if it were implemented with real robots. 
 
 \subsection{Random walk}
 The four previous motor schemas are theoretically sufficient to achieve the goals of our project, but the presence of noise often creates a tricky evaluation. Moreover, some difficult obstacle configurations are hard to get over considering only these previously presented schemas. One possible solution to improve the performance is to add a random component to the speed of the robots. This is usually a bad idea in absence of obstacles since it creates a smooth fluid walk, but in our situation, if a robot is stuck behind an obstacle this additional random component can possibly free the robot by leading it towards a random direction.
@@ -808,14 +810,14 @@ A good feeling allowed us to find good manually tuned parameters quite easily. T
   \hline
   Motor-schema & Weight & Min threshold & Max threshold\\
   \hline
-  $move\_to\_goal$ &  $0.07$ & $0.1$ & $0.5$\\
-  $keep\_formation$ & $0.35$ & $0.03$ & $0.1$\\
-  $avoid\_robot$ & $0.07$ & $0.05$ & $0.1$\\
+  $move\_to\_goal$ &  $0.07$ & $0.10$ & $0.50$\\
+  $keep\_formation$ & $0.35$ & $0.03$ & $0.10$\\
+  $avoid\_robot$ & $0.07$ & $0.05$ & $0.10$\\
   $avoid\_obstacle$ & $0.35$ & $60$ & $200$\\
   \hline
   Motor-schema & Weight & Noise gen. frequency & Fading \\
   \hline
-  $noise$ & $0.33$ & $10$ & $1$\\
+  $noise$ & $0.33$ & $10$ & $1.0$\\
   \hline
 \end{tabular}
 \caption{Values of the parameters manually tuned} \label{manual_param}
@@ -823,6 +825,23 @@ A good feeling allowed us to find good manually tuned parameters quite easily. T
 \end{table}
 
 \subsection{Results on PSO}
+Different runs have been done, using each of the different worlds previously introduced to run PSO. The final actual run is set to be the world $3$ in order to see how well the robots get over the difficult configuration of obstacles. The optimized weights found by PSO are reported in Table \ref{weights} for the three worlds and using the supervisor to send the positions of the obstacles to the robots, and the world $1$ using the sensors. 
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+  \hline
+  Motor-schema & World $1$ & World $2$ & World $3$ & World $1$ sensors \\
+  \hline
+  $move\_to\_goal$ &  $0.21$ & $0.28$ & $0.29$ & $0.18$\\
+  $keep\_formation$ & $0.33$ & $0.30$ & $0.15$ & $0.10$\\
+  $avoid\_robot$ & $0.14$ & $0.11$ & $0.19$ & $0.30$\\
+  $avoid\_obstacle$ & $0.27$ & $0.26$ & $0.32$ & $0.15$\\
+  $noise$ & $0.04$ & $0.06$ & $0.05$ & $0.26$\\
+  \hline
+\end{tabular}
+\caption{Values of the parameters manually tuned} \label{weights}
+\end{center} 
+\end{table}
 
 
 \section{Conclusion}
