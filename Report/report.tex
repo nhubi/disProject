@@ -946,7 +946,7 @@ parameters to evaluate. At the end of each evaluation, \textit{PSO} would
 then call \texttt{wb\_supervisor\_simulation\_revert()}. In doing so, we 
 could avoid the current situation, where come robots crash after a several 
 hours of simulated time. This would allow us to run \textit{PSO} for longer 
-time and thus to have a bigger swarm size and more \textit{PSO} iterations.
+time and thus to have a bigger swarm size and more \textit{PSO} iterations. Also running each of the three worlds per evaluation and generate a combined fitness would be possible.
 Furthermore we would probably be able to better reproduce the results 
 presented in the paper of Di Mario et al 
 \cite{IEEEhowto:martinoli_pso_noise_2}.
